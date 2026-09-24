@@ -72,6 +72,8 @@ def follow_conversation() -> None:
                 if line.startswith("data: "):
                     ev = json.loads(line[6:])
                     who = {"caller": "caller", "agent": "agent "}.get(ev.get("kind"), ev.get("kind"))
+                    if ev.get("language"):
+                        who += f" [{ev['language']}]"
                     log(f"{who}: {ev.get('text', '')}")
     except Exception:
         pass
