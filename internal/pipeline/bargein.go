@@ -20,7 +20,9 @@ func normalizedTranscriptText(s string) string {
 	var b strings.Builder
 	for _, r := range strings.ToLower(s) {
 		switch {
-		case unicode.IsLetter(r), unicode.IsDigit(r), r == '\'':
+		// Marks too: Devanagari and other Indic scripts write vowels as
+		// combining marks, and dropping them splits every word apart.
+		case unicode.IsLetter(r), unicode.IsMark(r), unicode.IsDigit(r), r == '\'':
 			b.WriteRune(r)
 		default:
 			b.WriteByte(' ')
@@ -224,6 +226,25 @@ var backchannelWordTokens = map[string]bool{
 	"ah": true, "aha": true, "gotcha": true, "got": true, "it": true,
 	"i": true, "see": true, "true": true, "totally": true, "exactly": true,
 	"thats": true, "that's": true,
+
+	// The same "I'm listening" words in the languages callers most often
+	// switch to. Rejection still needs EVERY token to be in this set, so
+	// short function words ("de" in "de acuerdo", "va" in "va bene") can't
+	// swallow a real sentence.
+	// Spanish
+	"sí": true, "si": true, "vale": true, "claro": true, "ajá": true, "aja": true,
+	"bueno": true, "entiendo": true, "exacto": true, "perfecto": true, "de": true, "acuerdo": true,
+	// French
+	"oui": true, "ouais": true, "d'accord": true, "daccord": true, "voilà": true, "voila": true,
+	"bien": true, "entendu": true, "exactement": true, "parfait": true, "hum": true,
+	// Italian
+	"sì": true, "certo": true, "va": true, "bene": true, "esatto": true, "perfetto": true, "capito": true,
+	// Portuguese
+	"sim": true, "tá": true, "ta": true, "beleza": true, "entendi": true, "exato": true, "perfeito": true, "uhum": true,
+	// German
+	"ja": true, "genau": true, "gut": true, "richtig": true, "verstehe": true, "klar": true, "stimmt": true,
+	// Hindi, as speech-to-text writes it in Latin script
+	"haan": true, "han": true, "ha": true, "accha": true, "acha": true, "theek": true, "thik": true, "hai": true, "ji": true,
 }
 
 // bargeInCommandTokens are words that interrupt the agent on their own, no
@@ -233,6 +254,15 @@ var bargeInCommandTokens = map[string]bool{
 	"actually": true, "no": true, "hang": true, "hold": true,
 	"repeat": true, "transfer": true, "operator": true, "human": true,
 	"help": true,
+	// "Wait" / "stop" / "no" in Spanish, French, Italian, Portuguese, German
+	// and (Latin-script) Hindi. Only words that mean nothing else: Spanish
+	// "para" (stop, but also "for") would interrupt half of all sentences.
+	"espera": true, "espere": true, "alto": true,
+	"attendez": true, "attends": true, "arrêtez": true, "arrête": true, "non": true,
+	"aspetta": true, "aspetti": true, "basta": true,
+	"pare": true, "não": true, "nao": true,
+	"warte": true, "warten": true, "stopp": true, "halt": true, "nein": true,
+	"ruko": true, "rukiye": true, "nahi": true, "nahin": true,
 }
 
 // bargeInWeakTokens carry no content on their own, so they don't count toward
