@@ -1,0 +1,25 @@
+Voxie
+Copyright 2026 SomehowLiving
+
+This product is a modified version of StreamCore
+(https://github.com/streamcoreai/streamcore-server), licensed under the
+Apache License, Version 2.0. The original copyright notices and license are
+retained; see LICENSE. "StreamCore" is a name of its authors; Voxie is not
+affiliated with or endorsed by them.
+
+Changes made in Voxie (see the git history from commit dc3e568 on):
+- Listen first, greeting from the agent, ending the call after the last line.
+- Sarvam speech-to-text (REST and streaming); an AssemblyAI message-size fix.
+- Backchannels that don't cut the agent off; turn-taking in other languages.
+- Failover speech-to-text, and an adaptive listener that chooses and switches
+  speech-to-text per call by the caller's language (Groq Whisper and Sarvam
+  identification; audio replay across a switch).
+- Agent replies voiced sentence by sentence; [lang:xx] language tags.
+- Fixes to the bundled VibeVoice sidecars for a fully local setup.
+- New: voice-router/ (Kokoro + Sarvam text-to-speech), configs/,
+  examples/quickstart/, tools/callers/, compose.yaml, docs/voxie/.
+
+Third-party components used at runtime, under their own licenses:
+- Kokoro-82M (Apache 2.0), https://huggingface.co/hexgrad/Kokoro-82M
+- StreamCore python-sdk (Apache 2.0), used by tools/callers/
+- Cloud APIs: Deepgram, Sarvam AI, AssemblyAI, Groq (their terms apply)
