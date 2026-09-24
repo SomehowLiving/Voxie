@@ -72,8 +72,10 @@ load on its first sentence, which a caller would hear as a pause.
 - A sentence too short to tell ("Ok.") reuses the language of the last 30s.
 
 **Spoken forms:**
-- **Amounts** are read in each language's words ("₹4,999" → "4,999
-  rupees" / "4999 rupias" / "4999 ルピー").
+- **Amounts** in ₹, $, € and £ are read with the currency in each
+  language's words ("₹4,999" → "4,999 rupees" / "4999 rupias" / "4999
+  ルピー"; "4 999 €" → "4999 euros"). ¥ is left alone: it's yen in
+  Japanese and yuan in Chinese.
 - **Names** are respelled per language from `--spoken-names`. Without it,
   Spanish, Italian and Portuguese spell an all-caps name out letter by
   letter, and Japanese and Chinese drop or garble Latin-script words.

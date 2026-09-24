@@ -81,9 +81,10 @@ _voice_gender = "female"
 
 # Names the agent says in every language, spelled so each language's text-
 # to-phoneme step reads them as words. Heard in live checks: Spanish, Italian
-# and Portuguese spelled "REX" out as "R X", and Japanese/Chinese dropped or
-# garbled Latin-script words entirely ("Pro" came out as "德尔"). Loaded from
-# --spoken-names (JSON: {"ja": {"REX": "レックス"}, ...}); see
+# and Portuguese spelled an all-caps name out letter by letter ("R X"), and
+# Japanese/Chinese dropped or garbled Latin-script words entirely ("Pro" came
+# out as "德尔"). Loaded from
+# --spoken-names (JSON: {"ja": {"ACME": "アクメ"}, ...}); see
 # spoken_names.example.json.
 SPOKEN_NAMES: dict[str, dict[str, str]] = {}
 
@@ -97,8 +98,16 @@ def load_spoken_names(path: str | None) -> None:
     logger.info("spoken names loaded for %d languages from %s", len(SPOKEN_NAMES), path)
 
 
-# The word said after an amount in each language ("₹4,999" -> "4999 rupias").
-RUPEES = {"en": "rupees", "es": "rupias", "fr": "roupies", "it": "rupie", "pt": "rúpias", "ja": "ルピー", "zh": "卢比", "hi": "रुपये"}
+# The word said after an amount, per currency symbol and language
+# ("₹4,999" -> "4999 rupias"). The G2P has no reading for the symbols, so
+# without this an amount is said with no currency at all. ¥ is left alone:
+# it's yen in Japanese and yuan in Chinese.
+CURRENCY_WORDS = {
+    "₹": {"en": "rupees", "es": "rupias", "fr": "roupies", "it": "rupie", "pt": "rúpias", "ja": "ルピー", "zh": "卢比", "hi": "रुपये"},
+    "$": {"en": "dollars", "es": "dólares", "fr": "dollars", "it": "dollari", "pt": "dólares", "ja": "ドル", "zh": "美元", "hi": "डॉलर"},
+    "€": {"en": "euros", "es": "euros", "fr": "euros", "it": "euro", "pt": "euros", "ja": "ユーロ", "zh": "欧元", "hi": "यूरो"},
+    "£": {"en": "pounds", "es": "libras", "fr": "livres", "it": "sterline", "pt": "libras", "ja": "ポンド", "zh": "英镑", "hi": "पाउंड"},
+}
 
 _detector = None
 _last_language = "en"
@@ -238,28 +247,37 @@ def _pipeline(lang: str):
     return _pipelines[lang]
 
 
-# "₹4,999" -> "4,999 rupees". The G2P has no reading for the symbol, which
-# would otherwise be skipped -- and an amount said without its currency.
-_RUPEE_RE = re.compile(r"₹\s?([\d,]+(?:\.\d+)?)")
+# Indian grouping first ("1,00,000"), then thousands groups, then plain.
+_LAKH = r"\d{1,2}(?:,\d{2})+,\d{3}(?:\.\d+)?"
+_NUMBER = _LAKH + r"|\d{1,3}(?:[.,\s\u00a0\u202f]\d{3})*(?:[.,]\d+)?|\d+(?:[.,]\d+)?"
 
 
 def normalize(text: str, language: str = "en") -> str:
-    word = RUPEES.get(language, "rupees")
     for name, spoken in SPOKEN_NAMES.get(language, {}).items():
         text = re.sub(rf"(?<![A-Za-z]){name}(?![A-Za-z])", spoken, text)
 
-    def amount(digits: str) -> str:
+    def amount(digits: str, word: str) -> str:
         # Outside English, "4,999" or "4.999" is read as a decimal; plain
         # digits are read as the whole number in every language.
-        if language != "en":
+        if re.fullmatch(_LAKH, digits):
+            digits = digits.replace(",", "")  # "1,00,000" -> "100000", read right everywhere
+        elif language != "en":
             digits = re.sub(r"(\d)[,.\s\u00a0\u202f](?=\d{3}\b)", r"\1", digits)
+        # "$12.50" is "12 dollars 50", not "twelve point five dollars".
+        cents = re.fullmatch(r"(.+?)[.,](\d{2})", digits)
+        if cents:
+            return f"{cents.group(1)} {word} {cents.group(2)}"
         return f"{digits} {word}"
 
-    # "₹4,999" (symbol first) and "4.999 ₹" (symbol after, as translations
-    # often put it) both become "<number> <word>".
-    text = _RUPEE_RE.sub(lambda m: amount(m.group(1)), text)
-    text = re.sub(r"(\d{1,3}(?:[.,\s  ]\d{3})*(?:[.,]\d+)?)\s?₹", lambda m: amount(m.group(1)), text)
-    return text.replace("₹", f" {word} ").strip()
+    for symbol, words in CURRENCY_WORDS.items():
+        word = words.get(language, words["en"])
+        sym = re.escape(symbol)
+        # "₹4,999" (symbol first) and "4.999 €" (symbol after, as many
+        # languages write it) both become "<number> <word>".
+        text = re.sub(rf"{sym}\s?({_NUMBER})", lambda m: amount(m.group(1), word), text)
+        text = re.sub(rf"({_NUMBER})\s?{sym}", lambda m: amount(m.group(1), word), text)
+        text = text.replace(symbol, f" {word} ")
+    return re.sub(r"  +", " ", text).strip()
 
 
 # ---------------------------------------------------------------------------
@@ -482,7 +500,7 @@ def main():
     # Warm up so the first real request doesn't pay for the voice download,
     # CUDA kernel setup and the G2P's first load.
     # Check the Sarvam key once, up front. A rejected key would otherwise
-    # surface only on a customer's first lines -- as silence, for languages
+    # surface only on a caller's first lines -- as silence, for languages
     # no local voice can speak -- before the breaker learned it.
     if _sarvam_key:
         try:

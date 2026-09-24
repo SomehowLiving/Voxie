@@ -1,35 +1,32 @@
 {
   "es": {
-    "REX": "Rex"
+    "ACME": "Acme"
   },
   "fr": {
-    "REX": "Rex"
+    "ACME": "Acme"
   },
   "it": {
-    "REX": "Rex"
+    "ACME": "Acme"
   },
   "pt": {
-    "REX": "Rex"
+    "ACME": "Acme"
   },
   "ja": {
-    "REX": "レックス",
+    "ACME": "アクメ",
     "Pro": "プロ",
     "Starter": "スターター",
-    "Scale": "スケール",
     "Enterprise": "エンタープライズ"
   },
   "zh": {
-    "REX": "雷克斯",
+    "ACME": "艾克米",
     "Pro": "专业版",
     "Starter": "入门版",
-    "Scale": "扩展版",
     "Enterprise": "企业版"
   },
   "hi": {
-    "REX": "रेक्स",
+    "ACME": "एक्मी",
     "Pro": "प्रो",
     "Starter": "स्टार्टर",
-    "Scale": "स्केल",
     "Enterprise": "एंटरप्राइज़"
   }
 }
