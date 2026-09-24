@@ -1,0 +1,14 @@
+# torch is installed separately, for your CUDA version (see Dockerfile / README):
+#   pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cu128
+kokoro==0.9.4
+misaki[ja,zh]==0.9.4
+unidic-lite==1.0.8
+soundfile==0.14.0
+scipy==1.17.1
+numpy==2.4.6
+fastapi==0.141.1
+uvicorn==0.53.0
+pydantic==2.13.5
+lingua-language-detector==2.1.1
+spacy==3.8.16
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl

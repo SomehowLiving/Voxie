@@ -1,0 +1,35 @@
+{
+  "es": {
+    "REX": "Rex"
+  },
+  "fr": {
+    "REX": "Rex"
+  },
+  "it": {
+    "REX": "Rex"
+  },
+  "pt": {
+    "REX": "Rex"
+  },
+  "ja": {
+    "REX": "レックス",
+    "Pro": "プロ",
+    "Starter": "スターター",
+    "Scale": "スケール",
+    "Enterprise": "エンタープライズ"
+  },
+  "zh": {
+    "REX": "雷克斯",
+    "Pro": "专业版",
+    "Starter": "入门版",
+    "Scale": "扩展版",
+    "Enterprise": "企业版"
+  },
+  "hi": {
+    "REX": "रेक्स",
+    "Pro": "प्रो",
+    "Starter": "स्टार्टर",
+    "Scale": "स्केल",
+    "Enterprise": "एंटरप्राइज़"
+  }
+}
