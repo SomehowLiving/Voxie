@@ -1,6 +1,9 @@
 package tts
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestParseVoiceTag(t *testing.T) {
 	cases := []struct {
@@ -51,5 +54,15 @@ func TestWrappersForwardControlsCapability(t *testing.T) {
 	var l Client = &limitedClient{inner: &deepgramClient{}, limiter: newConcurrencyLimiter(1)}
 	if _, ok := l.(ControllableStreamer); !ok {
 		t.Error("limitedClient must implement ControllableStreamer")
+	}
+}
+
+func TestStripVoiceTagsRemovesLanguageHints(t *testing.T) {
+	if got := StripVoiceTags("[lang:ta] வணக்கம், நான் REX."); got != "வணக்கம், நான் REX." {
+		t.Errorf("StripVoiceTags kept the language hint: %q", got)
+	}
+	// ParseVoiceTag leaves it in place, so it still reaches the synthesizer.
+	if _, text := ParseVoiceTag("[lang:ta] வணக்கம்"); !strings.HasPrefix(text, "[lang:ta]") {
+		t.Errorf("ParseVoiceTag must not strip the language hint, got %q", text)
 	}
 }

@@ -319,6 +319,10 @@ type GrokConfig struct {
 
 type STTConfig struct {
 	Provider string `toml:"provider"`
+	// Failover is the ordered provider list used when Provider is
+	// "failover": the first that connects serves the call, and a mid-call
+	// failure moves on to the next.
+	Failover []string `toml:"failover"`
 }
 
 type LLMConfig struct {
@@ -329,13 +333,15 @@ type TTSConfig struct {
 	Provider string `toml:"provider"`
 }
 
-// SarvamConfig is Sarvam AI's speech-to-text (https://docs.sarvam.ai) --
-// REST/batch only, no streaming endpoint, so this provider emits finals
-// only (see internal/stt/sarvam.go's package comment for what that means
-// for barge-in).
+// SarvamConfig is Sarvam AI's speech-to-text (https://docs.sarvam.ai),
+// strongest on Indian languages. Streaming over a WebSocket by default
+// (internal/stt/sarvam_stream.go); mode = "rest" uploads one utterance at a
+// time instead (internal/stt/sarvam.go). Both emit finals only.
 type SarvamConfig struct {
 	APIKey       string `toml:"api_key"`
-	Model        string `toml:"model"`         // "saaras:v3" (default) or "saaras:v4"
+	Mode         string `toml:"mode"`          // "stream" (default) or "rest"
+	StreamModel  string `toml:"stream_model"`  // streaming model, default "saarika:v2.5"
+	Model        string `toml:"model"`         // REST model: "saaras:v3" (default) or "saaras:v4"
 	LanguageCode string `toml:"language_code"` // BCP-47, e.g. "hi-IN", "en-IN", or "unknown" to auto-detect
 }
 

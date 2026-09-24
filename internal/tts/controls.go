@@ -2,6 +2,7 @@ package tts
 
 import (
 	"context"
+	"regexp"
 	"strings"
 )
 
@@ -68,10 +69,17 @@ func ParseVoiceTag(sentence string) (VoiceControls, string) {
 // StripVoiceTags removes every known [tag] occurrence from text — used when
 // recording transcripts so delivery hints never pollute what reviews and
 // the LLM history treat as spoken words.
+// langTag matches a "[lang:xx]" language hint anywhere in a line.
+var langTag = regexp.MustCompile(`\[lang:[a-zA-Z-]{2,8}\]\s*`)
+
 func StripVoiceTags(text string) string {
 	if !strings.Contains(text, "[") {
 		return text
 	}
+	// A language hint ("[lang:ta] ...") is for the TTS provider only: it
+	// passes ParseVoiceTag untouched so the synthesizer can route on it, but
+	// never belongs in transcripts, history, or interruption context.
+	text = langTag.ReplaceAllString(text, "")
 	for tag := range voiceTags {
 		text = strings.ReplaceAll(text, "["+tag+"]", "")
 		text = strings.ReplaceAll(text, "["+strings.ToUpper(tag[:1])+tag[1:]+"]", "")

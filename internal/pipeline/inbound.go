@@ -143,6 +143,15 @@ func (p *Pipeline) runInbound() {
 	var bargeInPending bool
 	var bargeInStart time.Time
 	var bargeInHeld bool
+	// When the barge-in VAD's current run of speech started (zero when
+	// silent). A finals-only provider has no partial text to confirm that
+	// sound is the caller talking, so the window -- and the duck that comes
+	// with it -- waits for finalsOnlyOnset of continuous sound. At the VAD's
+	// 60ms onset, the agent's own voice leaking back through a speaker, or a
+	// bump, dipped the agent's volume again and again mid-sentence (heard
+	// live with Sarvam as "the voice hangs").
+	var vadSpeechSince time.Time
+	const finalsOnlyOnset = 300 * time.Millisecond
 	const backchannelWindow = 600 * time.Millisecond
 	// A backchannel can outlast the window ("yeah, okay, sure..."). While the
 	// partial text says it is only acknowledgement, the agent stays ducked
@@ -192,6 +201,11 @@ func (p *Pipeline) runInbound() {
 			// Uses the fast bargeInVAD (60ms onset) for responsiveness.
 			if *p.cfg.Pipeline.BargeIn {
 				p.bargeInVAD.Process(frame.Samples)
+				if !p.bargeInVAD.IsSpeaking() {
+					vadSpeechSince = time.Time{}
+				} else if vadSpeechSince.IsZero() {
+					vadSpeechSince = time.Now()
+				}
 
 				if bargeInPending {
 					elapsed := time.Since(bargeInStart)
@@ -256,7 +270,8 @@ func (p *Pipeline) runInbound() {
 						}
 					}
 					// else: still speaking within window, keep waiting
-				} else if p.bargeInVAD.IsSpeaking() && p.speaking.Load() && (!emitsPartials || hasPartialText.Load()) {
+				} else if p.bargeInVAD.IsSpeaking() && p.speaking.Load() &&
+					((emitsPartials && hasPartialText.Load()) || (!emitsPartials && time.Since(vadSpeechSince) >= finalsOnlyOnset)) {
 					// Conditions met — start backchannel suppression window.
 					// A finals-only provider opens the window on VAD alone,
 					// since partial text never arrives to confirm the speech;

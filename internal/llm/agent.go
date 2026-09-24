@@ -328,12 +328,53 @@ func readJSONReply(r io.Reader, emit func(string)) (bool, error) {
 	if err := json.Unmarshal(body, &reply); err != nil {
 		return false, fmt.Errorf("parse json reply: %w", err)
 	}
-	if reply.Text != "" {
-		emit(reply.Text)
-	} else {
-		emit(reply.Response)
+	text := reply.Text
+	if text == "" {
+		text = reply.Response
+	}
+	// Hand a buffered reply over one sentence at a time, so the first
+	// sentence is synthesized and playing while the rest are still being
+	// voiced. Emitted whole, the splitter cut it only at its LAST sentence
+	// end, and a three-sentence reply from a slower voice (Sarvam, ~1s a
+	// sentence) sat silent until nearly all of it was ready.
+	for _, sentence := range splitSentences(text) {
+		emit(sentence)
 	}
 	return reply.EndCall, nil
+}
+
+// splitSentences cuts text after each sentence ender that is followed by a
+// space or the end ("First. Second? Third।"), keeping each ender and the
+// space after it with its sentence. Joining the parts gives back the text.
+func splitSentences(text string) []string {
+	var parts []string
+	start := 0
+	runes := []rune(text)
+	pos := 0 // byte offset of runes[i]
+	for i, r := range runes {
+		width := utf8.RuneLen(r)
+		ender := r == '.' || r == '!' || r == '?' || r == '।' || r == '॥' || r == '。' || r == '！' || r == '？'
+		if ender {
+			end := pos + width
+			// A following space belongs to this sentence; a following
+			// letter or digit (an email, "4.5") means no break here.
+			if i+1 == len(runes) || runes[i+1] == ' ' || runes[i+1] == '\n' {
+				if i+1 < len(runes) {
+					end++
+				}
+				parts = append(parts, text[start:end])
+				start = end
+			} else if r == '।' || r == '॥' || r == '。' || r == '！' || r == '？' {
+				parts = append(parts, text[start:end])
+				start = end
+			}
+		}
+		pos += width
+	}
+	if start < len(text) {
+		parts = append(parts, text[start:])
+	}
+	return parts
 }
 
 // SetTools is a no-op: the external agent owns its own tools. Server-side

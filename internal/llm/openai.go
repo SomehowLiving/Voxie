@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	openai "github.com/sashabaranov/go-openai"
 )
@@ -507,6 +508,24 @@ func toolCallDeltaIndex(tc openai.ToolCall) int {
 // Without this, the splitter cut "name@gmail.com" at the internal dot, so TTS
 // dropped the "dot" and read the address as "gmail com".
 func findSentenceEnd(s string) int {
+	// Sentence enders outside ASCII -- the danda "।" (Hindi, Bengali,
+	// Punjabi, Odia...) and the CJK full-width "。！？" -- end a sentence
+	// wherever they appear. Without them a whole reply in those scripts was
+	// one "sentence", and nothing played until all of it was synthesized.
+	unicodeEnd := -1
+	for i, r := range s {
+		switch r {
+		case '।', '॥', '。', '！', '？':
+			unicodeEnd = i + utf8.RuneLen(r) - 1
+		}
+	}
+	if ascii := findASCIISentenceEnd(s); ascii > unicodeEnd {
+		return ascii
+	}
+	return unicodeEnd
+}
+
+func findASCIISentenceEnd(s string) int {
 	for i := len(s) - 1; i >= 0; i-- {
 		switch s[i] {
 		case '!', '?':

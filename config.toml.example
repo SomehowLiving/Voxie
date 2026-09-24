@@ -120,7 +120,9 @@ turn_merge_ms = 350          # Debounce window for merging finals into one turn.
 provider = ""           # Supported: grok (empty = classic pipeline)
 
 [stt]
-provider = "deepgram"   # Supported: aliyun, assemblyai, deepgram, openai, telnyx, vibevoice, volcengine
+provider = "deepgram"   # Supported: aliyun, assemblyai, deepgram, failover, openai, sarvam, telnyx, vibevoice, volcengine
+failover = []           # With provider = "failover": providers in order, e.g. ["sarvam", "deepgram"] -- the first that
+                        # connects serves the call; if it fails mid-call the next takes over
 
 [llm]
 provider = "openai"     # Supported: openai, ollama, agent
@@ -172,8 +174,10 @@ keyterms = []           # Nova-3 only: bias the decoder toward domain words ("Ta
 # streaming endpoint -- so this provider emits finals only: barge-in falls
 # back to VAD-only after the backchannel window (see internal/stt/sarvam.go).
 [sarvam]
-api_key = ""             # Required if stt.provider = "sarvam"
-model = "saaras:v3"      # or "saaras:v4"
+api_key = ""             # Required if stt.provider = "sarvam" (or SARVAM_API_KEY)
+mode = "stream"          # "stream" (WebSocket, default) or "rest" (one upload per utterance)
+stream_model = "saarika:v2.5"  # Streaming model
+model = "saaras:v3"      # REST model: "saaras:v3" or "saaras:v4"
 language_code = "unknown" # BCP-47 (e.g. "hi-IN", "en-IN"), or "unknown" to auto-detect
 
 [assemblyai]

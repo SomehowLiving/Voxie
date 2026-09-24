@@ -43,42 +43,63 @@ type PartialsEmitter interface {
 
 // NewClient returns an STT client for the configured provider.
 func NewClient(ctx context.Context, cfg *config.Config, onResult func(TranscriptResult)) (Client, error) {
-	switch cfg.STT.Provider {
+	if cfg.STT.Provider == "failover" {
+		partials := true
+		for _, name := range cfg.STT.Failover {
+			partials = partials && providerEmitsPartials(name)
+		}
+		build := func(ctx context.Context, name string, onResult func(TranscriptResult)) (Client, error) {
+			if name == "failover" {
+				return nil, fmt.Errorf("\"failover\" can't be one of its own providers")
+			}
+			return newProvider(ctx, cfg, name, onResult)
+		}
+		return newFailoverClient(ctx, cfg.STT.Failover, build, partials, onResult)
+	}
+	return newProvider(ctx, cfg, cfg.STT.Provider, onResult)
+}
+
+// newProvider builds one named STT provider.
+func newProvider(ctx context.Context, cfg *config.Config, provider string, onResult func(TranscriptResult)) (Client, error) {
+	switch provider {
 	case "deepgram":
 		if cfg.Deepgram.APIKey == "" {
-			return nil, fmt.Errorf("stt provider %q requires [deepgram] api_key to be set", cfg.STT.Provider)
+			return nil, fmt.Errorf("stt provider %q requires [deepgram] api_key to be set", provider)
 		}
 		return NewDeepgramClient(ctx, cfg.Deepgram, onResult)
 	case "openai":
 		if cfg.OpenAI.APIKey == "" {
-			return nil, fmt.Errorf("stt provider %q requires [openai] api_key to be set", cfg.STT.Provider)
+			return nil, fmt.Errorf("stt provider %q requires [openai] api_key to be set", provider)
 		}
 		return NewOpenAIClient(ctx, cfg.OpenAI.APIKey, cfg.OpenAI.STTModel, onResult)
 	case "assemblyai":
 		if cfg.AssemblyAI.APIKey == "" {
-			return nil, fmt.Errorf("stt provider %q requires [assemblyai] api_key to be set", cfg.STT.Provider)
+			return nil, fmt.Errorf("stt provider %q requires [assemblyai] api_key to be set", provider)
 		}
 		return NewAssemblyAIClient(ctx, cfg.AssemblyAI, onResult)
 	case "aliyun":
 		if cfg.Aliyun.APIKey == "" {
-			return nil, fmt.Errorf("stt provider %q requires [aliyun] api_key to be set", cfg.STT.Provider)
+			return nil, fmt.Errorf("stt provider %q requires [aliyun] api_key to be set", provider)
 		}
 		return NewAliyunClient(ctx, cfg.Aliyun, onResult)
 	case "volcengine":
 		if cfg.Volcengine.APIKey == "" {
-			return nil, fmt.Errorf("stt provider %q requires [volcengine] api_key to be set", cfg.STT.Provider)
+			return nil, fmt.Errorf("stt provider %q requires [volcengine] api_key to be set", provider)
 		}
 		return NewVolcengineClient(ctx, cfg.Volcengine, onResult)
 	case "telnyx":
 		if cfg.Telnyx.APIKey == "" {
-			return nil, fmt.Errorf("stt provider %q requires [telnyx] api_key to be set", cfg.STT.Provider)
+			return nil, fmt.Errorf("stt provider %q requires [telnyx] api_key to be set", provider)
 		}
 		return NewTelnyxClient(ctx, cfg.Telnyx, onResult)
 	case "vibevoice":
 		return NewVibeVoiceClient(ctx, cfg.VibeVoice.ASRURL, onResult)
 	case "sarvam":
-		return NewSarvamClient(ctx, cfg.Sarvam, onResult)
+		if cfg.Sarvam.Mode == "rest" {
+			return NewSarvamClient(ctx, cfg.Sarvam, onResult)
+		}
+		return NewSarvamStreamClient(ctx, cfg.Sarvam, onResult)
 	default:
-		return nil, fmt.Errorf("unknown stt provider %q (supported: aliyun, assemblyai, deepgram, openai, sarvam, telnyx, vibevoice, volcengine)", cfg.STT.Provider)
+		return nil, fmt.Errorf("unknown stt provider %q (supported: aliyun, assemblyai, deepgram, failover, openai, sarvam, telnyx, vibevoice, volcengine)", provider)
 	}
 }

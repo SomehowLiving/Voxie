@@ -257,3 +257,27 @@ func TestInboundVADOnlyBargeInSuppressesShortBurst(t *testing.T) {
 		t.Error("short unclassifiable burst fired barge-in, want it suppressed as backchannel")
 	}
 }
+
+// A finals-only provider can't tell the caller from the agent's own voice
+// leaking back or a bump, so sound shorter than finalsOnlyOnset must not
+// even duck the agent -- a dip mid-sentence is what the caller hears.
+func TestInboundFinalsOnlyShortSoundDoesNotDuck(t *testing.T) {
+	cfg := &config.Config{}
+	cfg.STT.Provider = "openai"
+	cfg.OpenAI.APIKey = "test-key"
+	bar := true
+	cfg.Pipeline.BargeIn = &bar
+
+	p := newInboundTestPipeline(t, cfg)
+	startInbound(t, p)
+
+	// ~150ms of sound, then silence.
+	pushPaced(t, p, loudSamples(), 15, 10*time.Millisecond)
+	if p.audioMuted.Load() {
+		t.Fatal("150ms of sound ducked the agent; want it left alone")
+	}
+	pushPaced(t, p, silentSamples(), 20, 10*time.Millisecond)
+	if interruptFired(p) {
+		t.Error("a short sound interrupted the agent")
+	}
+}

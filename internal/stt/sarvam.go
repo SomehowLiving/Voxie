@@ -15,10 +15,11 @@ import (
 	"github.com/streamcoreai/streamcore-server/internal/vad"
 )
 
-// Sarvam AI's Speech-to-Text (https://docs.sarvam.ai) is REST/batch only --
-// POST a whole audio file, get one transcript back. No streaming or
-// partial-results endpoint exists (confirmed against Sarvam's own API
-// docs, not assumed). That makes this client-side-endpointed, the exact
+// Sarvam AI's Speech-to-Text over REST ([sarvam] mode = "rest"): POST a
+// whole utterance, get one transcript back. The default is Sarvam's
+// streaming WebSocket (sarvam_stream.go), which an earlier version of this
+// comment wrongly said didn't exist; this client remains for deployments
+// that prefer per-utterance uploads. It is client-side-endpointed, the exact
 // shape telnyx.go's in-house-engine path already solves for the identical
 // problem: this reuses that pattern (StreamCore's own VAD segments
 // utterances locally, one REST call per utterance) rather than inventing
