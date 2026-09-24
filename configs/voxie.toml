@@ -1,0 +1,50 @@
+# Voxie: one config for every caller, anywhere.
+# Keys come from the environment (.env): DEEPGRAM_API_KEY, SARVAM_API_KEY,
+# ASSEMBLYAI_API_KEY, GROQ_API_KEY, STREAMCORE_AGENT_API_KEY.
+
+[server]
+port = "8080"
+public_ip = ""          # set (with turn_secret) when callers aren't on this machine's network
+turn_secret = ""
+
+[pipeline]
+barge_in = true
+echo_guard = "always"                  # callers on speakers or phones: the agent's own voice isn't the caller
+greeting = "Hello."                    # fallback only; the agent writes the real opening line
+greeting_from_agent = true             # ask the agent for the opening line (type "greeting")
+greeting_delay_ms = 4000               # listen first: the caller gets 4s to speak before the agent greets
+user_speech_quiet_ms = 600             # quiet after the caller stops before the agent answers
+turn_merge_ms = 350                    # merge finals this close together into one turn
+
+[stt]
+provider = "adaptive"                  # choose the listener per call, switch mid-call (see docs/voxie/how-it-works.md)
+
+[stt.adaptive]
+world = ["deepgram", "assemblyai", "sarvam"]   # default listener: a failover chain
+indian = ["sarvam", "deepgram"]                # once a turn is identified as Tamil, Telugu, Bengali...
+identify = ["groq", "sarvam"]                  # who identifies a checked turn's language
+
+[deepgram]
+model = "nova-3"
+language = "multi"
+
+[sarvam]
+mode = "stream"
+stream_model = "saarika:v2.5"
+language_code = "unknown"              # auto-detect
+
+[assemblyai]
+model = "u3-rt-pro"
+
+[llm]
+provider = "agent"                     # your app decides what to say
+
+[agent]
+url = "http://127.0.0.1:9101/agent"    # the quickstart's demo agent; point it at your app
+timeout_ms = 60000
+
+[tts]
+provider = "vibevoice"                 # the voice router speaks the VibeVoice sidecar's protocol
+
+[vibevoice]
+tts_url = "http://127.0.0.1:8300"      # voice-router/

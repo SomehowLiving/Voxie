@@ -1,0 +1,47 @@
+# Voxie, all of it: the voice server, the GPU voice router and the quickstart.
+#
+#   cp .env.example .env    # add your keys
+#   docker compose up --build
+#   open http://localhost:8400
+#
+# Host networking: WebRTC media needs the server reachable on UDP, and
+# publishing thousands of UDP ports through Docker's proxy is slow (the
+# upstream EC2 deployment does the same). Works on Linux and WSL2; on Docker
+# Desktop for macOS/Windows, run the server natively or set server.public_ip.
+services:
+  voxie:
+    build: .
+    network_mode: host
+    env_file: .env
+    volumes:
+      - ./configs/voxie.toml:/config.toml:ro
+    restart: unless-stopped
+
+  voice-router:
+    build: voice-router
+    network_mode: host
+    env_file: .env
+    command: ["--voice-gender", "${VOXIE_VOICE_GENDER:-female}", "--default-voice", "${VOXIE_ENGLISH_VOICE:-af_heart}"]
+    volumes:
+      - hf-cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  quickstart:
+    image: node:22-alpine
+    network_mode: host
+    env_file: .env
+    working_dir: /app
+    volumes:
+      - ./examples/quickstart:/app:ro
+    command: ["node", "server.mjs"]
+    depends_on: [voxie]
+
+volumes:
+  hf-cache:
