@@ -32,6 +32,7 @@ type Config struct {
 	TTS        TTSConfig        `toml:"tts"`
 	RAG        RAGConfig        `toml:"rag"`
 	Deepgram   DeepgramConfig   `toml:"deepgram"`
+	Sarvam     SarvamConfig     `toml:"sarvam"`
 	AssemblyAI AssemblyAIConfig `toml:"assemblyai"`
 	OpenAI     OpenAIConfig     `toml:"openai"`
 	Ollama     OllamaConfig     `toml:"ollama"`
@@ -148,6 +149,32 @@ type PipelineConfig struct {
 	Greeting         string `toml:"greeting"`          // Text spoken by the agent when a user connects
 	GreetingOutgoing string `toml:"greeting_outgoing"` // Text spoken on outgoing SIP calls (falls back to greeting)
 	Debug            bool   `toml:"debug"`             // Emit per-turn timing events over the DataChannel
+
+	// GreetingDelayMs, when set, holds the configured greeting for up to
+	// this long to let the caller speak first -- someone who picks up and
+	// says "hello?" gets answered instead of talked over by a scripted
+	// line. If the caller's first turn arrives before the delay elapses,
+	// the greeting is skipped entirely and that turn flows through the
+	// normal agent path instead; if not, the greeting fires exactly as it
+	// always has. 0 (default) preserves today's immediate-greeting
+	// behaviour unchanged.
+	GreetingDelayMs int `toml:"greeting_delay_ms"`
+
+	// GreetingSpeechSettleMs is how long after the caller last made sound a
+	// delayed greeting keeps waiting for their first turn to arrive, before
+	// deciding the sound was noise and greeting anyway. It has to cover the
+	// STT's end-of-speech-to-final latency: ~1-2s for streaming cloud STT,
+	// much longer for a batch or CPU-bound local engine. 0 means 5000.
+	GreetingSpeechSettleMs int `toml:"greeting_speech_settle_ms"`
+
+	// GreetingFromAgent asks the LLM client for the opening line (see
+	// llm.Greeter -- today only llm.provider = "agent" implements it)
+	// instead of speaking the static greeting, so an outbound call can open
+	// with the person's name and the reason for the call. The static
+	// greeting, if set, is the fallback when the agent errors or returns
+	// nothing. Off by default: an existing agent endpoint that doesn't
+	// understand "greeting" requests never receives one.
+	GreetingFromAgent bool `toml:"greeting_from_agent"`
 
 	// UserSpeechQuietMs is how long the caller must be quiet before the agent
 	// starts speaking. It stops the agent talking over someone who is still
@@ -300,6 +327,16 @@ type LLMConfig struct {
 
 type TTSConfig struct {
 	Provider string `toml:"provider"`
+}
+
+// SarvamConfig is Sarvam AI's speech-to-text (https://docs.sarvam.ai) --
+// REST/batch only, no streaming endpoint, so this provider emits finals
+// only (see internal/stt/sarvam.go's package comment for what that means
+// for barge-in).
+type SarvamConfig struct {
+	APIKey       string `toml:"api_key"`
+	Model        string `toml:"model"`         // "saaras:v3" (default) or "saaras:v4"
+	LanguageCode string `toml:"language_code"` // BCP-47, e.g. "hi-IN", "en-IN", or "unknown" to auto-detect
 }
 
 type DeepgramConfig struct {
@@ -790,6 +827,7 @@ var envOverrides = []struct {
 	{"STREAMCORE_API_KEY", func(c *Config) *string { return &c.Server.APIKey }},
 	{"STREAMCORE_AGENT_API_KEY", func(c *Config) *string { return &c.Agent.APIKey }},
 	{"DEEPGRAM_API_KEY", func(c *Config) *string { return &c.Deepgram.APIKey }},
+	{"SARVAM_API_KEY", func(c *Config) *string { return &c.Sarvam.APIKey }},
 	{"ASSEMBLYAI_API_KEY", func(c *Config) *string { return &c.AssemblyAI.APIKey }},
 	{"ALIYUN_API_KEY", func(c *Config) *string { return &c.Aliyun.APIKey }},
 	{"VOLCENGINE_API_KEY", func(c *Config) *string { return &c.Volcengine.APIKey }},

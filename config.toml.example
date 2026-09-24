@@ -89,6 +89,16 @@ turn_merge_ms = 350          # Debounce window for merging finals into one turn.
                              # answers callers halfway through a sentence; lower if replies feel slow
 # rag_prefetch = false                    # Start retrieval during the merge window instead of after it
 # readback_bargein_guard_enabled = false  # Ignore weak barge-ins while the agent reads values back
+# greeting_delay_ms = 4000                # Hold the greeting this long to let the caller speak first;
+                                           # skipped entirely if they do. 0 (default) greets immediately.
+                                           # Not wired into realtime/speech-to-speech mode.
+# greeting_speech_settle_ms = 5000        # If the caller made sound during that hold, keep waiting this long
+                                           # after they go quiet for their words to come back from STT before
+                                           # greeting anyway. Must exceed your STT's end-of-speech-to-final
+                                           # latency; raise it for batch or CPU-bound local STT.
+# greeting_from_agent = false            # Ask llm.provider = "agent" for the opening line (a "greeting"
+                                           # request) instead of speaking the static greeting; the static
+                                           # greeting becomes the fallback if the agent fails.
 
 # Echo reference for barge-in, decided per session. On a path with no AEC
 # (SIP/PCMU telephony) the agent's own voice comes back loud enough to look
@@ -157,6 +167,14 @@ language = ""           # Optional BCP-47 tag (en-US, es-MX). Non-en/es routes t
 endpointing = "300"     # Silence (ms) before a transcript is finalised. Raise it if callers get cut off mid-sentence
 utterance_end_ms = "1000"  # Silence (ms) before an UtteranceEnd event; flushes a turn when no speech_final arrives (min 1000)
 keyterms = []           # Nova-3 only: bias the decoder toward domain words ("Tauranga", product names)
+
+# Sarvam AI (https://docs.sarvam.ai) speech-to-text. REST/batch only -- no
+# streaming endpoint -- so this provider emits finals only: barge-in falls
+# back to VAD-only after the backchannel window (see internal/stt/sarvam.go).
+[sarvam]
+api_key = ""             # Required if stt.provider = "sarvam"
+model = "saaras:v3"      # or "saaras:v4"
+language_code = "unknown" # BCP-47 (e.g. "hi-IN", "en-IN"), or "unknown" to auto-detect
 
 [assemblyai]
 api_key = ""            # Required if stt.provider = "assemblyai"

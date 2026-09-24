@@ -43,6 +43,13 @@ const (
 	// audio frame takes longer than this to flush, something is wrong and
 	// we'd rather error than wedge the audio pipeline.
 	assemblyAIWriteTimeout = 5 * time.Second
+
+	// Universal-Streaming rejects any audio message shorter than 50ms or
+	// longer than 1000ms ("Input Duration Violation") and closes the
+	// socket. The pipeline hands SendAudio 20ms frames, so they're batched
+	// up to this size first: 60ms of 16kHz linear16, the smallest whole
+	// number of frames above the floor.
+	assemblyAIMinChunkBytes = assemblyAISampleRate * 2 * 60 / 1000
 )
 
 type assemblyAIClient struct {
@@ -52,6 +59,7 @@ type assemblyAIClient struct {
 	cancel   context.CancelFunc
 
 	writeMu sync.Mutex // gorilla/websocket requires single concurrent writer
+	pending []byte     // audio not yet sent, below assemblyAIMinChunkBytes; guarded by writeMu
 	closed  atomic.Bool
 	readWG  sync.WaitGroup
 
@@ -158,12 +166,19 @@ func (c *assemblyAIClient) SendAudio(data []byte) error {
 	}
 	c.writeMu.Lock()
 	defer c.writeMu.Unlock()
+	// The pipeline reuses data's backing buffer after this returns, so it's
+	// copied into pending rather than retained.
+	c.pending = append(c.pending, data...)
+	if len(c.pending) < assemblyAIMinChunkBytes {
+		return nil
+	}
 	if err := c.conn.SetWriteDeadline(time.Now().Add(assemblyAIWriteTimeout)); err != nil {
 		return fmt.Errorf("assemblyai: set write deadline: %w", err)
 	}
-	if err := c.conn.WriteMessage(websocket.BinaryMessage, data); err != nil {
+	if err := c.conn.WriteMessage(websocket.BinaryMessage, c.pending); err != nil {
 		return fmt.Errorf("assemblyai: write audio: %w", err)
 	}
+	c.pending = c.pending[:0]
 	return nil
 }
 

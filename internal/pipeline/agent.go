@@ -43,6 +43,7 @@ func (p *Pipeline) runAgent() {
 			}
 
 			log.Printf("[agent] user: %s", ev.Text)
+			p.closeCallerSpokeFirst.Do(func() { close(p.callerSpokeFirst) })
 			gen := p.supersedeResponse()
 			p.sendEvent(stateMsg{Type: "state", State: "thinking"})
 			go func() { defer p.recoverPanic("respond"); p.respond(gen, ev.Text, ev.TurnStart) }()
@@ -245,6 +246,10 @@ func (p *Pipeline) respond(gen uint64, userText string, turnStart time.Time) {
 
 	if err != nil && respCtx.Err() == nil {
 		log.Printf("[agent] LLM error: %v", err)
+	}
+	if ender, ok := p.llmClient.(llm.CallEnder); ok && ender.TakeEndCall() {
+		log.Printf("[agent] backend asked to end the call after this response")
+		p.endCallGen.Store(gen + 1)
 	}
 
 	wg.Wait()
@@ -500,6 +505,16 @@ func (p *Pipeline) finishResponse(gen uint64) {
 		return
 	}
 	p.sendEvent(stateMsg{Type: "state", State: "listening"})
+
+	// The backend ended the call with this response, and every frame of it
+	// has now been sent. Ending the pipeline closes the peer, which a SIP
+	// bridge reads as the far end hanging up -- after the goodbye, not over
+	// it. A caller who barged in superseded gen above, so they're answered
+	// instead of cut off.
+	if p.endCallGen.Load() == gen+1 {
+		log.Printf("[agent] final response played; ending the call")
+		p.cancel()
+	}
 }
 
 // cancelResponse cancels any in-progress LLM/TTS response.
@@ -523,6 +538,127 @@ func (p *Pipeline) drainOutbound() {
 	}
 }
 
+// greetingRace reports whether the delayed greeting should actually fire:
+// true if the delay elapsed with the caller still silent, false if the
+// caller's first turn (runAgent's closeCallerSpokeFirst) or pipeline
+// shutdown won the race first. A pure, allocation-free decision on purpose
+// -- kept separate from greetAfterDelay so it's testable without any of
+// greet()'s TTS/response-tracking machinery.
+func greetingRace(ctx context.Context, callerSpokeFirst <-chan struct{}, delay time.Duration) bool {
+	select {
+	case <-time.After(delay):
+		return true
+	case <-callerSpokeFirst:
+		// The caller spoke before the delay elapsed -- runAgent is already
+		// answering what they said; the scripted greeting would talk over it.
+		return false
+	case <-ctx.Done():
+		return false
+	}
+}
+
+// The default for pipeline.greeting_speech_settle_ms, and the longest a
+// greeting is held for a caller who keeps making sound without a turn ever
+// arriving (continuous line noise).
+const (
+	defaultGreetingSpeechSettle = 5 * time.Second
+	greetingHoldCap             = 20 * time.Second
+)
+
+func (p *Pipeline) greetingSpeechSettle() time.Duration {
+	if ms := p.cfg.Pipeline.GreetingSpeechSettleMs; ms > 0 {
+		return time.Duration(ms) * time.Millisecond
+	}
+	return defaultGreetingSpeechSettle
+}
+
+// greetAfterDelay holds the greeting for up to delay, then speaks it --
+// unless the caller spoke first (their finished turn arrived, or they're
+// audibly mid-utterance and it arrives shortly) or the pipeline stopped. The
+// text is resolved only once the greeting is actually going ahead, so an
+// agent that supplies it is never asked for one that won't be spoken.
+func (p *Pipeline) greetAfterDelay(delay time.Duration) {
+	defer p.greetingDecided.Store(true)
+	if !greetingRace(p.ctx, p.callerSpokeFirst, delay) {
+		return
+	}
+	lastSound := func() time.Time {
+		if n := p.lastCallerSoundAt.Load(); n != 0 {
+			return time.Unix(0, n)
+		}
+		return time.Time{}
+	}
+	if awaitCallerWords(p.ctx, p.callerSpokeFirst, lastSound, p.greetingSpeechSettle(), greetingHoldCap, 100*time.Millisecond) {
+		return
+	}
+	p.greetResolved()
+}
+
+// awaitCallerWords runs once the greeting delay has elapsed with no finished
+// turn. If the caller has made sound recently, their words may still be in
+// flight -- a turn only reaches runAgent after they stop talking and STT
+// catches up -- so it waits for that turn rather than greeting over it. It
+// gives up (greet after all: that sound was noise, not words) once the caller
+// has been quiet for settle, or holdCap has passed. Returns true if a turn
+// arrived or the pipeline stopped, i.e. the greeting should not be spoken.
+func awaitCallerWords(ctx context.Context, turnArrived <-chan struct{}, lastSound func() time.Time, settle, holdCap, poll time.Duration) bool {
+	deadline := time.Now().Add(holdCap)
+	for {
+		select {
+		case <-turnArrived:
+			return true
+		case <-ctx.Done():
+			return true
+		default:
+		}
+		last := lastSound()
+		if last.IsZero() || time.Since(last) >= settle || time.Now().After(deadline) {
+			return false
+		}
+		select {
+		case <-turnArrived:
+			return true
+		case <-ctx.Done():
+			return true
+		case <-time.After(poll):
+		}
+	}
+}
+
+// greetResolved speaks whatever resolveGreeting picks, if anything.
+func (p *Pipeline) greetResolved() {
+	text := resolveGreeting(p.ctx, p.cfg.Pipeline.GreetingFromAgent, p.llmClient, p.greetingText())
+	if text == "" {
+		return
+	}
+	// The agent round trip takes time; a caller who started talking during
+	// it gets answered by runAgent instead of talked over by the greeting.
+	select {
+	case <-p.callerSpokeFirst:
+		return
+	default:
+	}
+	p.greet(text)
+}
+
+// resolveGreeting picks the call's opening line: the LLM client's own, when
+// greeting_from_agent is on and the client implements llm.Greeter and
+// returns something; otherwise the static greeting. "" means say nothing.
+func resolveGreeting(ctx context.Context, fromAgent bool, client llm.Client, static string) string {
+	if fromAgent {
+		if g, ok := client.(llm.Greeter); ok {
+			text, err := g.Greeting(ctx)
+			if err == nil && strings.TrimSpace(text) != "" {
+				return text
+			}
+			if err != nil {
+				log.Printf("[agent] greeting from agent failed, using static greeting: %v", err)
+			}
+		}
+	}
+	return static
+}
+
 // greet synthesizes the greeting text via TTS and pushes PCM to outPCMCh.
 // This runs once, right after the pipeline starts.
 func (p *Pipeline) greet(text string) {
@@ -544,6 +680,12 @@ func (p *Pipeline) greet(text string) {
 		cancel()
 		p.finishResponse(gen)
 	}()
+
+	// Recorded like any response's text, so a barge-in on the greeting
+	// captures it as interruptedText. Without it, a caller who cut the
+	// greeting off with "yeah, okay" had their turn dropped as a passive
+	// acknowledgement -- leaving dead air after the greeting was stopped.
+	p.lastAgentText.Store(tts.StripVoiceTags(text))
 
 	sentences := make(chan string, 1)
 	sentences <- text

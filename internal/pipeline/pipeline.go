@@ -131,6 +131,21 @@ type Pipeline struct {
 	// already in progress.
 	suppressGreeting bool
 
+	// callerSpokeFirst is closed the moment the caller's first real turn
+	// (not a passive acknowledgement) reaches runAgent, so a delayed
+	// greeting (see cfg.Pipeline.GreetingDelayMs) can cancel itself instead
+	// of talking over whatever the caller just said. closeCallerSpokeFirst
+	// guards the close so it only ever happens once.
+	callerSpokeFirst      chan struct{}
+	closeCallerSpokeFirst sync.Once
+
+	// lastCallerSoundAt (unix nanos, 0 = never) is when runInbound's onset
+	// VAD last heard the caller, tracked only until greetingDecided. It lets
+	// a delayed greeting hold off while the caller's first words are still
+	// in flight through STT, instead of talking over them.
+	lastCallerSoundAt atomic.Int64
+	greetingDecided   atomic.Bool
+
 	// transcriptLog is the running record of the conversation. The rolling
 	// summary and the low-confidence heuristics read it; it is not the
 	// LLM's own history. Shared with conv.
@@ -174,6 +189,12 @@ type Pipeline struct {
 	responseMu        sync.Mutex
 	responseCancel    context.CancelFunc
 	responseCancelGen uint64
+
+	// endCallGen is gen+1 of the response whose backend asked to end the call
+	// (llm.CallEnder); 0 means none. finishResponse ends the pipeline once
+	// exactly that response has fully played. Offset by one so the zero value
+	// can never match the greeting's generation.
+	endCallGen atomic.Uint64
 
 	// Interruption tracking
 	lastAgentText   atomic.Value // string — accumulates current response text
@@ -281,6 +302,7 @@ func New(
 		// A resumed caller is mid-conversation; greeting them again is the
 		// most audible way to tell them the agent forgot.
 		suppressGreeting: resumed,
+		callerSpokeFirst: make(chan struct{}),
 		sendEvent:        sendEvent,
 		direction:        opts.Direction,
 		ssrc:             12345678,
@@ -447,13 +469,22 @@ func (p *Pipeline) Start() {
 	// Send initial greeting if configured. A resumed call skips it: the caller
 	// is mid-conversation and being greeted again is exactly how a dropped
 	// connection announces itself as a lost one.
-	if g := p.greetingText(); g != "" && !p.suppressGreeting {
+	if !p.suppressGreeting {
 		if p.cfg.RealtimeEnabled() {
 			// The provider connection is established inside runRealtime, so
-			// wait for the client before asking it to speak.
-			go func() { defer p.recoverKeepAlive("greetRealtimeWhenReady"); p.greetRealtimeWhenReady(g) }()
-		} else {
-			go func() { defer p.recoverKeepAlive("greet"); p.greet(g) }()
+			// wait for the client before asking it to speak. GreetingDelayMs
+			// and GreetingFromAgent are not wired into the realtime
+			// (speech-to-speech) path -- its turn detection lives inside
+			// runRealtime, not runAgent, and it has no llm.Client to ask.
+			if g := p.greetingText(); g != "" {
+				go func() { defer p.recoverKeepAlive("greetRealtimeWhenReady"); p.greetRealtimeWhenReady(g) }()
+			}
+		} else if p.greetingText() != "" || p.cfg.Pipeline.GreetingFromAgent {
+			if delay := p.cfg.Pipeline.GreetingDelayMs; delay > 0 {
+				go func() { defer p.recoverKeepAlive("greet"); p.greetAfterDelay(time.Duration(delay) * time.Millisecond) }()
+			} else {
+				go func() { defer p.recoverKeepAlive("greet"); p.greetResolved() }()
+			}
 		}
 	}
 

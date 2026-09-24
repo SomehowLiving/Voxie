@@ -60,6 +60,13 @@ func isBackchannelOnly(tokens []string) bool {
 	return true
 }
 
+// isBackchannelTranscript reports whether a raw partial transcript is nothing
+// but acknowledgement words ("yeah okay", "mm-hm, right"). Empty text is not
+// a backchannel: it is no evidence either way.
+func isBackchannelTranscript(s string) bool {
+	return isBackchannelOnly(strings.Fields(normalizedTranscriptText(s)))
+}
+
 // isMeaningfulBargeInTranscript reports whether a partial transcript is worth
 // cutting the agent off for.
 func isMeaningfulBargeInTranscript(s string) bool {

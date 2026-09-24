@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 	"unicode/utf8"
 )
@@ -62,7 +63,15 @@ type agentClient struct {
 	mu          sync.Mutex
 	sessionID   string
 	extraSystem string // accumulated skill text, forwarded on every turn
+
+	// endCall is set when a chat reply carries "end_call": true (JSON replies
+	// only) and consumed by TakeEndCall.
+	endCall atomic.Bool
 }
+
+// TakeEndCall implements CallEnder: whether the last chat reply asked to end
+// the call, clearing the flag so it applies to exactly one response.
+func (c *agentClient) TakeEndCall() bool { return c.endCall.Swap(false) }
 
 // NewAgentClient returns a Client that proxies turns to an external agent
 // endpoint. timeoutMs bounds a whole turn including streaming the reply;
@@ -128,6 +137,27 @@ func (c *agentClient) Chat(ctx context.Context, turn Turn, onChunk func(string),
 	}
 	log.Printf("[llm] agent response: %s", truncate(result, 80))
 	return result, nil
+}
+
+// Greeting implements Greeter: it asks the agent for the call's opening line
+// with a "greeting" request (no text -- nobody has spoken yet), so the
+// agent can name the person and the reason for the call. Buffered rather
+// than streamed: it's one short line, and the pipeline speaks it through
+// the same interruptible path as a static greeting.
+func (c *agentClient) Greeting(ctx context.Context) (string, error) {
+	c.mu.Lock()
+	sessionID := c.sessionID
+	c.mu.Unlock()
+
+	out, err := c.do(ctx, agentRequest{
+		SessionID:  sessionID,
+		ResourceID: c.resourceID,
+		Type:       "greeting",
+	}, nil, nil)
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(out), nil
 }
 
 func (c *agentClient) OneShot(ctx context.Context, system, user string) (string, error) {
@@ -205,7 +235,11 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 	case strings.HasPrefix(contentType, "text/event-stream"):
 		err = readSSE(resp.Body, emit)
 	case strings.HasPrefix(contentType, "application/json"):
-		err = readJSONReply(resp.Body, emit)
+		var endCall bool
+		endCall, err = readJSONReply(resp.Body, emit)
+		if endCall && payload.Type == "chat" {
+			c.endCall.Store(true)
+		}
 	default:
 		err = readTextStream(resp.Body, emit)
 	}
@@ -279,24 +313,27 @@ func readTextStream(r io.Reader, emit func(string)) error {
 	}
 }
 
-func readJSONReply(r io.Reader, emit func(string)) error {
+// readJSONReply emits a buffered JSON reply's text and reports whether it
+// also asked to end the call ("end_call": true) after this line is spoken.
+func readJSONReply(r io.Reader, emit func(string)) (bool, error) {
 	body, err := io.ReadAll(io.LimitReader(r, 1<<20))
 	if err != nil {
-		return err
+		return false, err
 	}
 	var reply struct {
 		Text     string `json:"text"`
 		Response string `json:"response"`
+		EndCall  bool   `json:"end_call"`
 	}
 	if err := json.Unmarshal(body, &reply); err != nil {
-		return fmt.Errorf("parse json reply: %w", err)
+		return false, fmt.Errorf("parse json reply: %w", err)
 	}
 	if reply.Text != "" {
 		emit(reply.Text)
 	} else {
 		emit(reply.Response)
 	}
-	return nil
+	return reply.EndCall, nil
 }
 
 // SetTools is a no-op: the external agent owns its own tools. Server-side

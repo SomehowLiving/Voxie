@@ -72,6 +72,27 @@ type Client interface {
 	Reset()
 }
 
+// Greeter is an optional capability for a Client that can supply the
+// call's opening line itself, instead of the static [pipeline] greeting.
+// Used only when pipeline.greeting_from_agent is set: an outbound call's
+// first line usually has to name the person and the reason for the call,
+// which one fixed string in config.toml can't do. The pipeline type-asserts
+// for it at greeting time and falls back to the static greeting if the
+// Client doesn't implement it, errors, or returns nothing.
+type Greeter interface {
+	Greeting(ctx context.Context) (string, error)
+}
+
+// CallEnder is an optional capability for a Client whose backend can decide
+// the call is over -- e.g. an external agent that has reached a resolution
+// and just said its closing line. TakeEndCall reports (and clears) whether
+// the most recent Chat reply asked for that. The pipeline checks it after
+// each response and, if set, ends the session once that response has fully
+// played, so the caller hears the goodbye before the line drops.
+type CallEnder interface {
+	TakeEndCall() bool
+}
+
 // NewClient returns an LLM client for the configured provider.
 //
 // resourceID is who is on the call, empty when nobody was identified. Only the

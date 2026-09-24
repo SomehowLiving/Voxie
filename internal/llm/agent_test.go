@@ -55,6 +55,43 @@ func TestChatForwardsTheResourceID(t *testing.T) {
 	}
 }
 
+// The greeting request carries no text (nobody has spoken), the conversation's
+// session_id, and the resource_id -- the agent needs the last one to know who
+// it's calling before the first turn.
+func TestGreetingSendsTypeGreetingWithSessionAndResource(t *testing.T) {
+	agent := newCaptureAgent(t)
+	client := agent.client("+919876543210")
+
+	g, ok := client.(Greeter)
+	if !ok {
+		t.Fatal("agent client does not implement Greeter")
+	}
+	text, err := g.Greeting(context.Background())
+	if err != nil {
+		t.Fatalf("Greeting: %v", err)
+	}
+	if text != "ok." {
+		t.Fatalf("Greeting returned %q, want the agent's reply", text)
+	}
+
+	if len(agent.requests) != 1 {
+		t.Fatalf("agent saw %d requests, want 1", len(agent.requests))
+	}
+	req := agent.requests[0]
+	if req.Type != "greeting" || req.Text != "" || req.ResourceID != "+919876543210" || req.SessionID == "" {
+		t.Fatalf("greeting request = %+v, want type=greeting, empty text, resource and session set", req)
+	}
+
+	// The same session_id must carry into the first chat turn, so the agent
+	// sees one conversation, not two.
+	if _, err := client.Chat(context.Background(), Turn{Text: "hello?", Prompt: "hello?"}, nil, nil); err != nil {
+		t.Fatalf("Chat: %v", err)
+	}
+	if agent.requests[1].SessionID != req.SessionID {
+		t.Fatalf("chat session_id %q differs from greeting session_id %q", agent.requests[1].SessionID, req.SessionID)
+	}
+}
+
 // The rolling summary uses the same endpoint, so it needs the resource too.
 func TestOneShotForwardsTheResourceID(t *testing.T) {
 	agent := newCaptureAgent(t)
@@ -180,5 +217,56 @@ func TestResetRotatesTheSessionButKeepsTheResource(t *testing.T) {
 	}
 	if after.ResourceID != "user_8891" {
 		t.Fatalf("resource_id after reset = %q, want user_8891", after.ResourceID)
+	}
+}
+
+func newReplyAgent(t *testing.T, reply string) Client {
+	t.Helper()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(reply))
+	}))
+	t.Cleanup(srv.Close)
+	return NewAgentClient(srv.URL, "", 0, "")
+}
+
+// A JSON chat reply with end_call asks for the call to end after it's spoken,
+// exactly once.
+func TestChatReplyEndCallIsTakenOnce(t *testing.T) {
+	client := newReplyAgent(t, `{"text":"Sorry for the trouble. Goodbye.","end_call":true}`)
+	text, err := client.Chat(context.Background(), Turn{Text: "it's not mine", Prompt: "it's not mine"}, nil, nil)
+	if err != nil || text != "Sorry for the trouble. Goodbye." {
+		t.Fatalf("Chat = %q, %v", text, err)
+	}
+	ender, ok := client.(CallEnder)
+	if !ok {
+		t.Fatal("agent client does not implement CallEnder")
+	}
+	if !ender.TakeEndCall() {
+		t.Fatal("end_call was not recorded")
+	}
+	if ender.TakeEndCall() {
+		t.Fatal("end_call must apply to one response only")
+	}
+}
+
+func TestChatReplyWithoutEndCallDoesNotEndTheCall(t *testing.T) {
+	client := newReplyAgent(t, `{"text":"Do you have a minute?"}`)
+	if _, err := client.Chat(context.Background(), Turn{Text: "hi", Prompt: "hi"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if client.(CallEnder).TakeEndCall() {
+		t.Fatal("a reply without end_call ended the call")
+	}
+}
+
+// Only a chat reply can end the call -- not the greeting or background work.
+func TestEndCallOnGreetingIsIgnored(t *testing.T) {
+	client := newReplyAgent(t, `{"text":"Hi, this is REX.","end_call":true}`)
+	if _, err := client.(Greeter).Greeting(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if client.(CallEnder).TakeEndCall() {
+		t.Fatal("end_call on a greeting reply must be ignored")
 	}
 }

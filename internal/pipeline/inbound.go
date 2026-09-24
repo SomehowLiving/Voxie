@@ -10,6 +10,7 @@ import (
 	"github.com/pion/rtp"
 	"github.com/streamcoreai/streamcore-server/internal/audio"
 	"github.com/streamcoreai/streamcore-server/internal/stt"
+	"github.com/streamcoreai/streamcore-server/internal/vad"
 )
 
 // runReader reads RTP packets from the remote WebRTC track, decodes Opus
@@ -141,12 +142,29 @@ func (p *Pipeline) runInbound() {
 	// Backchannel suppression state machine
 	var bargeInPending bool
 	var bargeInStart time.Time
+	var bargeInHeld bool
 	const backchannelWindow = 600 * time.Millisecond
+	// A backchannel can outlast the window ("yeah, okay, sure..."). While the
+	// partial text says it is only acknowledgement, the agent stays ducked
+	// instead of being cut off; this caps that hold in case the partials
+	// stall, after which the old speech-length rule decides.
+	const backchannelHoldMax = 3 * time.Second
 
 	// Reusable conversion buffer — one per call instead of one per 20ms
 	// frame. Safe: every SendAudio implementation writes the bytes out (or
 	// copies them) before returning.
 	sttBuf := make([]byte, 0, audio.FrameSize*2)
+
+	// While a delayed greeting is still undecided, track when the caller last
+	// made sound. A finished transcript only exists once they've stopped
+	// talking and STT has caught up -- seconds after they started -- so the
+	// greeting has to look at raw speech onset instead, or it talks over a
+	// caller who picked up and said "hello?". Nothing else is speaking at
+	// this point in the call, so there's no agent echo to mistake for them.
+	var onsetVAD *vad.Detector
+	if p.cfg.Pipeline.GreetingDelayMs > 0 {
+		onsetVAD = vad.NewDefault()
+	}
 
 	for {
 		select {
@@ -163,13 +181,38 @@ func (p *Pipeline) runInbound() {
 				return
 			}
 
+			if onsetVAD != nil && !p.greetingDecided.Load() {
+				onsetVAD.Process(frame.Samples)
+				if onsetVAD.IsSpeaking() {
+					p.lastCallerSoundAt.Store(time.Now().UnixNano())
+				}
+			}
+
 			// Barge-in detection with backchannel suppression.
 			// Uses the fast bargeInVAD (60ms onset) for responsiveness.
 			if *p.cfg.Pipeline.BargeIn {
 				p.bargeInVAD.Process(frame.Samples)
 
 				if bargeInPending {
-					if time.Since(bargeInStart) >= backchannelWindow {
+					elapsed := time.Since(bargeInStart)
+					// Past the window, speech whose partial text is still
+					// nothing but acknowledgement keeps the agent ducked rather
+					// than cutting it off. It is confirmed the moment the text
+					// turns into content ("yeah okay but I never..."), and
+					// classified as a backchannel below once it ends. Only for
+					// providers that stream partials: without text there is no
+					// basis for telling a long "mm-hm" from an interruption.
+					holdBackchannel := false
+					if emitsPartials && elapsed >= backchannelWindow && elapsed < backchannelHoldMax {
+						partial, _ := latestPartial.Load("text")
+						partialStr, _ := partial.(string)
+						holdBackchannel = isBackchannelTranscript(partialStr)
+						if holdBackchannel && !bargeInHeld {
+							bargeInHeld = true
+							log.Printf("[inbound] barge-in held past 600ms: still a backchannel (%q)", partialStr)
+						}
+					}
+					if elapsed >= backchannelWindow && !holdBackchannel {
 						// Speech continued past the suppression window — real interruption.
 						log.Println("[inbound] barge-in confirmed (speech > 600ms)")
 						bargeInPending = false
@@ -221,6 +264,7 @@ func (p *Pipeline) runInbound() {
 					// fully elapsed.
 					bargeInPending = true
 					bargeInStart = time.Now()
+					bargeInHeld = false
 					hasPartialText.Store(false)
 					// Duck rather than cut: the caller hears the agent lower
 					// its voice immediately, and it recovers if this turns out
