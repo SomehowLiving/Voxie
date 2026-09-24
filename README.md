@@ -31,7 +31,9 @@ Built on [StreamCore](https://github.com/streamcoreai/streamcore-server)
   keeps the turn as heard. A provider going down degrades the call; it
   doesn't end it.
 - **One small contract for your app.** Four request types over HTTP
-  ([agent contract](docs/voxie/agent-contract.md)).
+  ([agent contract](docs/voxie/agent-contract.md)). Every turn arrives
+  with the language it was heard in, so your app can answer in it
+  without its own detection.
 
 ## Quick start
 
