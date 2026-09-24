@@ -120,9 +120,21 @@ turn_merge_ms = 350          # Debounce window for merging finals into one turn.
 provider = ""           # Supported: grok (empty = classic pipeline)
 
 [stt]
-provider = "deepgram"   # Supported: aliyun, assemblyai, deepgram, failover, openai, sarvam, telnyx, vibevoice, volcengine
+provider = "deepgram"   # Supported: adaptive, aliyun, assemblyai, deepgram, failover, openai, sarvam, telnyx, vibevoice, volcengine
 failover = []           # With provider = "failover": providers in order, e.g. ["sarvam", "deepgram"] -- the first that
                         # connects serves the call; if it fails mid-call the next takes over
+
+# With provider = "adaptive": the listener is chosen per call (from the agent's "listen" hint) and switched
+# mid-call when a turn it may have misheard turns out to be in a language another listener hears better.
+# Each listener is a failover chain. Deepgram multi hears en/hi/es/fr/de/it/pt/nl/ru/ja; regional Indian
+# languages go to the Indian chain; zh/ko/ar/tr to Deepgram with the language fixed.
+[stt.adaptive]
+world = ["deepgram", "assemblyai", "sarvam"]  # default listener
+indian = ["sarvam", "deepgram"]               # after a turn is identified as Tamil, Telugu, Bengali...
+identify = ["groq", "sarvam"]                 # who identifies a checked turn's language (Groq Whisper, then Sarvam)
+identify_model = "whisper-large-v3"           # Groq model; the turbo model mislabels Indian languages
+hindi_confidence = 0.97                       # a Deepgram "hi" turn below this is checked
+min_confidence = 0.85                         # any Deepgram turn below this is checked
 
 [llm]
 provider = "openai"     # Supported: openai, ollama, agent
@@ -179,6 +191,9 @@ mode = "stream"          # "stream" (WebSocket, default) or "rest" (one upload p
 stream_model = "saarika:v2.5"  # Streaming model
 model = "saaras:v3"      # REST model: "saaras:v3" or "saaras:v4"
 language_code = "unknown" # BCP-47 (e.g. "hi-IN", "en-IN"), or "unknown" to auto-detect
+
+[groq]
+api_key = ""            # Groq Whisper identifies languages for stt.provider = "adaptive" (or set GROQ_API_KEY)
 
 [assemblyai]
 api_key = ""            # Required if stt.provider = "assemblyai"

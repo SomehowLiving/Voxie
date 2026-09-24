@@ -186,7 +186,7 @@ func (c *sarvamStreamClient) readLoop() {
 				confidence = *t.LanguageProbability
 			}
 			log.Printf("[stt:sarvam] final (%s): %q", t.LanguageCode, text)
-			c.onResult(TranscriptResult{Text: text, IsFinal: true, Confidence: confidence})
+			c.onResult(TranscriptResult{Text: text, IsFinal: true, Confidence: confidence, Language: baseLanguage(t.LanguageCode)})
 		case "events":
 			// START_SPEECH / END_SPEECH: the pipeline runs its own VAD, so
 			// these are informational.

@@ -270,3 +270,28 @@ func TestEndCallOnGreetingIsIgnored(t *testing.T) {
 		t.Fatal("end_call on a greeting reply must be ignored")
 	}
 }
+
+func TestListenHintSendsTypeListenAndReadsTheReply(t *testing.T) {
+	agent := newCaptureAgent(t)
+	client := agent.client("+919876543210")
+	h, ok := client.(ListenHinter)
+	if !ok {
+		t.Fatal("agent client does not implement ListenHinter")
+	}
+	if _, _, err := h.ListenHint(context.Background()); err != nil {
+		// The capture agent replies with plain text, not a hint object.
+		t.Logf("non-JSON reply: %v", err)
+	}
+	if len(agent.requests) != 1 || agent.requests[0].Type != "listen" || agent.requests[0].ResourceID != "+919876543210" {
+		t.Fatalf("listen request = %+v", agent.requests)
+	}
+
+	lang, region, err := newReplyAgent(t, `{"language":"ta","region":"IN"}`).(ListenHinter).ListenHint(context.Background())
+	if err != nil || lang != "ta" || region != "IN" {
+		t.Fatalf("ListenHint = %q, %q, %v", lang, region, err)
+	}
+	lang, region, err = newReplyAgent(t, `{}`).(ListenHinter).ListenHint(context.Background())
+	if err != nil || lang != "" || region != "" {
+		t.Fatalf("an empty hint = %q, %q, %v", lang, region, err)
+	}
+}

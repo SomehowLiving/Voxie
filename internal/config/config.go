@@ -34,6 +34,7 @@ type Config struct {
 	Deepgram   DeepgramConfig   `toml:"deepgram"`
 	Sarvam     SarvamConfig     `toml:"sarvam"`
 	AssemblyAI AssemblyAIConfig `toml:"assemblyai"`
+	Groq       GroqConfig       `toml:"groq"`
 	OpenAI     OpenAIConfig     `toml:"openai"`
 	Ollama     OllamaConfig     `toml:"ollama"`
 	Agent      AgentConfig      `toml:"agent"`
@@ -323,6 +324,36 @@ type STTConfig struct {
 	// "failover": the first that connects serves the call, and a mid-call
 	// failure moves on to the next.
 	Failover []string `toml:"failover"`
+	// Adaptive configures provider "adaptive": the listener is chosen per
+	// call and switched mid-call when the caller's language needs another.
+	Adaptive AdaptiveConfig `toml:"adaptive"`
+}
+
+// AdaptiveConfig is [stt.adaptive]. Each listener is a failover chain.
+type AdaptiveConfig struct {
+	// World is the default listener, for callers in any language Deepgram's
+	// multilingual model hears (default ["deepgram"]).
+	World []string `toml:"world"`
+	// Indian is the listener after a turn is identified as a regional Indian
+	// language -- Tamil, Telugu, Bengali... (default ["sarvam", "deepgram"]).
+	Indian []string `toml:"indian"`
+	// Identify lists who identifies the language of a turn the listener may
+	// have misheard, in order: "groq" (Whisper), "sarvam" (default both).
+	Identify []string `toml:"identify"`
+	// IdentifyModel is the Groq Whisper model (default "whisper-large-v3";
+	// the turbo model mislabels Indian languages).
+	IdentifyModel string `toml:"identify_model"`
+	// HindiConfidence: a Deepgram "hi" turn below it is checked -- regional
+	// Indian languages come back as Hindi-looking text at 0.70-0.95, real
+	// Hindi at 0.99+ (default 0.97).
+	HindiConfidence float64 `toml:"hindi_confidence"`
+	// MinConfidence: any Deepgram turn below it is checked (default 0.85).
+	MinConfidence float64 `toml:"min_confidence"`
+}
+
+// GroqConfig holds the key for Groq's Whisper, used to identify languages.
+type GroqConfig struct {
+	APIKey string `toml:"api_key"`
 }
 
 type LLMConfig struct {
@@ -349,7 +380,8 @@ type DeepgramConfig struct {
 	APIKey string `toml:"api_key"`
 	Model  string `toml:"model"`
 	// Language is a BCP-47 tag (e.g. "en-US", "es-MX"). It is mapped to the
-	// language code the Nova-3 model expects; anything outside en/es becomes
+	// language code the Nova-3 model expects; only languages checked against
+	// real audio pass through (see nova3Language), anything else becomes
 	// "multi". Empty defaults to English.
 	Language string `toml:"language"`
 	// Endpointing is how long (ms, as a string) Deepgram waits for silence
@@ -835,6 +867,7 @@ var envOverrides = []struct {
 	{"DEEPGRAM_API_KEY", func(c *Config) *string { return &c.Deepgram.APIKey }},
 	{"SARVAM_API_KEY", func(c *Config) *string { return &c.Sarvam.APIKey }},
 	{"ASSEMBLYAI_API_KEY", func(c *Config) *string { return &c.AssemblyAI.APIKey }},
+	{"GROQ_API_KEY", func(c *Config) *string { return &c.Groq.APIKey }},
 	{"ALIYUN_API_KEY", func(c *Config) *string { return &c.Aliyun.APIKey }},
 	{"VOLCENGINE_API_KEY", func(c *Config) *string { return &c.Volcengine.APIKey }},
 	{"OPENAI_API_KEY", func(c *Config) *string { return &c.OpenAI.APIKey }},

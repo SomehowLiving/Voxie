@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"context"
 	"log"
 	"strings"
 	"sync"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/pion/rtp"
 	"github.com/streamcoreai/streamcore-server/internal/audio"
+	"github.com/streamcoreai/streamcore-server/internal/llm"
 	"github.com/streamcoreai/streamcore-server/internal/stt"
 	"github.com/streamcoreai/streamcore-server/internal/vad"
 )
@@ -123,7 +125,7 @@ func (p *Pipeline) runInbound() {
 
 	go func() { defer p.recoverPanic("runTurnBuffer"); p.runTurnBuffer() }()
 
-	sttClient, err := stt.NewClient(p.ctx, p.cfg, sttCallback)
+	sttClient, err := stt.NewClientFor(p.ctx, p.cfg, p.listenHint(), sttCallback)
 	if err != nil {
 		log.Printf("[inbound] STT start error: %v", err)
 		return
@@ -131,13 +133,12 @@ func (p *Pipeline) runInbound() {
 	defer sttClient.Close()
 
 	// Finals-only providers never confirm speech with partial text
-	// (issue #75). Asserted once here: a provider that does not implement
-	// stt.PartialsEmitter keeps emitsPartials true and the partials-driven
-	// path below exactly as it was.
-	emitsPartials := true
-	if ep, ok := sttClient.(stt.PartialsEmitter); ok {
-		emitsPartials = ep.EmitsPartials()
-	}
+	// (issue #75). A provider that does not implement stt.PartialsEmitter
+	// keeps the partials-driven path below exactly as it was. Asked on every
+	// decision, not once: a failover or adaptive client can move mid-call
+	// between a partials provider (Deepgram) and a finals-only one (Sarvam).
+	partialsEmitter, _ := sttClient.(stt.PartialsEmitter)
+	emitsPartials := func() bool { return partialsEmitter == nil || partialsEmitter.EmitsPartials() }
 
 	// Backchannel suppression state machine
 	var bargeInPending bool
@@ -217,7 +218,7 @@ func (p *Pipeline) runInbound() {
 					// providers that stream partials: without text there is no
 					// basis for telling a long "mm-hm" from an interruption.
 					holdBackchannel := false
-					if emitsPartials && elapsed >= backchannelWindow && elapsed < backchannelHoldMax {
+					if emitsPartials() && elapsed >= backchannelWindow && elapsed < backchannelHoldMax {
 						partial, _ := latestPartial.Load("text")
 						partialStr, _ := partial.(string)
 						holdBackchannel = isBackchannelTranscript(partialStr)
@@ -271,7 +272,7 @@ func (p *Pipeline) runInbound() {
 					}
 					// else: still speaking within window, keep waiting
 				} else if p.bargeInVAD.IsSpeaking() && p.speaking.Load() &&
-					((emitsPartials && hasPartialText.Load()) || (!emitsPartials && time.Since(vadSpeechSince) >= finalsOnlyOnset)) {
+					((emitsPartials() && hasPartialText.Load()) || (!emitsPartials() && time.Since(vadSpeechSince) >= finalsOnlyOnset)) {
 					// Conditions met — start backchannel suppression window.
 					// A finals-only provider opens the window on VAD alone,
 					// since partial text never arrives to confirm the speech;
@@ -290,4 +291,28 @@ func (p *Pipeline) runInbound() {
 			}
 		}
 	}
+}
+
+// listenHintTimeout bounds the "listen" request: the call's ears must not
+// wait on it. Past it, the adaptive listener starts on its default.
+const listenHintTimeout = 800 * time.Millisecond
+
+// listenHint asks the agent what it knows of the caller's language, for the
+// adaptive listener only (no other provider uses it, so none pays for it).
+func (p *Pipeline) listenHint() stt.Hint {
+	if p.cfg.STT.Provider != "adaptive" || p.llmClient == nil {
+		return stt.Hint{}
+	}
+	h, ok := p.llmClient.(llm.ListenHinter)
+	if !ok {
+		return stt.Hint{}
+	}
+	ctx, cancel := context.WithTimeout(p.ctx, listenHintTimeout)
+	defer cancel()
+	language, region, err := h.ListenHint(ctx)
+	if err != nil {
+		log.Printf("[inbound] no caller hint for the listener: %v", err)
+		return stt.Hint{}
+	}
+	return stt.Hint{Language: language, Region: region}
 }

@@ -15,6 +15,12 @@ type TranscriptResult struct {
 	// reported value was genuinely zero); callers must treat it as "unknown"
 	// rather than "low confidence".
 	Confidence float64
+	// Language is the provider-detected language of a final ("hi", "ta",
+	// "en"...), empty when the provider doesn't say.
+	Language string
+	// Provider names the provider that produced it, when it ran inside a
+	// failover chain.
+	Provider string
 }
 
 // Client is the interface that all STT providers must implement.
@@ -43,20 +49,44 @@ type PartialsEmitter interface {
 
 // NewClient returns an STT client for the configured provider.
 func NewClient(ctx context.Context, cfg *config.Config, onResult func(TranscriptResult)) (Client, error) {
-	if cfg.STT.Provider == "failover" {
-		partials := true
-		for _, name := range cfg.STT.Failover {
-			partials = partials && providerEmitsPartials(name)
-		}
-		build := func(ctx context.Context, name string, onResult func(TranscriptResult)) (Client, error) {
-			if name == "failover" {
-				return nil, fmt.Errorf("\"failover\" can't be one of its own providers")
-			}
-			return newProvider(ctx, cfg, name, onResult)
-		}
-		return newFailoverClient(ctx, cfg.STT.Failover, build, partials, onResult)
+	return NewClientFor(ctx, cfg, Hint{}, onResult)
+}
+
+// Hint is what's known about the caller before they speak: the customer's
+// language on record and their region ("IN"). Only the adaptive provider
+// uses it, to choose the starting listener.
+type Hint struct {
+	Language string
+	Region   string
+}
+
+// NewClientFor is NewClient for a call whose caller is known.
+func NewClientFor(ctx context.Context, cfg *config.Config, hint Hint, onResult func(TranscriptResult)) (Client, error) {
+	switch cfg.STT.Provider {
+	case "failover":
+		return newChain(ctx, cfg, cfg.STT.Failover, "", onResult)
+	case "adaptive":
+		return newAdaptiveClient(ctx, cfg, hint, onResult)
 	}
 	return newProvider(ctx, cfg, cfg.STT.Provider, onResult)
+}
+
+// newChain builds a failover chain over names. A non-empty language fixes
+// the language of the chain's Deepgram (only codes nova3Language knows;
+// others stay multi); Sarvam keeps auto-detecting.
+func newChain(ctx context.Context, cfg *config.Config, names []string, language string, onResult func(TranscriptResult)) (Client, error) {
+	build := func(ctx context.Context, name string, onResult func(TranscriptResult)) (Client, error) {
+		if name == "failover" || name == "adaptive" {
+			return nil, fmt.Errorf("%q can't be one of a chain's providers", name)
+		}
+		if language != "" && name == "deepgram" {
+			c := *cfg
+			c.Deepgram.Language = language
+			return newProvider(ctx, &c, name, onResult)
+		}
+		return newProvider(ctx, cfg, name, onResult)
+	}
+	return newFailoverClient(ctx, names, build, true, onResult)
 }
 
 // newProvider builds one named STT provider.
@@ -100,6 +130,6 @@ func newProvider(ctx context.Context, cfg *config.Config, provider string, onRes
 		}
 		return NewSarvamStreamClient(ctx, cfg.Sarvam, onResult)
 	default:
-		return nil, fmt.Errorf("unknown stt provider %q (supported: aliyun, assemblyai, deepgram, failover, openai, sarvam, telnyx, vibevoice, volcengine)", provider)
+		return nil, fmt.Errorf("unknown stt provider %q (supported: adaptive, aliyun, assemblyai, deepgram, failover, openai, sarvam, telnyx, vibevoice, volcengine)", provider)
 	}
 }

@@ -83,6 +83,15 @@ type Greeter interface {
 	Greeting(ctx context.Context) (string, error)
 }
 
+// ListenHinter is an optional capability for a Client whose backend knows
+// who is on the call: the customer's language on record and their region
+// ("IN"). The pipeline asks once, before speech-to-text starts, so the
+// adaptive listener can start on the one most likely to hear the caller.
+// Any error or empty answer means "no hint".
+type ListenHinter interface {
+	ListenHint(ctx context.Context) (language, region string, err error)
+}
+
 // CallEnder is an optional capability for a Client whose backend can decide
 // the call is over -- e.g. an external agent that has reached a resolution
 // and just said its closing line. TakeEndCall reports (and clears) whether

@@ -43,6 +43,8 @@ type deepgramCallback struct {
 	// message of this utterance, so the UtteranceEnd flush path — which has
 	// no message of its own — can still report one.
 	lastChunkConfidence float64
+	// lastLanguage is the language multi mode reported for this utterance.
+	lastLanguage string
 }
 
 func (cb *deepgramCallback) Open(or *msginterfaces.OpenResponse) error {
@@ -61,11 +63,18 @@ func (cb *deepgramCallback) Message(mr *msginterfaces.MessageResponse) error {
 		return nil
 	}
 	confidence := alt.Confidence
+	language := ""
+	if len(alt.Languages) > 0 {
+		language = alt.Languages[0]
+	}
 
 	var emit *TranscriptResult
 
 	cb.mu.Lock()
 	cb.lastChunkConfidence = confidence
+	if language != "" {
+		cb.lastLanguage = language
+	}
 	if mr.IsFinal {
 		cb.finalized = mergeTranscriptChunks(cb.finalized, text)
 		if mr.SpeechFinal {
@@ -74,7 +83,7 @@ func (cb *deepgramCallback) Message(mr *msginterfaces.MessageResponse) error {
 				combined = text
 			}
 			if !cb.shouldSuppressRecentFinalLocked(combined) {
-				emit = &TranscriptResult{Text: combined, IsFinal: true, Confidence: confidence}
+				emit = &TranscriptResult{Text: combined, IsFinal: true, Confidence: confidence, Language: cb.lastLanguage}
 			}
 			cb.resetUtteranceLocked(combined)
 		} else {
@@ -92,7 +101,7 @@ func (cb *deepgramCallback) Message(mr *msginterfaces.MessageResponse) error {
 
 	if emit != nil {
 		if emit.IsFinal {
-			log.Printf("[stt] final: %q (conf=%.2f)", emit.Text, emit.Confidence)
+			log.Printf("[stt] final: %q (conf=%.2f lang=%s)", emit.Text, emit.Confidence, emit.Language)
 		}
 		cb.onResult(*emit)
 	}
@@ -119,6 +128,7 @@ func (cb *deepgramCallback) resetUtteranceLocked(finalText string) {
 	cb.lastEmittedPartial = ""
 	cb.speechActive = false
 	cb.lastChunkConfidence = 0
+	cb.lastLanguage = ""
 	if strings.TrimSpace(finalText) != "" {
 		cb.lastFinal = finalText
 		cb.lastFinalAt = time.Now()
@@ -155,12 +165,13 @@ func (cb *deepgramCallback) UtteranceEnd(ur *msginterfaces.UtteranceEndResponse)
 	combined := strings.TrimSpace(cb.finalized)
 	emit := combined != "" && !cb.shouldSuppressRecentFinalLocked(combined)
 	confidence := cb.lastChunkConfidence
+	language := cb.lastLanguage
 	cb.resetUtteranceLocked(combined)
 	cb.mu.Unlock()
 
 	if emit {
 		log.Printf("[stt] utterance end flush: %q (conf=%.2f)", combined, confidence)
-		cb.onResult(TranscriptResult{Text: combined, IsFinal: true, Confidence: confidence})
+		cb.onResult(TranscriptResult{Text: combined, IsFinal: true, Confidence: confidence, Language: language})
 	}
 	return nil
 }
@@ -245,10 +256,15 @@ func nova3Language(locale string) string {
 	switch base {
 	case "", "en":
 		return "en"
-	case "es":
-		return "es"
-	case "zh":
-		return "zh"
+	case "es", "zh":
+		return base
+	// Checked against real audio (clean and phone-quality) with the language
+	// fixed: 0.97-1.00 confidence, word-accurate. Multi mode hears none of
+	// the Indian ones or ko/ar/tr -- it returns Hindi-looking text or soup.
+	// Malayalam is not offered by Nova-3.
+	case "hi", "ta", "te", "kn", "bn", "gu", "pa", "mr",
+		"fr", "de", "it", "pt", "nl", "ru", "ja", "ko", "ar", "tr":
+		return base
 	default:
 		return "multi"
 	}

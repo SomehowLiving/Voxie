@@ -160,6 +160,45 @@ func (c *agentClient) Greeting(ctx context.Context) (string, error) {
 	return strings.TrimSpace(out), nil
 }
 
+// ListenHint implements ListenHinter with a "listen" request: what the
+// agent knows of the caller's language before they speak. JSON reply
+// {"language": "ta", "region": "IN"}, both optional. An agent that doesn't
+// know the type may answer anything; only a 2xx JSON object is read.
+func (c *agentClient) ListenHint(ctx context.Context) (string, string, error) {
+	c.mu.Lock()
+	sessionID := c.sessionID
+	c.mu.Unlock()
+	body, err := json.Marshal(agentRequest{SessionID: sessionID, ResourceID: c.resourceID, Type: "listen"})
+	if err != nil {
+		return "", "", err
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.url, bytes.NewReader(body))
+	if err != nil {
+		return "", "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	if c.apiKey != "" {
+		req.Header.Set("Authorization", "Bearer "+c.apiKey)
+	}
+	resp, err := c.http.Do(req)
+	if err != nil {
+		return "", "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return "", "", fmt.Errorf("agent endpoint returned %d", resp.StatusCode)
+	}
+	var hint struct {
+		Language string `json:"language"`
+		Region   string `json:"region"`
+	}
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 4096)).Decode(&hint); err != nil {
+		return "", "", fmt.Errorf("listen reply: %w", err)
+	}
+	return strings.TrimSpace(hint.Language), strings.TrimSpace(hint.Region), nil
+}
+
 func (c *agentClient) OneShot(ctx context.Context, system, user string) (string, error) {
 	c.mu.Lock()
 	sessionID := c.sessionID

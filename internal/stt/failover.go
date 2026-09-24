@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -58,6 +59,9 @@ type failoverClient struct {
 	mu      sync.Mutex
 	current Client
 	index   int // position of current in names
+	// activePartials mirrors whether the provider serving now streams
+	// partials; read on every barge-in decision, so it's lock-free.
+	activePartials atomic.Bool
 
 	stallTimeout  time.Duration
 	speechPending bool      // the caller spoke after the last transcript
@@ -73,6 +77,9 @@ func newFailoverClient(ctx context.Context, names []string, build providerFactor
 	f.onResult = func(r TranscriptResult) {
 		f.mu.Lock()
 		f.speechPending, f.loudFrames = false, 0
+		if f.index >= 0 {
+			r.Provider = f.names[f.index]
+		}
 		f.mu.Unlock()
 		if onResult != nil {
 			onResult(r)
@@ -106,6 +113,7 @@ func (f *failoverClient) startFrom(from, attempts int) error {
 			log.Printf("[stt:failover] started on %s (earlier providers unavailable)", name)
 		}
 		f.current, f.index = c, i
+		f.activePartials.Store(f.partials && providerEmitsPartials(name))
 		return nil
 	}
 	return fmt.Errorf("stt failover: no provider available: %w", errors.Join(errs...))
@@ -150,12 +158,13 @@ func (f *failoverClient) SendAudio(data []byte) error {
 	return nil
 }
 
-// EmitsPartials reports false if any provider in the chain is finals-only.
-// The pipeline asks once, at the start of the call; answering for the
-// primary alone would leave barge-in waiting for partials that never come
-// after a switch to a finals-only provider. VAD-only barge-in works with
-// either kind.
-func (f *failoverClient) EmitsPartials() bool { return f.partials }
+// EmitsPartials answers for the provider serving right now. The pipeline
+// asks on every barge-in decision, so after a switch to a finals-only
+// provider (Sarvam) barge-in moves to its VAD-only path at once, and back
+// again when a partials provider takes over. (It used to answer once for
+// the whole chain, which put a Deepgram-first chain with Sarvam as its
+// backup on VAD-only barge-in for the whole call.)
+func (f *failoverClient) EmitsPartials() bool { return f.activePartials.Load() }
 
 func (f *failoverClient) Close() {
 	f.mu.Lock()

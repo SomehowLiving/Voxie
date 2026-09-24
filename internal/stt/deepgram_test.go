@@ -22,10 +22,16 @@ func TestNova3LanguageStripsLocale(t *testing.T) {
 		"zh":    "zh",
 		"zh-CN": "zh",
 		"zh-TW": "zh",
-		"ja-JP": "multi",
-		"ko-KR": "multi",
-		"hi-IN": "multi",
+		// Checked against real audio with the language fixed (see nova3Language).
+		"ja-JP": "ja",
+		"ko-KR": "ko",
+		"hi-IN": "hi",
+		"ta-IN": "ta",
+		"ar":    "ar",
+		// Malayalam isn't offered by Nova-3; unverified codes stay multi.
+		"ml-IN": "multi",
 		"mi-NZ": "multi",
+		"multi": "multi",
 	}
 	for in, want := range cases {
 		if got := nova3Language(in); got != want {
