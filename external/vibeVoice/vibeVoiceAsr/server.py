@@ -17,6 +17,7 @@ import asyncio
 import json
 import argparse
 import logging
+import subprocess
 import tempfile
 import os
 import re
@@ -128,12 +129,50 @@ def reset_vad_states():
 # ---------------------------------------------------------------------------
 _model = None
 _backend = None
+_asr_cpp_proc = None  # persistent VibeASR.cpp asr_stream_server subprocess
 _inference_lock = asyncio.Lock()  # MLX is NOT thread-safe; serialize all model access
 
 # Regex to filter out noise tags the ASR model emits for non-speech audio.
 _NOISE_TAG_RE = re.compile(
     r"^\s*(\[.*?\]\s*)*$"  # matches strings made entirely of [Tag] tokens
 )
+
+
+def load_vibeasr_cpp(bin_path, vae_model, lm_model, threads=8):
+    """Spawn VibeASR.cpp's asr_stream_server as a persistent subprocess.
+
+    Loads the quantized model once (~40s) and then answers each transcribe
+    request over its stdin/stdout protocol (send a WAV path, read lines
+    until '---END---'). Used because microsoft/VibeVoice-ASR is a 7B model
+    that doesn't fit this machine's RAM/VRAM via the generic transformers
+    path below, whereas VibeVoice-ASR-BitNet (1.58GB, quantized) runs in
+    real time on CPU through this binary.
+    """
+    global _asr_cpp_proc, _backend
+    logger.info(f"Starting VibeASR.cpp: {bin_path}")
+    _asr_cpp_proc = subprocess.Popen(
+        [
+            bin_path,
+            "--vae-model", vae_model,
+            "--lm-model", lm_model,
+            "-t", str(threads),
+            "--no-token-stream",
+        ],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True,
+        bufsize=1,
+    )
+    logger.info("Waiting for VibeASR.cpp to finish loading models (~30-40s)...")
+    while True:
+        line = _asr_cpp_proc.stdout.readline()
+        if not line:
+            raise RuntimeError("VibeASR.cpp exited before signaling ready")
+        if line.strip() == "---READY---":
+            break
+    _backend = "vibeasr_cpp"
+    logger.info("VibeASR.cpp ready")
 
 
 def load_model(model_name):
@@ -204,6 +243,25 @@ def _is_noise_only(text: str) -> bool:
 
 def transcribe_audio(wav_path):
     """Transcribe a WAV file and return cleaned text, or '' if noise-only."""
+    if _backend == "vibeasr_cpp":
+        proc = _asr_cpp_proc
+        proc.stdin.write(wav_path + "\n")
+        proc.stdin.flush()
+        lines = []
+        while True:
+            line = proc.stdout.readline()
+            if not line:
+                raise RuntimeError("VibeASR.cpp subprocess closed unexpectedly")
+            stripped = line.rstrip("\n")
+            if stripped == "---END---":
+                break
+            lines.append(stripped)
+        text = "\n".join(lines).strip()
+        if text.startswith("[ERROR]"):
+            logger.error(f"VibeASR.cpp: {text}")
+            return ""
+        return "" if _is_noise_only(text) else text
+
     if _backend == "mlx":
         result = _model.generate(audio=wav_path, max_tokens=8192, temperature=0.0)
         text = _extract_text(result.text)
@@ -383,9 +441,14 @@ async def handle_connection(ws):
             pass
 
 
-async def main(host: str, port: int, model_name: str):
+async def main(host: str, port: int, model_name: str, args):
     load_vad()
-    load_model(model_name)
+    if args.vibeasr_cpp_bin:
+        load_vibeasr_cpp(
+            args.vibeasr_cpp_bin, args.vae_model, args.lm_model, args.threads
+        )
+    else:
+        load_model(model_name)
     logger.info(f"Starting VibeVoice ASR WebSocket server on ws://{host}:{port}")
 
     async with websockets.serve(handle_connection, host, port, max_size=2**20):
@@ -410,6 +473,15 @@ if __name__ == "__main__":
         help="Silero VAD speech probability threshold (0.0-1.0)",
     )
     parser.add_argument("--log-level", default="INFO")
+    parser.add_argument(
+        "--vibeasr-cpp-bin",
+        default=None,
+        help="Path to VibeASR.cpp's asr_stream_server binary. When set, "
+        "uses it instead of the (7B, RAM-heavy) transformers path.",
+    )
+    parser.add_argument("--vae-model", default=None, help="VibeASR.cpp VAE GGUF path")
+    parser.add_argument("--lm-model", default=None, help="VibeASR.cpp LM GGUF path")
+    parser.add_argument("--threads", type=int, default=8, help="VibeASR.cpp threads")
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -424,4 +496,4 @@ if __name__ == "__main__":
             else "microsoft/VibeVoice-ASR"
         )
 
-    asyncio.run(main(args.host, args.port, args.model))
+    asyncio.run(main(args.host, args.port, args.model, args))
