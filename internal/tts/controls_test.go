@@ -58,7 +58,7 @@ func TestWrappersForwardControlsCapability(t *testing.T) {
 }
 
 func TestStripVoiceTagsRemovesLanguageHints(t *testing.T) {
-	if got := StripVoiceTags("[lang:ta] வணக்கம், நான் REX."); got != "வணக்கம், நான் REX." {
+	if got := StripVoiceTags("[lang:ta] வணக்கம், நான் Voxie."); got != "வணக்கம், நான் Voxie." {
 		t.Errorf("StripVoiceTags kept the language hint: %q", got)
 	}
 	// ParseVoiceTag leaves it in place, so it still reaches the synthesizer.

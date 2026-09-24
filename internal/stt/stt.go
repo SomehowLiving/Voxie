@@ -52,7 +52,7 @@ func NewClient(ctx context.Context, cfg *config.Config, onResult func(Transcript
 	return NewClientFor(ctx, cfg, Hint{}, onResult)
 }
 
-// Hint is what's known about the caller before they speak: the customer's
+// Hint is what's known about the caller before they speak: their
 // language on record and their region ("IN"). Only the adaptive provider
 // uses it, to choose the starting listener.
 type Hint struct {

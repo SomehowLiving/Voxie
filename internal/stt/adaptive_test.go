@@ -164,7 +164,7 @@ func deepgramFinal(text, lang string, conf float64) TranscriptResult {
 const (
 	garbledTamil = "यह न कि मीन डुम पौन से यह वेंडाम. पेय मेंट लिंगई अनुपंगल"
 	tamil        = "எனக்கு மீண்டும் போன் செய்ய வேண்டாம். பேமெண்ட் லிங்கை அனுப்புங்கள்."
-	hindi        = "मुझे दोबारा phone मत करना, payment link भेज दो"
+	hindi        = "कल आप कितने बजे खुलते हैं, appointment लेना पड़ेगा क्या"
 )
 
 func TestAdaptiveStartsFromTheCallersHint(t *testing.T) {
@@ -500,4 +500,14 @@ func TestAdaptiveReplaysWhatTheCallerSaidDuringTheCheck(t *testing.T) {
 		t.Fatalf("new listener got %d frames; the 30 spoken during the check must be replayed", replayed)
 	}
 	h.nothing(100 * time.Millisecond) // the old listener's garbage is dropped
+}
+
+func TestAdaptiveLabelsTurnsFromAFixedLanguageListener(t *testing.T) {
+	// Deepgram with the language fixed doesn't label its transcripts.
+	h := newHarness(t, listenerSpec{language: "ko"}, false)
+	h.speak(60)
+	h.log.last().emit(TranscriptResult{Text: "다시 전화하지 마세요", IsFinal: true, Confidence: 0.99, Provider: "deepgram"})
+	if got := h.next(); got.Language != "ko" {
+		t.Fatalf("language = %q, want ko", got.Language)
+	}
 }

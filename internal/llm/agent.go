@@ -31,6 +31,7 @@ import (
 //	  "resource_id":      "…",     // who is on the call; omitted when unknown
 //	  "type":             "chat",  // "chat" for a user turn, "oneshot" for a stateless transform
 //	  "text":             "…",     // exactly what the caller said
+//	  "language":         "ta",    // the language it was heard in, when known
 //	  "system":           "…",     // skill text, plus any instruction for this turn
 //	  "interrupted_text": "…",     // what the agent was saying when cut off
 //	  "context":          ["…"],   // retrieved chunks, when RAG is on
@@ -106,7 +107,9 @@ type agentRequest struct {
 	ResourceID string `json:"resource_id,omitempty"`
 	Type       string `json:"type"`
 	Text       string `json:"text"`
-	System     string `json:"system,omitempty"`
+	// Language is the language the caller spoke this turn in (chat only).
+	Language string `json:"language,omitempty"`
+	System   string `json:"system,omitempty"`
 
 	// Context the pipeline gathered for this turn, kept out of Text so an agent
 	// that persists what it receives stores the caller's words and nothing else.
@@ -122,6 +125,7 @@ func (c *agentClient) Chat(ctx context.Context, turn Turn, onChunk func(string),
 		ResourceID: c.resourceID,
 		Type:       "chat",
 		Text:       turn.Text,
+		Language:   turn.Language,
 		// Note is an instruction for this turn only, so it rides with the skill
 		// text rather than accumulating into it.
 		System:          c.extraSystem + turn.Note,

@@ -317,6 +317,10 @@ func (a *adaptiveClient) listenerResult(id int, r TranscriptResult) {
 		a.onResult(r)
 		return
 	}
+	if r.Language == "" && a.spec.language != "" {
+		// Deepgram with a language fixed doesn't label its transcripts.
+		r.Language = a.spec.language
+	}
 	now := time.Now()
 	item := adaptiveItem{final: &r, pcm: a.turnAudioLocked(), spec: a.spec, voiced: a.voicedSinceFinal, from: id, at: now}
 	a.turnStart = now

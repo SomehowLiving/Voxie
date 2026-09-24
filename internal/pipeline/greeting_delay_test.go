@@ -26,8 +26,8 @@ type plainClient struct{ llm.Client }
 
 func TestResolveGreeting_UsesAgentGreetingWhenEnabled(t *testing.T) {
 	got := resolveGreeting(context.Background(), true,
-		fakeGreeterClient{text: "Hi Arjun, this is REX about your failed payment."}, "static hello")
-	if got != "Hi Arjun, this is REX about your failed payment." {
+		fakeGreeterClient{text: "Hi Priya, this is Voxie about your delivery."}, "static hello")
+	if got != "Hi Priya, this is Voxie about your delivery." {
 		t.Fatalf("got %q, want the agent's greeting", got)
 	}
 }

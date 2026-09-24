@@ -77,7 +77,7 @@ func newFakeSarvam(t *testing.T, transcript string) (*sarvamCapture, func()) {
 // real WAV file carrying the configured key/model/language, and exactly one
 // final transcript back through onResult.
 func TestSarvamUploadsOneUtteranceAndReportsItsFinal(t *testing.T) {
-	capture, cleanup := newFakeSarvam(t, "mera payment fail ho gaya")
+	capture, cleanup := newFakeSarvam(t, "kal kitne baje khulte ho")
 	defer cleanup()
 
 	results := make(chan TranscriptResult, 4)
@@ -102,7 +102,7 @@ func TestSarvamUploadsOneUtteranceAndReportsItsFinal(t *testing.T) {
 
 	select {
 	case r := <-results:
-		if !r.IsFinal || r.Text != "mera payment fail ho gaya" {
+		if !r.IsFinal || r.Text != "kal kitne baje khulte ho" {
 			t.Fatalf("result = %+v, want the fake server's transcript as a final", r)
 		}
 	case <-time.After(3 * time.Second):

@@ -40,6 +40,12 @@ type Turn struct {
 	// Text is what the caller said. Never decorated.
 	Text string
 
+	// Language is the language the listener heard this turn in (ISO 639-1:
+	// "ta", "es"), empty when unknown. A hint from speech-to-text, not a
+	// guarantee: a one-word turn ("Hello") may be labelled English whatever
+	// the caller speaks, so keep your own sense of the call's language.
+	Language string
+
 	// Prompt is Text with the context below folded in, for providers that carry
 	// context in the message. Equal to Text when there is none.
 	Prompt string
@@ -84,7 +90,7 @@ type Greeter interface {
 }
 
 // ListenHinter is an optional capability for a Client whose backend knows
-// who is on the call: the customer's language on record and their region
+// who is on the call: the caller's language on record and their region
 // ("IN"). The pipeline asks once, before speech-to-text starts, so the
 // adaptive listener can start on the one most likely to hear the caller.
 // Any error or empty answer means "no hint".

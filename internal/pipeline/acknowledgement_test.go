@@ -177,3 +177,31 @@ func TestTurnBufferKeepsOverAgentSpeechAcrossMerge(t *testing.T) {
 		t.Fatal("turn buffer never emitted the merged turn")
 	}
 }
+
+// A merged turn takes the language of its longest piece: a Hindi sentence
+// whose tail was heard as English ("okay, thank you") is still Hindi.
+func TestTurnBufferKeepsTheLongestPiecesLanguage(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	p := newResponseStatePipeline(nil)
+	p.ctx = ctx
+	p.cfg = &config.Config{}
+	p.cfg.Pipeline.TurnMergeMs = 60
+	p.finalCh = make(chan TranscriptEvent, transcriptChSize)
+	p.transcriptCh = make(chan TranscriptEvent, transcriptChSize)
+
+	go p.runTurnBuffer()
+
+	p.finalCh <- TranscriptEvent{Text: "मुझे दोबारा फ़ोन मत करना, लिंक भेज दो", Final: true, Language: "hi"}
+	p.finalCh <- TranscriptEvent{Text: "okay thank you", Final: true, Language: "en"}
+
+	select {
+	case merged := <-p.transcriptCh:
+		if merged.Language != "hi" {
+			t.Fatalf("merged language = %q, want hi", merged.Language)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("turn buffer never emitted the merged turn")
+	}
+}

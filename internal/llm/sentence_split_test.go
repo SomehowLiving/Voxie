@@ -15,7 +15,7 @@ func TestSplitSentencesCutsAtEachEnder(t *testing.T) {
 		},
 		"お支払いが完了しませんでした。少しお時間いただけますか？": {"お支払いが完了しませんでした。", "少しお時間いただけますか？"},
 		// Not a sentence end: an email, a decimal, an amount.
-		"Write to help@rex.ai about the 4.5% fee of ₹4.999 today.": {"Write to help@rex.ai about the 4.5% fee of ₹4.999 today."},
+		"Write to help@example.com about the 4.5% fee of ₹4.999 today.": {"Write to help@example.com about the 4.5% fee of ₹4.999 today."},
 		"No ender at all": {"No ender at all"},
 	}
 	for in, want := range cases {
@@ -44,7 +44,7 @@ func TestFindSentenceEndKnowsTheDandaAndCJKEnders(t *testing.T) {
 	if end := findSentenceEnd("完了しました。次"); end < 0 {
 		t.Fatal("the CJK full stop must end a sentence")
 	}
-	if end := findSentenceEnd("help@rex.ai"); end >= 0 {
+	if end := findSentenceEnd("help@example.com"); end >= 0 {
 		t.Fatal("a dot inside an email is not a sentence end")
 	}
 }

@@ -262,7 +262,7 @@ func TestChatReplyWithoutEndCallDoesNotEndTheCall(t *testing.T) {
 
 // Only a chat reply can end the call -- not the greeting or background work.
 func TestEndCallOnGreetingIsIgnored(t *testing.T) {
-	client := newReplyAgent(t, `{"text":"Hi, this is REX.","end_call":true}`)
+	client := newReplyAgent(t, `{"text":"Hi, this is Voxie.","end_call":true}`)
 	if _, err := client.(Greeter).Greeting(context.Background()); err != nil {
 		t.Fatal(err)
 	}
@@ -293,5 +293,19 @@ func TestListenHintSendsTypeListenAndReadsTheReply(t *testing.T) {
 	lang, region, err = newReplyAgent(t, `{}`).(ListenHinter).ListenHint(context.Background())
 	if err != nil || lang != "" || region != "" {
 		t.Fatalf("an empty hint = %q, %q, %v", lang, region, err)
+	}
+}
+
+func TestChatSendsTheLanguageTheCallerSpoke(t *testing.T) {
+	agent := newCaptureAgent(t)
+	client := agent.client("")
+	if _, err := client.Chat(context.Background(), Turn{Text: "வணக்கம்", Prompt: "வணக்கம்", Language: "ta"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.Chat(context.Background(), Turn{Text: "hmm", Prompt: "hmm"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if agent.requests[0].Language != "ta" || agent.requests[1].Language != "" {
+		t.Fatalf("languages sent = %q, %q; want ta, then none", agent.requests[0].Language, agent.requests[1].Language)
 	}
 }

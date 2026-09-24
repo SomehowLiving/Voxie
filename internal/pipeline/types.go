@@ -11,8 +11,12 @@ type PCMFrame struct {
 
 // TranscriptEvent carries an STT result through the pipeline.
 type TranscriptEvent struct {
-	Text      string
-	Final     bool
+	Text  string
+	Final bool
+	// Language is the language the listener heard (ISO 639-1), empty when
+	// it didn't say. A merged turn takes its longest piece's language.
+	Language  string
+	langChars int       // length of the piece Language came from
 	TurnStart time.Time // set on final transcripts for latency measurement
 	// MergeWaitMs is how long the turn buffer held this turn open merging
 	// continuations, so latency accounting can separate debounce from work.

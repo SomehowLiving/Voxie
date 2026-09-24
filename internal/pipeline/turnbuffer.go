@@ -4,6 +4,7 @@ import (
 	"log"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 // Turn-buffer tuning. A caller who pauses mid-sentence ("I want to... um...
@@ -102,10 +103,16 @@ func (p *Pipeline) runTurnBuffer() {
 			if pending == nil {
 				merged := ev
 				merged.Text = text
+				merged.langChars = utf8.RuneCountInString(text)
 				pending = &merged
 				turnBegan = time.Now()
 			} else {
 				pending.Text = strings.TrimSpace(pending.Text + " " + text)
+				// The longest piece speaks for the turn's language: a Hindi
+				// sentence ending in "okay, thank you" is still Hindi.
+				if n := utf8.RuneCountInString(text); ev.Language != "" && n > pending.langChars {
+					pending.Language, pending.langChars = ev.Language, n
+				}
 				// Keep the earliest turn start: latency is measured from when
 				// the caller first stopped speaking, not from the last chunk.
 				//

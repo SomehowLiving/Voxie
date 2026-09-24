@@ -21,6 +21,7 @@ This extends upstream StreamCore's "bring your own agent" contract
   "resource_id": "+919812345678",
   "type": "chat",
   "text": "मुझे दोबारा फ़ोन मत करना",
+  "language": "hi",
   "interrupted_text": "…what the agent was saying when cut off",
   "summary": "…rolling digest of earlier turns"
 }
@@ -30,6 +31,12 @@ This extends upstream StreamCore's "bring your own agent" contract
 - **`resource_id`** says who is on the call: the dialled number from a
   phone bridge, or whatever the client sent as `X-StreamCore-Resource-Id`.
   It's absent when unknown.
+- **`language`** (on `chat`) is the language the caller spoke this turn,
+  as an ISO 639-1 code, when the listener knows it. It's the adaptive
+  listener's verdict: identified and corrected turns carry the identified
+  language. Treat it as a strong hint, not a verdict on the whole call. A
+  one-word "Hello" is labelled English whatever the caller speaks, so
+  switch your reply language only on a real sentence.
 - **`interrupted_text`** is present when the caller cut the agent off. It
   says what they actually heard, so don't assume the whole last reply
   landed.

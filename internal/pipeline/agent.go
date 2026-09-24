@@ -46,7 +46,7 @@ func (p *Pipeline) runAgent() {
 			p.closeCallerSpokeFirst.Do(func() { close(p.callerSpokeFirst) })
 			gen := p.supersedeResponse()
 			p.sendEvent(stateMsg{Type: "state", State: "thinking"})
-			go func() { defer p.recoverPanic("respond"); p.respond(gen, ev.Text, ev.TurnStart) }()
+			go func() { defer p.recoverPanic("respond"); p.respond(gen, ev.Text, ev.Language, ev.TurnStart) }()
 
 		case <-p.interruptCh:
 			// Capture what agent was saying for interruption context
@@ -89,7 +89,7 @@ func (p *Pipeline) isPassiveAcknowledgement(ev TranscriptEvent) bool {
 // gen is the response generation issued by supersedeResponse; it scopes every
 // mutation of shared speaking state to this response, so a barge-in or a newer
 // turn cleanly takes ownership of the audio path.
-func (p *Pipeline) respond(gen uint64, userText string, turnStart time.Time) {
+func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time.Time) {
 	respCtx, cancel := context.WithCancel(p.ctx)
 
 	// Superseded between the turn being dispatched and this goroutine getting
@@ -116,7 +116,7 @@ func (p *Pipeline) respond(gen uint64, userText string, turnStart time.Time) {
 	// pick up naturally.
 	// turn.Text stays the caller's words throughout; turn.Prompt accumulates the
 	// same context inline for providers that can only read one message.
-	turn := llm.Turn{Text: userText, Prompt: userText}
+	turn := llm.Turn{Text: userText, Prompt: userText, Language: language}
 	if interrupted, _ := p.interruptedText.Load().(string); interrupted != "" {
 		p.interruptedText.Store("")
 		trimmedUser := strings.TrimSpace(strings.ToLower(userText))

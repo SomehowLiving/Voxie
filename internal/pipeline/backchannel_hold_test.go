@@ -162,9 +162,9 @@ func TestGreetingIsRecordedAsTheAgentsCurrentText(t *testing.T) {
 	defer cancel()
 	p.ttsClient = &fakeTTS{}
 
-	p.greet("Hi Arjun, this is REX calling about your payment.")
+	p.greet("Hi Priya, this is Voxie calling about your order.")
 
-	if got, _ := p.lastAgentText.Load().(string); got != "Hi Arjun, this is REX calling about your payment." {
+	if got, _ := p.lastAgentText.Load().(string); got != "Hi Priya, this is Voxie calling about your order." {
 		t.Fatalf("lastAgentText after greeting = %q, want the greeting text", got)
 	}
 

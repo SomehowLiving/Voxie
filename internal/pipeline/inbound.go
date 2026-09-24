@@ -83,7 +83,7 @@ func (p *Pipeline) runInbound() {
 	var latestPartial sync.Map // key: "text", value: string
 
 	sttCallback := func(result stt.TranscriptResult) {
-		ev := TranscriptEvent{Text: result.Text, Final: result.IsFinal}
+		ev := TranscriptEvent{Text: result.Text, Final: result.IsFinal, Language: result.Language}
 		if result.IsFinal {
 			ev.TurnStart = time.Now()
 			// Sampled here, not in runAgent: the turn buffer may hold this
