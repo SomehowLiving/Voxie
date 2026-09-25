@@ -1,13 +1,15 @@
 # Voxie, all of it: the voice server, the GPU voice router and the quickstart.
 #
 #   cp .env.example .env    # add your keys
-#   docker compose up --build
+#   docker compose up --build             # Linux (Docker Engine)
+#   docker compose up -d --build voice-router   # Docker Desktop: see README
 #   open http://localhost:8400
 #
-# Host networking: WebRTC media needs the server reachable on UDP, and
-# publishing thousands of UDP ports through Docker's proxy is slow (the
-# upstream EC2 deployment does the same). Works on Linux and WSL2; on Docker
-# Desktop for macOS/Windows, run the server natively or set server.public_ip.
+# The server and quickstart use host networking: WebRTC media needs the
+# server reachable on UDP, and publishing thousands of UDP ports through
+# Docker's proxy is slow (the upstream EC2 deployment does the same). On
+# Docker Desktop (Windows, WSL2, macOS) "host" is Docker's VM, not your
+# machine, so run those two natively; the voice router works everywhere.
 services:
   voxie:
     build: .
@@ -19,11 +21,15 @@ services:
 
   voice-router:
     build: voice-router
-    network_mode: host
+    # Plain HTTP, so published ports work everywhere, Docker Desktop included.
+    ports:
+      - "8300:8300"
     env_file: .env
     command: ["--voice-gender", "${VOXIE_VOICE_GENDER:-female}", "--default-voice", "${VOXIE_ENGLISH_VOICE:-af_heart}"]
     volumes:
-      - hf-cache:/root/.cache/huggingface
+      # Kokoro's weights. A named volume by default; set VOXIE_HF_CACHE to a
+      # host directory to share an existing Hugging Face cache instead.
+      - ${VOXIE_HF_CACHE:-hf-cache}:/root/.cache/huggingface
     deploy:
       resources:
         reservations:

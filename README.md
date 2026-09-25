@@ -42,24 +42,29 @@ an NVIDIA GPU for the voice router.
 
 ```bash
 cp .env.example .env          # add your keys
+```
+
+**Linux (Docker Engine):**
+
+```bash
 docker compose up --build     # server :8080, voice router :8300, quickstart :8400
+```
+
+**Docker Desktop (Windows, WSL2, macOS).** Docker's "host network" is its
+own VM, not your machine. So run the voice router in Docker, and the
+server (Go 1.25+) and quickstart (Node 20+) natively:
+
+```bash
+docker compose up -d --build voice-router
+go build -o voxie . && cp configs/voxie.toml config.toml
+set -a && . ./.env && set +a && ./voxie &
+node examples/quickstart/server.mjs
 ```
 
 Then open **http://localhost:8400**, click **Start call**, and speak any
 language. The quickstart's demo agent replies in your language with Groq,
-and echoes you if `GROQ_API_KEY` is unset.
-
-Compose uses host networking (Linux and WSL2). On Docker Desktop for
-macOS or Windows, run the server natively (below) or set
-`server.public_ip`.
-
-**Without Docker:**
-
-```bash
-go build -o voxie . && cp configs/voxie.toml config.toml && set -a && . ./.env && ./voxie
-# voice router: see voice-router/README.md
-node examples/quickstart/server.mjs
-```
+and echoes you if `GROQ_API_KEY` is unset. The voice router can also run
+without Docker: see [voice-router/README.md](voice-router/README.md).
 
 ## Use it in your project
 
