@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -253,6 +254,23 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 	var fullResponse strings.Builder
 	var sentenceBuf strings.Builder
 	spokeFirst := false // whether the reply's first piece has gone to the voice
+	// speak hands a finished sentence to the voice. A long first sentence
+	// goes clause first: a slow voice (Sarvam, ~1-3s a sentence) starts
+	// speaking sooner, and the rest is voiced while the clause plays.
+	speak := func(sentence string) {
+		if !spokeFirst {
+			if cut := firstClauseCut(sentence); cut > 0 {
+				onSentence(strings.TrimSpace(sentence[:cut]))
+				// The rest keeps the sentence's language tag, or the voice
+				// would guess its language from the script.
+				sentence = leadingLangTag(sentence) + strings.TrimLeft(sentence[cut:], " ")
+			}
+		}
+		if trimmed := strings.TrimSpace(sentence); trimmed != "" {
+			onSentence(trimmed)
+		}
+		spokeFirst = true
+	}
 	emit := func(chunk string) {
 		if chunk == "" {
 			return
@@ -265,21 +283,8 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 		if onSentence != nil {
 			text := sentenceBuf.String()
 			if idx := findSentenceEnd(text); idx >= 0 {
-				sentence := text[:idx+1]
 				rest := text[idx+1:]
-				// A long first sentence goes to the voice clause first: a
-				// slow voice (Sarvam, ~1-3s a sentence) starts speaking
-				// sooner, and the rest is voiced while the clause plays.
-				if !spokeFirst {
-					if cut := firstClauseCut(sentence); cut > 0 {
-						onSentence(strings.TrimSpace(sentence[:cut]))
-						sentence = sentence[cut:]
-					}
-				}
-				if trimmed := strings.TrimSpace(sentence); trimmed != "" {
-					onSentence(trimmed)
-				}
-				spokeFirst = true
+				speak(text[:idx+1])
 				sentenceBuf.Reset()
 				sentenceBuf.WriteString(rest)
 			}
@@ -289,7 +294,11 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 	contentType := resp.Header.Get("Content-Type")
 	switch {
 	case strings.HasPrefix(contentType, "text/event-stream"):
-		err = readSSE(resp.Body, emit)
+		var endCall bool
+		endCall, err = readSSE(resp.Body, emit)
+		if endCall && payload.Type == "chat" {
+			c.endCall.Store(true)
+		}
 	case strings.HasPrefix(contentType, "application/json"):
 		var endCall bool
 		endCall, err = readJSONReply(resp.Body, emit)
@@ -305,7 +314,7 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 
 	if onSentence != nil {
 		if remaining := strings.TrimSpace(sentenceBuf.String()); remaining != "" {
-			onSentence(remaining)
+			speak(remaining) // a one-sentence reply is often only flushed here
 		}
 	}
 	return fullResponse.String(), nil
@@ -314,7 +323,8 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 // readSSE emits the payload of each "data:" line. A line is treated as JSON
 // {"delta": "…"} when it parses as an object; anything else is raw text, so
 // trivial agents can just print data lines without JSON-encoding.
-func readSSE(r io.Reader, emit func(string)) error {
+func readSSE(r io.Reader, emit func(string)) (bool, error) {
+	endCall := false
 	scanner := bufio.NewScanner(r)
 	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
 	for scanner.Scan() {
@@ -325,20 +335,24 @@ func readSSE(r io.Reader, emit func(string)) error {
 		}
 		data = strings.TrimPrefix(data, " ")
 		if data == "[DONE]" {
-			return nil
+			return endCall, nil
 		}
 		if strings.HasPrefix(data, "{") {
 			var event struct {
-				Delta string `json:"delta"`
+				Delta   string `json:"delta"`
+				EndCall bool   `json:"end_call"`
 			}
 			if json.Unmarshal([]byte(data), &event) == nil {
+				// {"end_call": true}, on its own or with the last delta,
+				// works as in a JSON reply: end once the reply has played.
+				endCall = endCall || event.EndCall
 				emit(event.Delta)
 				continue
 			}
 		}
 		emit(data)
 	}
-	return scanner.Err()
+	return endCall, scanner.Err()
 }
 
 // readTextStream emits raw bytes as they arrive, holding back any trailing
@@ -398,6 +412,16 @@ func readJSONReply(r io.Reader, emit func(string)) (bool, error) {
 	}
 	return reply.EndCall, nil
 }
+
+// leadingLangTag returns a sentence's "[lang:xx] " prefix, if it has one.
+func leadingLangTag(sentence string) string {
+	if m := langTagPrefix.FindString(sentence); m != "" {
+		return strings.TrimSpace(m) + " "
+	}
+	return ""
+}
+
+var langTagPrefix = regexp.MustCompile(`^\s*\[lang:[A-Za-z]{2,3}(?:-[A-Za-z]{2})?\]`)
 
 // firstClauseCut returns where to cut a long sentence after its first
 // clause (a comma, Arabic or CJK comma, or a dash), so the voice can start on

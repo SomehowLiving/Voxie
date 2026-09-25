@@ -71,10 +71,9 @@ anyway: return `{"text": ""}` once you've greeted.
 
 ### `chat`
 
-This is the caller's turn. Reply with what to say. With `"end_call": true`
-(JSON replies only), Voxie hangs up once that line has fully played. If
-the caller talks over the goodbye, it's cancelled and you get their words
-as a new `chat`.
+This is the caller's turn. Reply with what to say. With `"end_call": true`,
+Voxie hangs up once that line has fully played. If the caller talks over
+the goodbye, it's cancelled and you get their words as a new `chat`.
 
 ## Reply formats
 
@@ -82,13 +81,17 @@ By `Content-Type`:
 - **`application/json`**: `{"text": "…", "end_call"?: bool}`. Buffered.
   Voxie still voices it one sentence at a time.
 - **`text/event-stream`**: `data:` lines of text or `{"delta": "…"}`,
-  spoken as they arrive.
+  spoken sentence by sentence as they arrive. Send `{"end_call": true}` as
+  an event to end the call after the reply, and `[DONE]` to finish. Stream
+  when your reply is ready in pieces, for example translated sentence by
+  sentence: Voxie starts voicing the first while the rest is on its way.
 - **`text/plain`**: chunked text, spoken as it arrives.
 
 ## Speaking the caller's language
 
-- **Tag the language:** start a reply with `[lang:xx]`, for example
-  `[lang:mr] …`. The voice router then picks the exact voice; Hindi and
+- **Tag the language:** start each sentence with `[lang:xx]`, for example
+  `[lang:mr] …`. Voxie voices a reply sentence by sentence, so an untagged
+  later sentence would be guessed from its script. The voice router then picks the exact voice; Hindi and
   Marathi share a script, so text alone can't tell them apart. The tag
   never appears in transcripts.
 - **Only answer in languages the voice can speak right now.** Read the

@@ -3,6 +3,7 @@ package llm
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -318,6 +319,9 @@ func TestLongFirstSentenceGoesToTheVoiceClauseFirst(t *testing.T) {
 	}{
 		{"hindi greeting", `{"text":"नमस्ते सोफ़िया, मैं REX हूँ, आपके प्रो अकाउंट से कॉल कर रहा हूँ। क्या आपके पास एक मिनट है?"}`,
 			[]string{"नमस्ते सोफ़िया,", "मैं REX हूँ, आपके प्रो अकाउंट से कॉल कर रहा हूँ।", "क्या आपके पास एक मिनट है?"}},
+		// The rest of a cut sentence keeps its language tag.
+		{"tagged", `{"text":"[lang:mr] नमस्कार सोफिया, मी REX बोलतोय, तुमच्या प्रो खात्यातून कॉल करतोय."}`,
+			[]string{"[lang:mr] नमस्कार सोफिया,", "[lang:mr] मी REX बोलतोय, तुमच्या प्रो खात्यातून कॉल करतोय."}},
 		// A clause too short to be worth saying alone ("Hi Sofía,") is kept.
 		{"short first clause", `{"text":"Hi Sofía, this is REX calling from your Pro account. Do you have a minute?"}`,
 			[]string{"Hi Sofía, this is REX calling from your Pro account.", "Do you have a minute?"}},
@@ -339,5 +343,35 @@ func TestLongFirstSentenceGoesToTheVoiceClauseFirst(t *testing.T) {
 				t.Fatalf("sentences to the voice:\n got %q\nwant %q", got, c.want)
 			}
 		})
+	}
+}
+
+func TestStreamedReplyIsVoicedAsItArrivesAndCanEndTheCall(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		flusher := w.(http.Flusher)
+		for _, event := range []string{
+			`{"delta":"[lang:hi] धन्यवाद, सोफ़िया। "}`,
+			`{"delta":"[lang:hi] आपका दिन शुभ हो।"}`,
+			`{"end_call":true}`,
+			`[DONE]`,
+		} {
+			fmt.Fprintf(w, "data: %s\n\n", event)
+			flusher.Flush()
+		}
+	}))
+	t.Cleanup(srv.Close)
+	client := NewAgentClient(srv.URL, "", 0, "")
+
+	var sentences []string
+	if _, err := client.Chat(context.Background(), Turn{Text: "bye", Prompt: "bye"}, nil, func(s string) { sentences = append(sentences, s) }); err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"[lang:hi] धन्यवाद, सोफ़िया।", "[lang:hi] आपका दिन शुभ हो।"}
+	if strings.Join(sentences, "|") != strings.Join(want, "|") {
+		t.Fatalf("sentences = %q, want %q", sentences, want)
+	}
+	if !client.(CallEnder).TakeEndCall() {
+		t.Fatal(`{"end_call": true} in a streamed reply must end the call`)
 	}
 }
