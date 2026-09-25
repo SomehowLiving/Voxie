@@ -25,7 +25,7 @@ services:
     ports:
       - "8300:8300"
     env_file: .env
-    command: ["--voice-gender", "${VOXIE_VOICE_GENDER:-female}", "--default-voice", "${VOXIE_ENGLISH_VOICE:-af_heart}"]
+    command: ["--voice", "${VOXIE_VOICE:-${VOXIE_VOICE_GENDER:-female}}", "--default-voice", "${VOXIE_ENGLISH_VOICE:-}"]
     volumes:
       # Kokoro's weights. A named volume by default; set VOXIE_HF_CACHE to a
       # host directory to share an existing Hugging Face cache instead.

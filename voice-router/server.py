@@ -60,7 +60,6 @@ app = FastAPI(title="Kokoro TTS sidecar")
 _model = None
 _pipelines: dict = {}  # lang code -> KPipeline, all sharing _model
 _device = "cpu"
-_default_voice = "af_heart"
 # One model, many callers: StreamCore synthesizes sentences concurrently, and
 # a shared torch model isn't safe to run from several threads at once.
 _lock = threading.Lock()
@@ -68,16 +67,41 @@ _lock = threading.Lock()
 _VOICE_RE = re.compile(r"^[a-z][fm]_[a-z0-9]+$")
 
 # Kokoro pipeline language code and voices (female, male) per language.
-VOICES = {
-    "es": ("e", "ef_dora", "em_alex"),
-    "fr": ("f", "ff_siwis", "ff_siwis"),  # Kokoro has no male French voice
-    "it": ("i", "if_sara", "im_nicola"),
-    "pt": ("p", "pf_dora", "pm_alex"),
-    "ja": ("j", "jf_alpha", "jm_kumo"),
-    "zh": ("z", "zf_xiaobei", "zm_yunxi"),
-    "hi": ("h", "hf_alpha", "hm_omega"),
+# Kokoro's pipeline (text-to-phoneme) code per language.
+VOICES = {"es": "e", "fr": "f", "it": "i", "pt": "p", "ja": "j", "zh": "z", "hi": "h"}
+
+# A persona is one consistent voice across every language: a Kokoro voice
+# for English and each Kokoro language (Hindi only as Sarvam's fallback),
+# and a Sarvam speaker for the Indian languages. Where Kokoro has a single
+# voice of a gender (Spanish, French, Italian, Portuguese), both personas of
+# that gender share it; Kokoro's "Santa" voices are a jolly character, not
+# a second voice. Chosen per server (--voice) or per request (the request's
+# "voice" field names a persona).
+PERSONAS = {
+    "female": {
+        "gender": "female", "english": "af_heart", "sarvam": "priya",
+        "kokoro": {"es": "ef_dora", "fr": "ff_siwis", "it": "if_sara", "pt": "pf_dora",
+                   "ja": "jf_alpha", "zh": "zf_xiaobei", "hi": "hf_alpha"},
+    },
+    "male": {
+        "gender": "male", "english": "am_michael", "sarvam": "rahul",
+        # Kokoro has no male French voice.
+        "kokoro": {"es": "em_alex", "fr": "ff_siwis", "it": "im_nicola", "pt": "pm_alex",
+                   "ja": "jm_kumo", "zh": "zm_yunxi", "hi": "hm_omega"},
+    },
+    "female-2": {
+        "gender": "female", "english": "af_bella", "sarvam": "neha",
+        "kokoro": {"es": "ef_dora", "fr": "ff_siwis", "it": "if_sara", "pt": "pf_dora",
+                   "ja": "jf_nezumi", "zh": "zf_xiaoni", "hi": "hf_beta"},
+    },
+    "male-2": {
+        "gender": "male", "english": "am_fenrir", "sarvam": "aditya",
+        "kokoro": {"es": "em_alex", "fr": "ff_siwis", "it": "im_nicola", "pt": "pm_alex",
+                   "ja": "jm_kumo", "zh": "zm_yunjian", "hi": "hm_psi"},
+    },
 }
-_voice_gender = "female"
+_persona = "female"
+_english_override: str | None = None  # --default-voice: English voice for the server's persona
 
 # Names the agent says in every language, spelled so each language's text-
 # to-phoneme step reads them as words. Heard in live checks: Spanish, Italian
@@ -228,15 +252,28 @@ def _fix_espeak_data_path() -> None:
     EspeakWrapper.set_data_path(shim)
 
 
-def voice_for(language: str) -> tuple[str, str]:
+def persona_for(requested: str) -> dict:
+    """The request's persona if it names one, else the server's."""
+    return PERSONAS.get((requested or "").strip().lower(), PERSONAS[_persona])
+
+
+def english_voice(persona: dict) -> str:
+    if _english_override and persona is PERSONAS[_persona]:
+        return _english_override
+    return persona["english"]
+
+
+def voice_for(language: str, persona: dict) -> tuple[str, str]:
     """(Kokoro pipeline code, voice) for a language."""
     if language in VOICES:
-        code, female, male = VOICES[language]
-        return code, male if _voice_gender == "male" else female
-    # English (and anything unexpected): the default voice, read with the
+        return VOICES[language], persona["kokoro"][language]
+    # English (and anything unexpected): the persona's voice, or
+    # --default-voice for the server's own persona (a request for another
+    # persona keeps that persona's, so its gender stays right). Read with the
     # British G2P for British voices and American for everything else --
     # including a Hindi voice reading English.
-    return ("b" if _default_voice.startswith("b") else "a"), _default_voice
+    english = english_voice(persona)
+    return ("b" if english.startswith("b") else "a"), english
 
 
 def _pipeline(lang: str):
@@ -290,7 +327,6 @@ def normalize(text: str, language: str = "en") -> str:
 SARVAM_LANGUAGES = {"hi", "bn", "ta", "te", "kn", "ml", "mr", "gu", "pa", "od"}
 SARVAM_TTS_URL = "https://api.sarvam.ai/text-to-speech"
 SARVAM_MODEL = "bulbul:v3"
-SARVAM_SPEAKERS = {"male": "rahul", "female": "priya"}
 SARVAM_TIMEOUT_S = 6.0
 # Kokoro can read Devanagari: Hindi natively, Marathi passably.
 KOKORO_FALLBACK = {"hi": "hi", "mr": "hi"}
@@ -343,11 +379,11 @@ def sarvam_available() -> bool:
     return bool(_sarvam_key) and _sarvam_breaker.available()
 
 
-def _sarvam_once(text: str, language: str) -> bytes:
+def _sarvam_once(text: str, language: str, speaker: str | None = None) -> bytes:
     body = json.dumps({
         "text": text,
         "target_language_code": f"{language}-IN",
-        "speaker": SARVAM_SPEAKERS[_voice_gender],
+        "speaker": speaker or PERSONAS[_persona]["sarvam"],
         "model": SARVAM_MODEL,
         "speech_sample_rate": TARGET_SAMPLE_RATE,
     }).encode()
@@ -362,13 +398,13 @@ def _sarvam_once(text: str, language: str) -> bytes:
         return w.readframes(w.getnframes())
 
 
-def synthesize_sarvam(text: str, language: str) -> bytes:
+def synthesize_sarvam(text: str, language: str, speaker: str | None = None) -> bytes:
     """One retry for a transient error; a request Sarvam rejects (4xx) isn't
     retried."""
     last: Exception | None = None
     for attempt in range(2):
         try:
-            pcm = _sarvam_once(text, language)
+            pcm = _sarvam_once(text, language, speaker)
             _sarvam_breaker.success()
             return pcm
         except urllib.error.HTTPError as exc:
@@ -407,13 +443,14 @@ def speakable_languages() -> list[str]:
 
 
 def synthesize(text: str, voice: str = "") -> bytes:
+    persona = persona_for(voice)
     tagged, text = take_language_tag(text)
     language = tagged or detect_language(text)
     remember_language(language)
     if language in SARVAM_LANGUAGES and sarvam_available():
         try:
-            pcm = synthesize_sarvam(text, language)
-            logger.info("language %s -> Sarvam %s", language, SARVAM_SPEAKERS[_voice_gender])
+            pcm = synthesize_sarvam(text, language, persona["sarvam"])
+            logger.info("language %s -> Sarvam %s", language, persona["sarvam"])
             return pcm
         except Exception as exc:
             if language not in KOKORO_FALLBACK:
@@ -423,13 +460,13 @@ def synthesize(text: str, voice: str = "") -> bytes:
         if language not in KOKORO_FALLBACK:
             raise RuntimeError(f"no voice available for {language}: Sarvam is down or not configured")
         language = KOKORO_FALLBACK[language]
-    lang, voice = voice_for(language)
-    logger.info("language %s -> voice %s", language, voice)
+    lang, kokoro_voice = voice_for(language, persona)
+    logger.info("language %s -> voice %s", language, kokoro_voice)
     text = normalize(text, language)
     with _lock:
         parts = [
             r.audio.detach().float().cpu().numpy()
-            for r in _pipeline(lang)(text, voice=voice, speed=1.0)
+            for r in _pipeline(lang)(text, voice=kokoro_voice, speed=1.0)
             if r.audio is not None
         ]
     if not parts:
@@ -469,21 +506,24 @@ def health():
         "status": "ok",
         "model": REPO_ID,
         "device": _device,
-        "default_voice": _default_voice,
-        "voice_gender": _voice_gender,
+        "voice": _persona,
+        "voice_gender": PERSONAS[_persona]["gender"],
+        "voices": {name: {"gender": p["gender"], "english": english_voice(p), "sarvam": p["sarvam"]}
+                   for name, p in PERSONAS.items()},
         "languages": speakable_languages(),
         "sarvam": "not configured" if not _sarvam_key else ("up" if _sarvam_breaker.available() else "down"),
     }
 
 
 def main():
-    global _model, _device, _default_voice, _voice_gender
+    global _model, _device, _persona, _english_override
     parser = argparse.ArgumentParser(description="Kokoro TTS sidecar for StreamCore")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8300)
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
-    parser.add_argument("--default-voice", default="af_heart", help="Kokoro voice for English")
-    parser.add_argument("--voice-gender", choices=["female", "male"], default="female", help="voice for other languages (Kokoro and Sarvam)")
+    parser.add_argument("--voice", choices=sorted(PERSONAS), help="voice persona for every language (default: --voice-gender)")
+    parser.add_argument("--voice-gender", choices=["female", "male"], default="female", help="shorthand for --voice female / male")
+    parser.add_argument("--default-voice", default=None, help="Kokoro voice for English, overriding the persona's (hm_omega: Indian-accented English)")
     parser.add_argument("--spoken-names", default=os.environ.get("VOXIE_SPOKEN_NAMES"), help="JSON file: how to spell names per language")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s")
@@ -493,8 +533,8 @@ def main():
     from kokoro import KModel
 
     _device = args.device
-    _default_voice = args.default_voice if _VOICE_RE.match(args.default_voice) else "af_heart"
-    _voice_gender = args.voice_gender
+    _persona = args.voice or args.voice_gender
+    _english_override = args.default_voice if args.default_voice and _VOICE_RE.match(args.default_voice) else None
     logger.info("loading %s on %s", REPO_ID, _device)
     _model = KModel(repo_id=REPO_ID).to(_device).eval()
     # Warm up so the first real request doesn't pay for the voice download,
@@ -519,10 +559,20 @@ def main():
     for sample in ("Hola, esto es una prueba.", "Bonjour, ceci est un test.", "Ciao, questa è una prova.",
                    "Olá, isto é um teste.", "こんにちは、テストです。", "你好，这是测试。", "नमस्ते, यह एक परीक्षण है।"):
         synthesize(sample)
+    # The other personas share those pipelines; only their voice packs are
+    # still to load, which is quick and needs no synthesis.
+    for persona in PERSONAS.values():
+        for language in ("en", *VOICES):
+            code, kokoro_voice = voice_for(language, persona)
+            try:
+                with _lock:
+                    _pipeline(code).load_voice(kokoro_voice)
+            except Exception as exc:
+                logger.warning("couldn't preload voice %s: %s", kokoro_voice, exc)
     logger.info(
-        "ready (English voice %s, %s voices; Sarvam %s)",
-        _default_voice,
-        _voice_gender,
+        "ready (voice %s, English %s; Sarvam %s)",
+        _persona,
+        english_voice(PERSONAS[_persona]),
         ("on for " + ", ".join(sorted(SARVAM_LANGUAGES)) if sarvam_available() else "DOWN -- Indian languages other than Hindi can't be spoken")
         if _sarvam_key
         else "off: SARVAM_API_KEY not set",

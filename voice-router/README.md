@@ -13,7 +13,7 @@ tts_url = "http://127.0.0.1:8300"   # this server
 ```
 
 - `POST /synthesize {"text", "voice"}` returns raw 16 kHz mono 16-bit PCM.
-- `GET /health` reports the model, device, default voice, the languages it
+- `GET /health` reports the model, device, voice persona (and the ones on offer), the languages it
   can voice **right now**, and Sarvam's state.
 
 ## Run it
@@ -23,7 +23,7 @@ tts_url = "http://127.0.0.1:8300"   # this server
 ```bash
 docker build -t voxie-voice-router voice-router
 docker run --gpus all -p 8300:8300 -e SARVAM_API_KEY \
-  -v hf-cache:/root/.cache/huggingface voxie-voice-router --voice-gender female
+  -v hf-cache:/root/.cache/huggingface voxie-voice-router --voice female
 ```
 
 **Locally:** use a venv of its own. Installing `kokoro` next to VibeVoice
@@ -34,30 +34,41 @@ uv venv --python 3.11 .venv
 uv pip install --python .venv/bin/python torch==2.9.1 --index-url https://download.pytorch.org/whl/cu128
 uv pip install --python .venv/bin/python -r requirements.txt
 uv pip uninstall --python .venv/bin/python unidic   # see "Japanese" below
-.venv/bin/python server.py --port 8300 --default-voice af_heart --voice-gender female
+.venv/bin/python server.py --port 8300 --voice female
 ```
 
 | Flag | Default | |
 |---|---|---|
-| `--default-voice` | `af_heart` | Kokoro voice for English. `hm_omega` gives Indian-accented English |
-| `--voice-gender` | `female` | Voice for every other language, Kokoro and Sarvam |
+| `--voice` | `female` | Voice persona: `female`, `male`, `female-2` or `male-2` (below) |
+| `--voice-gender` | `female` | Older shorthand for `--voice female` / `--voice male` |
+| `--default-voice` | the persona's | Kokoro voice for English in the server's persona (requests for other personas keep theirs). `hm_omega` gives Indian-accented English |
 | `--spoken-names` | `$VOXIE_SPOKEN_NAMES` | JSON file of names respelled per language (see below) |
 | `--device` | `cuda` if available | |
 
 ## Languages and voices
 
-| Language | Female | Male |
-|---|---|---|
-| English | `--default-voice` | same |
-| Spanish | `ef_dora` | `em_alex` |
-| French | `ff_siwis` | `ff_siwis` (Kokoro has no male French voice) |
-| Italian | `if_sara` | `im_nicola` |
-| Portuguese | `pf_dora` | `pm_alex` |
-| Japanese | `jf_alpha` | `jm_kumo` |
-| Chinese | `zf_xiaobei` | `zm_yunxi` |
-| Hindi, Bengali, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Punjabi, Odia | Sarvam `bulbul:v3` `priya` | Sarvam `rahul` |
+A **voice persona** is one voice across every language. Pick it per
+server with `--voice`, or per request: `POST /synthesize {"voice": "male-2"}`
+(an unknown name falls back to the server's persona).
 
-Every language is warmed up at startup: each would otherwise take ~3s to
+| Language | `female` | `male` | `female-2` | `male-2` |
+|---|---|---|---|---|
+| English | `af_heart` | `am_michael` | `af_bella` | `am_fenrir` |
+| Spanish | `ef_dora` | `em_alex` | `ef_dora` | `em_alex` |
+| French | `ff_siwis` | `ff_siwis` | `ff_siwis` | `ff_siwis` |
+| Italian | `if_sara` | `im_nicola` | `if_sara` | `im_nicola` |
+| Portuguese | `pf_dora` | `pm_alex` | `pf_dora` | `pm_alex` |
+| Japanese | `jf_alpha` | `jm_kumo` | `jf_nezumi` | `jm_kumo` |
+| Chinese | `zf_xiaobei` | `zm_yunxi` | `zf_xiaoni` | `zm_yunjian` |
+| Hindi (Kokoro fallback) | `hf_alpha` | `hm_omega` | `hf_beta` | `hm_psi` |
+| Hindi, Bengali, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Punjabi, Odia | Sarvam `bulbul:v3` `priya` | Sarvam `rahul` | Sarvam `neha` | Sarvam `aditya` |
+
+Kokoro has one voice per gender for Spanish, Italian and Portuguese, and
+no male French voice, so those are shared. (Its "Santa" voices are a jolly
+character, not a second voice.) Sarvam has 37 speakers; to use others, edit
+`PERSONAS` in `server.py`.
+
+Every language is warmed up at startup, and every persona's voices preloaded: each would otherwise take ~3s to
 load on its first sentence, which a caller would hear as a pause.
 
 **Which language a sentence is in:**
