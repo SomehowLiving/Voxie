@@ -45,7 +45,9 @@ T0 = time.monotonic()
 
 
 def log(msg: str) -> None:
-    print(f"(+{time.monotonic() - T0:5.1f}s) {msg}", flush=True)
+    # Wall-clock time too, to line up with the server's millisecond log.
+    wall = time.strftime("%H:%M:%S", time.localtime()) + f".{int(time.time() * 1000) % 1000:03d}"
+    print(f"{wall} (+{time.monotonic() - T0:5.1f}s) {msg}", flush=True)
 
 
 def load(name: str) -> np.ndarray:
@@ -122,6 +124,7 @@ async def main() -> None:
         queue.append(load(name))
         while queue:
             await asyncio.sleep(0.02)
+        log(f"caller finished '{name}'")
         return time.monotonic()
 
     async def agent_turn(after: float, timeout: float = 60) -> None:
