@@ -146,7 +146,19 @@ type adaptiveItem struct {
 	voiced int       // frames with the caller's voice in this turn
 	from   int       // the listener that produced it
 	at     time.Time // when it arrived
+	// verdict carries a background check's answer back to the worker; the
+	// turn itself was released when the check started.
+	verdict *Identification
 }
+
+// How a final is handled.
+type checkKind int
+
+const (
+	checkNone       checkKind = iota // pass it on
+	checkHold                        // hold it while its language is identified
+	checkBackground                  // pass it on now; identify its language anyway
+)
 
 type adaptiveClient struct {
 	ctx      context.Context
@@ -172,6 +184,9 @@ type adaptiveClient struct {
 	voicedSinceFinal int
 	lastLoudAt       time.Time
 	noFinalQueued    bool
+	// heardWords: the listener has sent partial words since the last final,
+	// so it is hearing the caller -- whatever the loudness says.
+	heardWords bool
 
 	queue chan adaptiveItem
 	done  chan struct{}
@@ -297,7 +312,7 @@ func (a *adaptiveClient) SendAudio(data []byte) error {
 		a.loudSinceFinal++
 		a.lastLoudAt = now
 	}
-	if !a.noFinalQueued && a.loudSinceFinal >= noFinalSpeechFrames && now.Sub(a.lastLoudAt) > a.noFinalQuiet {
+	if !a.noFinalQueued && !a.heardWords && a.loudSinceFinal >= noFinalSpeechFrames && now.Sub(a.lastLoudAt) > a.noFinalQuiet {
 		// The caller clearly spoke and the listener said nothing: Chinese on
 		// Deepgram multi comes back empty.
 		a.noFinalQueued = true
@@ -313,6 +328,13 @@ func (a *adaptiveClient) listenerResult(id int, r TranscriptResult) {
 		return
 	}
 	if !r.IsFinal {
+		// Words are coming, so this isn't speech the listener missed. Live,
+		// a quiet caller's last "loud" frame came ~1.5s before the end of a
+		// Hindi sentence, the no-transcript check fired early, and the real
+		// final waited behind it for 1-2.6s.
+		if strings.TrimSpace(r.Text) != "" {
+			a.heardWords = true
+		}
 		a.mu.Unlock()
 		a.onResult(r)
 		return
@@ -325,7 +347,7 @@ func (a *adaptiveClient) listenerResult(id int, r TranscriptResult) {
 	item := adaptiveItem{final: &r, pcm: a.turnAudioLocked(), spec: a.spec, voiced: a.voicedSinceFinal, from: id, at: now}
 	a.turnStart = now
 	a.loudSinceFinal, a.voicedSinceFinal = 0, 0
-	a.noFinalQueued = false
+	a.noFinalQueued, a.heardWords = false, false
 	// Finals queue even when they won't be checked, so a turn released
 	// after a check never lands after the turn that followed it.
 	a.enqueueLocked(item)
@@ -376,8 +398,34 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 		// replayed to the new one, which will report it properly.
 		return
 	}
-	if item.final != nil && !a.shouldCheck(*item.final, item.voiced) {
+	if item.verdict != nil {
+		a.applyBackgroundVerdict(item)
+		return
+	}
+	kind := checkHold
+	if item.final != nil {
+		kind = a.checkKind(*item.final, item.voiced)
+	}
+	switch kind {
+	case checkNone:
 		a.onResult(*item.final)
+		return
+	case checkBackground:
+		// A confident Hindi turn on an Indian call: the caller doesn't wait
+		// for the check. It runs anyway -- Punjabi comes back from multi as
+		// Hindi at 1.00 -- and moves the listener for the turns after.
+		a.onResult(*item.final)
+		a.checks++
+		go func() {
+			id, ok := a.identifyTurn(item, true)
+			if !ok {
+				return
+			}
+			item.verdict = &id
+			a.mu.Lock()
+			a.enqueueLocked(item)
+			a.mu.Unlock()
+		}()
 		return
 	}
 	if item.final == nil {
@@ -389,7 +437,7 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 	a.checks++
 
 	started := time.Now()
-	id, ok := a.identifyTurn(item)
+	id, ok := a.identifyTurn(item, false)
 	heard := "no transcript"
 	if item.final != nil {
 		heard = fmt.Sprintf("%s %s@%.2f %q", item.final.Provider, orDash(item.final.Language), item.final.Confidence, truncateText(item.final.Text, 50))
@@ -441,32 +489,61 @@ func (a *adaptiveClient) agree(lang string) {
 
 func (a *adaptiveClient) settled() bool { return a.agreeing >= adaptiveSettleAfter }
 
-// shouldCheck: is this final one the listener may have misheard? voiced
-// is how many frames of the caller's voice the turn had.
-func (a *adaptiveClient) shouldCheck(r TranscriptResult, voiced int) bool {
+// applyBackgroundVerdict acts on a background check: the listener hears
+// the language (the call settles), or the call moves to one that does, for
+// the turns after. Audio since the last turn is replayed to it.
+func (a *adaptiveClient) applyBackgroundVerdict(item adaptiveItem) {
+	id := *item.verdict
+	heard := fmt.Sprintf("%s %s@%.2f %q", item.final.Provider, orDash(item.final.Language), item.final.Confidence, truncateText(item.final.Text, 50))
+	if item.spec.covers(id.Language) {
+		log.Printf("[stt:adaptive] background check (%s): %s says %s; %s hears it", heard, id.Source, id.Language, item.spec)
+		a.agree(id.Language)
+		return
+	}
+	next, known := listenerFor(id.Language)
+	if !known {
+		log.Printf("[stt:adaptive] background check (%s): %s says %s; no listener known for it", heard, id.Source, id.Language)
+		return
+	}
+	log.Printf("[stt:adaptive] background check (%s): %s says %s; switching to %s for the next turns", heard, id.Source, id.Language, next)
+	a.agreedOn, a.agreeing = "", 0
+	a.mu.Lock()
+	since := a.turnStart
+	a.mu.Unlock()
+	a.switchTo(next, since)
+}
+
+// checkKind decides how to handle a final. voiced is how many frames of the
+// caller's voice the turn had.
+func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int) checkKind {
 	if len(a.ids) == 0 || a.checks >= adaptiveMaxChecks {
-		return false
+		return checkNone
 	}
 	// The rules read Deepgram's confidence and language labels. Sarvam's
 	// "confidence" is its language probability, and its misses (a world
 	// language turned into English) can't be seen from its output.
 	if r.Provider != "deepgram" {
-		return false
+		return checkNone
 	}
 	// "haan", "ok": too little audio to identify, and cheap to mishear.
 	// Measured in voice, not words: a Chinese sentence is one "word", and
 	// "喂，你好，请问是哪位？" came back from multi as the five-character
 	// "真是呀为，".
 	if voiced < shortTurnFrames {
-		return false
+		return checkNone
 	}
 	if r.Confidence > 0 && r.Confidence < a.minConfidence {
-		return true
+		return checkHold
 	}
 	if r.Language == "hi" && !a.settled() {
-		return a.indianPrior || r.Confidence < a.hindiConfidence
+		switch {
+		case r.Confidence < a.hindiConfidence:
+			return checkHold
+		case a.indianPrior:
+			return checkBackground
+		}
 	}
-	return false
+	return checkNone
 }
 
 // identifyTurn asks which language the turn is in.
@@ -479,7 +556,10 @@ func (a *adaptiveClient) shouldCheck(r TranscriptResult, voiced int) bool {
 // its answer is taken whenever it names an Indian language; it's also the
 // transcript used when the call moves to the Indian listener. Whisper's
 // answer stands for everything else.
-func (a *adaptiveClient) identifyTurn(item adaptiveItem) (Identification, bool) {
+//
+// thorough waits for every identifier asked, not just the first usable
+// answer -- for background checks, where nobody is waiting.
+func (a *adaptiveClient) identifyTurn(item adaptiveItem, thorough bool) (Identification, bool) {
 	if len(item.pcm) == 0 || len(a.ids) == 0 {
 		return Identification{}, false
 	}
@@ -522,7 +602,7 @@ func (a *adaptiveClient) identifyTurn(item adaptiveItem) (Identification, bool) 
 	}
 	// Deepgram was unsure of this "hi": Whisper also calls Punjabi Hindi, so
 	// Sarvam gets a say before the turn is released as Hindi.
-	unsureHindi := item.final != nil && item.final.Confidence < 0.95
+	unsureHindi := thorough || (item.final != nil && item.final.Confidence < 0.95)
 
 	var whisper, sarvam *Identification // the latest usable answer from each side
 	for {
@@ -634,7 +714,7 @@ func (a *adaptiveClient) switchTo(spec listenerSpec, replayFrom time.Time) {
 	}
 	a.current, a.spec, a.acceptID = c, spec, id
 	a.turnStart = replayFrom
-	a.loudSinceFinal, a.voicedSinceFinal, a.noFinalQueued = 0, 0, false
+	a.loudSinceFinal, a.voicedSinceFinal, a.noFinalQueued, a.heardWords = 0, 0, false, false
 	a.mu.Unlock()
 	go old.Close()
 	log.Printf("[stt:adaptive] now listening with %s (replayed %dms of audio)", spec, replayed*20)

@@ -55,7 +55,9 @@ sequenceDiagram
    - "Yeah, okay", "vale", "d'accord" or "haan" don't stop it.
 4. **Speak.** Replies go to the voice one sentence at a time, so the
    agent starts talking before the whole reply is voiced. `।`, `॥`, `。`,
-   `！` and `？` end sentences too.
+   `！` and `？` end sentences too. A long first sentence goes clause first
+   (at a comma or dash), so a slow voice starts sooner: Sarvam's first
+   audio went from 1.6–1.9s to 0.7–1.1s.
 5. **End.** `end_call: true` hangs up after that line has fully played.
 
 ## Choosing the listener: the adaptive listener
@@ -84,7 +86,11 @@ per call:
    - Deepgram "hi" below 0.97
    - anything below 0.85
    - speech that produced no transcript at all
-   - on Indian numbers, Hindi turns until two checks agree
+   - on Indian numbers, Hindi turns until two checks agree. A confident
+     one (0.97+) isn't held: it goes to the agent at once, and the check
+     runs in the background, moving the listener for the next turns if
+     needed (Punjabi comes back as Hindi at 1.00).
+   - speech that produced neither words nor a final
 
    Turns under about 0.8s of voice ("haan", "ok") are never checked.
 3. **Identify.**

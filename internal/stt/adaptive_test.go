@@ -261,14 +261,47 @@ func TestAdaptiveReleasesTheTurnWhenTheListenerHearsTheLanguage(t *testing.T) {
 		if got := h.next(); got.Text != hindi {
 			t.Fatalf("turn %d: got %q", i, got.Text)
 		}
+		time.Sleep(50 * time.Millisecond) // let the background verdict land
 	}
-	// An Indian caller's Hindi is checked until two checks agree, then not.
+	// An Indian caller's confident Hindi is checked (in the background)
+	// until two checks agree, then not.
 	if groq.callCount() != 2 {
 		t.Errorf("checks = %d, want 2 (then settled)", groq.callCount())
 	}
 	if h.log.count() != 1 {
 		t.Error("the listener must not switch for Hindi")
 	}
+}
+
+func TestAdaptiveDoesNotHoldConfidentHindiForTheCheck(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "hi"}, delay: 250 * time.Millisecond}
+	h := newHarness(t, listenerSpec{}, true, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	start := time.Now()
+	h.log.last().emit(deepgramFinal(hindi, "hi", 1.0))
+	h.next()
+	if held := time.Since(start); held > 100*time.Millisecond {
+		t.Fatalf("held %s: a confident Hindi turn must go to the agent at once", held)
+	}
+	waitFor(t, func() bool { return groq.callCount() == 1 })
+}
+
+func TestAdaptiveBackgroundCheckMovesTheListenerForTheNextTurns(t *testing.T) {
+	// Live: Punjabi came back from multi as Hindi at 1.00, and Whisper
+	// called it Hindi too; only Sarvam knew.
+	groq := &fakeIdentifier{id: Identification{Language: "hi", Text: "whisper"}}
+	sarvam := &fakeIdentifier{id: Identification{Language: "pa", Text: "ਕਿਰਪਾ ਕਰਕੇ"}, delay: 80 * time.Millisecond}
+	h := newHarness(t, listenerSpec{}, true, namedIdentifier{"groq", groq.fn()}, namedIdentifier{"sarvam", sarvam.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("कृपा करके मैंने दुबारा phone न करो", "hi", 1.0))
+	if got := h.next(); got.Text != "कृपा करके मैंने दुबारा phone न करो" {
+		t.Fatalf("the turn goes on as heard, got %q", got.Text)
+	}
+	waitFor(t, func() bool { return h.log.count() == 2 })
+	if spec := h.log.last().spec; spec != (listenerSpec{indian: true, language: "pa"}) {
+		t.Fatalf("switched to %s", spec)
+	}
+	h.nothing(100 * time.Millisecond) // the released turn isn't sent again
 }
 
 func TestAdaptiveKeepsTheTranscriptWhenIdentificationFails(t *testing.T) {
@@ -509,5 +542,21 @@ func TestAdaptiveLabelsTurnsFromAFixedLanguageListener(t *testing.T) {
 	h.log.last().emit(TranscriptResult{Text: "다시 전화하지 마세요", IsFinal: true, Confidence: 0.99, Provider: "deepgram"})
 	if got := h.next(); got.Language != "ko" {
 		t.Fatalf("language = %q, want ko", got.Language)
+	}
+}
+
+func TestAdaptiveDoesNotCheckSpeechTheListenerIsHearing(t *testing.T) {
+	// A quiet caller: the loudness says they stopped, but partial words keep
+	// coming. That's a listener that hears them, not one that missed them.
+	groq := &fakeIdentifier{id: Identification{Language: "hi"}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
+	h.speak(noFinalSpeechFrames + 5)
+	h.log.last().emit(TranscriptResult{Text: "कल आप कितने बजे", Provider: "deepgram"})
+	h.next() // the partial
+	time.Sleep(80 * time.Millisecond)
+	_ = h.a.SendAudio(quietFrame())
+	h.nothing(100 * time.Millisecond)
+	if groq.callCount() != 0 {
+		t.Fatal("no-transcript check fired although the listener was sending words")
 	}
 }

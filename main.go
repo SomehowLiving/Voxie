@@ -26,6 +26,10 @@ import (
 )
 
 func main() {
+	// Millisecond timestamps: a voice turn's stages (final transcript, agent
+	// reply, first audio) are hundreds of milliseconds apart.
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+
 	cfg, err := config.Load("")
 	if err != nil {
 		log.Fatalf("config: %v", err)

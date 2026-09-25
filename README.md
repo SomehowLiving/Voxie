@@ -116,8 +116,9 @@ go test ./...
 
 - Tested with synthetic voices, clean and at phone quality. It hasn't
   been tested with real people on real phone lines yet.
-- A checked turn waits for language identification: 0.4–1s, usually on
-  the first turn only.
+- A turn the listener may have misheard waits for language
+  identification (0.4–1s), usually only the caller's first real turn.
+  Confident Hindi is checked in the background, without waiting.
 - No voice yet for German, Dutch, Russian, Korean, Arabic or Turkish.
   They're understood, but should be answered in English.
 - Free API tiers run out quickly under multilingual load. Plan on paid
