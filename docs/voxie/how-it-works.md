@@ -7,7 +7,7 @@
 | **Voxie server** (this repo, Go, `:8080`) | Audio over WebRTC/WHIP, speech detection, turn-taking, barge-in, echo guard, **hearing** (speech-to-text) |
 | **Your agent** (your app, HTTP) | **Deciding what to say**: see [agent-contract.md](agent-contract.md) |
 | **Voice router** (`voice-router/`, Python, `:8300`) | **Speaking**: Kokoro on the GPU for world languages, Sarvam for Indian languages |
-| A phone bridge (optional) | [sip-server](https://github.com/streamcoreai/sip-server) turns phone calls into WHIP sessions |
+| Phone calls (optional) | Built in for Twilio (`/twilio/media`, Twilio Media Streams: see the README). Any SIP trunk through [sip-server](https://github.com/streamcoreai/sip-server), which turns calls into WHIP sessions |
 
 **Cloud APIs:**
 - Deepgram, Sarvam and AssemblyAI for hearing.

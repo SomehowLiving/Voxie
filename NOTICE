@@ -16,6 +16,8 @@ Changes made in Voxie (see the git history from commit dc3e568 on):
   identification; audio replay across a switch).
 - Agent replies voiced sentence by sentence; [lang:xx] language tags.
 - Fixes to the bundled VibeVoice sidecars for a fully local setup.
+- Phone calls through Twilio Media Streams (internal/twilio/), on a media
+  interface that WebRTC calls now use too (internal/pipeline/media.go).
 - New: voice-router/ (Kokoro + Sarvam text-to-speech), configs/,
   examples/quickstart/, tools/callers/, compose.yaml, docs/voxie/.
 

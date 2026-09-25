@@ -4,12 +4,12 @@ import (
 	"log"
 	"time"
 
-	"github.com/pion/rtp"
 	"github.com/streamcoreai/streamcore-server/internal/audio"
 )
 
-// runSender reads PCM frames from outPCMCh, encodes them to Opus, and writes
-// RTP packets to the local WebRTC track with wall-clock pacing (20ms/frame).
+// runSender reads PCM frames from outPCMCh and writes them to the media link
+// (Opus RTP for WebRTC, μ-law for a phone stream) with wall-clock pacing
+// (20ms/frame).
 func (p *Pipeline) runSender() {
 	for {
 		// Wait for the first frame of a talkspurt
@@ -67,7 +67,7 @@ func (p *Pipeline) streamTalkspurt(first PCMFrame) {
 	}
 }
 
-// encodeAndSend encodes a single PCM frame to Opus and writes it as an RTP packet.
+// encodeAndSend sends a single PCM frame on the media link.
 func (p *Pipeline) encodeAndSend(frame PCMFrame) {
 	samples := frame.Samples
 	if len(samples) < audio.FrameSize {
@@ -92,36 +92,15 @@ func (p *Pipeline) encodeAndSend(frame PCMFrame) {
 	// can come back as echo on a path with no AEC. No-op when the guard is off.
 	p.echoGuard.Observe(samples)
 
-	opusData, err := p.encoder.Encode(samples)
-	if err != nil {
-		log.Printf("[sender] encode error: %v", err)
-		return
-	}
-
 	p.rtpMu.Lock()
-	p.seqNum++
-	p.timestamp += audio.RTPTimestampIncr
-	pkt := &rtp.Packet{
-		Header: rtp.Header{
-			Version:        2,
-			PayloadType:    111,
-			SequenceNumber: p.seqNum,
-			Timestamp:      p.timestamp,
-			SSRC:           p.ssrc,
-			Marker:         p.markerNext,
-		},
-		Payload: opusData,
-	}
+	talkspurt := p.markerNext
 	p.markerNext = false
 	p.rtpMu.Unlock()
 
-	raw, err := pkt.Marshal()
-	if err != nil {
-		log.Printf("[sender] marshal error: %v", err)
+	if p.media == nil {
 		return
 	}
-
-	if _, err := p.localTrack.Write(raw); err != nil {
+	if err := p.media.WriteFrame(samples, talkspurt); err != nil {
 		if p.ctx.Err() == nil {
 			log.Printf("[sender] write error: %v", err)
 		}

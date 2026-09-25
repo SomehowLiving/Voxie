@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/pion/webrtc/v4"
-	"github.com/streamcoreai/streamcore-server/internal/audio"
 	"github.com/streamcoreai/streamcore-server/internal/config"
 	"github.com/streamcoreai/streamcore-server/internal/llm"
 	"github.com/streamcoreai/streamcore-server/internal/plugin"
@@ -39,13 +38,8 @@ type Pipeline struct {
 	cancel context.CancelFunc
 	cfg    *config.Config
 
-	// Audio codec
-	decoder *audio.OpusDecoder
-	encoder *audio.OpusEncoder
-
-	// WebRTC tracks
-	remoteTrack *webrtc.TrackRemote
-	localTrack  *webrtc.TrackLocalStaticRTP
+	// The caller's audio link: a WebRTC peer's tracks, or a phone stream.
+	media Media
 
 	// Providers. In realtime mode llmClient and ttsClient are nil — the
 	// speech-to-speech provider covers all three roles.
@@ -211,11 +205,8 @@ type Pipeline struct {
 	// Call metadata
 	direction string // "outbound" for outgoing SIP calls, empty otherwise
 
-	// RTP outbound state
+	// Outbound talkspurt marker: set for the first frame of an utterance.
 	rtpMu      sync.Mutex
-	seqNum     uint16
-	timestamp  uint32
-	ssrc       uint32
 	markerNext bool
 }
 
@@ -233,14 +224,27 @@ func New(
 	conv *ConversationState,
 	resumed bool,
 ) (*Pipeline, error) {
-	dec, err := audio.NewOpusDecoder()
+	media, err := newWebRTCMedia(remoteTrack, localTrack)
 	if err != nil {
 		return nil, err
 	}
-	enc, err := audio.NewOpusEncoder()
-	if err != nil {
-		return nil, err
-	}
+	return NewWithMedia(ctx, cfg, media, sendEvent, pluginMgr, ragClient, opts, conv, resumed)
+}
+
+// NewWithMedia creates a pipeline on any audio link (see Media): a phone
+// stream as well as a WebRTC peer. Call Start() to launch it.
+func NewWithMedia(
+	ctx context.Context,
+	cfg *config.Config,
+	media Media,
+	sendEvent func(interface{}) error,
+	pluginMgr *plugin.Manager,
+	ragClient rag.Client,
+	opts PeerOptions,
+	conv *ConversationState,
+	resumed bool,
+) (*Pipeline, error) {
+	var err error
 	if conv == nil {
 		// No identity here: a Session always builds the conversation itself and
 		// passes it in, so reaching this means there is no session.
@@ -273,10 +277,7 @@ func New(
 		ctx:           pCtx,
 		cancel:        cancel,
 		cfg:           cfg,
-		decoder:       dec,
-		encoder:       enc,
-		remoteTrack:   remoteTrack,
-		localTrack:    localTrack,
+		media:         media,
 		llmClient:     llmClient,
 		ttsClient:     ttsClient,
 		ragClient:     ragClient,
@@ -305,7 +306,6 @@ func New(
 		callerSpokeFirst: make(chan struct{}),
 		sendEvent:        sendEvent,
 		direction:        opts.Direction,
-		ssrc:             12345678,
 		markerNext:       true,
 	}
 

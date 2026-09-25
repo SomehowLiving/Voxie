@@ -527,8 +527,12 @@ func (p *Pipeline) cancelResponse() {
 	p.responseMu.Unlock()
 }
 
-// drainOutbound discards any queued outbound PCM frames.
+// drainOutbound discards any queued outbound PCM frames, and any the far
+// side has buffered but not yet played (a phone stream).
 func (p *Pipeline) drainOutbound() {
+	if c, ok := p.media.(MediaClearer); ok {
+		c.Clear()
+	}
 	for {
 		select {
 		case <-p.outPCMCh:

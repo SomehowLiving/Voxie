@@ -23,6 +23,7 @@ import (
 	"github.com/streamcoreai/streamcore-server/internal/session"
 	"github.com/streamcoreai/streamcore-server/internal/signaling"
 	turnserver "github.com/streamcoreai/streamcore-server/internal/turn"
+	"github.com/streamcoreai/streamcore-server/internal/twilio"
 )
 
 func main() {
@@ -88,7 +89,15 @@ func main() {
 		issueToken = tokenHandler(cfg.Server.JWTSecret, cfg.Server.APIKey)
 	}
 
-	handler := corsMiddleware(newPublicMux(whipHandler, issueToken))
+	mux := newPublicMux(whipHandler, issueToken)
+	// Phone calls through Twilio Media Streams. Only with Twilio's auth token:
+	// it's what proves a stream really comes from Twilio, and without it the
+	// endpoint would let anyone start a call on this server's API keys.
+	if token := os.Getenv("TWILIO_AUTH_TOKEN"); token != "" {
+		mux.HandleFunc("/twilio/media", twilio.NewHandler(sm, token, os.Getenv("VOXIE_TWILIO_STREAM_URL")))
+		log.Println("Twilio Media Streams enabled at /twilio/media")
+	}
+	handler := corsMiddleware(mux)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Server.Port,

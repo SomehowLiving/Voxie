@@ -74,9 +74,39 @@ without Docker: see [voice-router/README.md](voice-router/README.md).
    `greeting`, `chat` and `oneshot`. The demo agent in
    [`examples/quickstart/server.mjs`](examples/quickstart/server.mjs)
    shows all four in ~60 lines.
-3. For phone calls, put [sip-server](https://github.com/streamcoreai/sip-server)
-   in front. It turns a SIP trunk (Twilio, Telnyx…) into WHIP sessions and
-   passes the dialled number as `resource_id`.
+3. For phone calls, see [Phone calls](#phone-calls) below.
+
+## Phone calls
+
+**Twilio, built in** (Twilio Media Streams). Twilio dials, or answers, the
+call and streams its audio to Voxie's `/twilio/media` WebSocket. Voxie runs
+it on the same pipeline as a browser call, with the same barge-in and the
+same voices. All you need is a Twilio number and a public URL for Voxie
+(`ngrok http 8080` is enough); no SIP trunk and no public IP.
+
+1. Set `TWILIO_AUTH_TOKEN` for the Voxie server. This turns the endpoint on,
+   and it then accepts only streams Twilio has signed. Behind a proxy that
+   rewrites the Host header, also set `VOXIE_TWILIO_STREAM_URL` to the public
+   `wss://…/twilio/media` URL.
+2. Place a call with this TwiML (Twilio's REST API `Twiml` parameter):
+   ```xml
+   <Response><Connect><Stream url="wss://<voxie-host>/twilio/media">
+     <Parameter name="resource_id" value="+919812345678"/>
+   </Stream></Connect></Response>
+   ```
+   `resource_id` reaches your agent as the call's `resource_id`.
+   `direction` defaults to `outbound`.
+3. When your agent ends the call (`end_call`), Voxie closes the stream once
+   the goodbye has played, and Twilio hangs up. If the caller hangs up
+   first, the call ends at Voxie too.
+
+Phone audio (8 kHz μ-law) is converted to 16 kHz and back, with a low-pass
+filter on the way out. When the caller interrupts, Voxie also clears the
+audio Twilio has buffered, so the agent stops at once.
+
+**Any SIP trunk:** put [sip-server](https://github.com/streamcoreai/sip-server)
+in front. It turns SIP calls into WHIP sessions and passes the dialled number
+as `resource_id`.
 
 ## Test it in many languages
 
@@ -94,7 +124,7 @@ What was measured, per language: [docs/voxie/languages.md](docs/voxie/languages.
 
 | Path | |
 |---|---|
-| `internal/`, `main.go` | The voice server (StreamCore plus Voxie's changes; the new listener is `internal/stt/adaptive.go`) |
+| `internal/`, `main.go` | The voice server (StreamCore plus Voxie's changes; the new listener is `internal/stt/adaptive.go`, phone calls are `internal/twilio/`) |
 | `voice-router/` | Kokoro + Sarvam text-to-speech |
 | `configs/voxie.toml` | One config for every caller |
 | `examples/quickstart/` | Call page, WHIP proxy, demo agent |
@@ -114,8 +144,8 @@ go test ./...
 
 ## Limits
 
-- Tested with synthetic voices, clean and at phone quality. It hasn't
-  been tested with real people on real phone lines yet.
+- Tested mostly with synthetic voices, clean and at phone quality, plus a
+  real phone call through Twilio to an Indian mobile.
 - A turn the listener may have misheard waits for language
   identification (0.4–1s), usually only the caller's first real turn.
   Confident Hindi is checked in the background, without waiting.

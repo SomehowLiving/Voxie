@@ -8,17 +8,16 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pion/rtp"
 	"github.com/streamcoreai/streamcore-server/internal/audio"
 	"github.com/streamcoreai/streamcore-server/internal/llm"
 	"github.com/streamcoreai/streamcore-server/internal/stt"
 	"github.com/streamcoreai/streamcore-server/internal/vad"
 )
 
-// runReader reads RTP packets from the remote WebRTC track, decodes Opus
-// to PCM, and pushes frames into inPCMCh.
+// runReader reads the caller's audio from the media link (Opus over RTP
+// for WebRTC, μ-law for a phone stream) as PCM, and pushes frames into
+// inPCMCh.
 func (p *Pipeline) runReader() {
-	buf := make([]byte, 1500)
 	var frameCount uint64
 	for {
 		select {
@@ -27,23 +26,12 @@ func (p *Pipeline) runReader() {
 		default:
 		}
 
-		n, _, err := p.remoteTrack.Read(buf)
+		pcm, err := p.media.ReadFrame()
 		if err != nil {
 			if p.ctx.Err() == nil {
-				log.Printf("[reader] track read error: %v", err)
+				log.Printf("[reader] media read error: %v", err)
 			}
 			return
-		}
-
-		pkt := &rtp.Packet{}
-		if err := pkt.Unmarshal(buf[:n]); err != nil {
-			continue
-		}
-
-		pcm, err := p.decoder.Decode(pkt.Payload)
-		if err != nil {
-			log.Printf("[reader] opus decode error (payload %d bytes): %v", len(pkt.Payload), err)
-			continue
 		}
 
 		// Diagnostic: log PCM levels for first frames and periodically
@@ -57,8 +45,7 @@ func (p *Pipeline) runReader() {
 					maxAbs = s
 				}
 			}
-			log.Printf("[reader] frame=%d payload=%d pcm_samples=%d max_abs=%d ssrc=%d seq=%d",
-				frameCount, len(pkt.Payload), len(pcm), maxAbs, pkt.SSRC, pkt.SequenceNumber)
+			log.Printf("[reader] frame=%d pcm_samples=%d max_abs=%d", frameCount, len(pcm), maxAbs)
 		}
 
 		select {

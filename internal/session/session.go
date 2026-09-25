@@ -190,6 +190,49 @@ func (s *Session) AddPeer(peerID string, opts PeerOptions) (*peer.Peer, error) {
 	return p, nil
 }
 
+// RunMedia runs a call over an audio link that isn't a WebRTC peer -- a
+// phone stream such as Twilio Media Streams -- and blocks until the call
+// ends: ctx is cancelled (the caller hung up), the session closes, or the
+// pipeline finishes (the agent ended the call).
+func (s *Session) RunMedia(ctx context.Context, media pipeline.Media, opts PeerOptions) (err error) {
+	s.mu.Lock()
+	s.idleSince = time.Time{} // in use: not the reaper's to collect
+	s.mu.Unlock()
+	defer func() {
+		s.mu.Lock()
+		s.idleSince = time.Now()
+		s.mu.Unlock()
+		// As in AddPeer: a panic costs this call, not the process.
+		if r := recover(); r != nil {
+			log.Printf("[session:%s] panic in media call: %v\n%s", s.ID, r, debug.Stack())
+			err = fmt.Errorf("panic: %v", r)
+		}
+	}()
+
+	conv, err := s.conversation()
+	if err != nil {
+		return err
+	}
+	callCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	go func() {
+		select {
+		case <-s.ctx.Done():
+			cancel()
+		case <-callCtx.Done():
+		}
+	}()
+	// No DataChannel on a phone line: transcript and state events have
+	// nowhere to go, which the pipeline treats as a client that ignores them.
+	noEvents := func(interface{}) error { return nil }
+	pl, err := pipeline.NewWithMedia(callCtx, s.cfg, media, noEvents, s.pluginMgr, s.ragClient, opts, conv, false)
+	if err != nil {
+		return err
+	}
+	pl.Start()
+	return nil
+}
+
 // conversation returns the session's durable state, building it on first use.
 // Every Pipeline this session ever starts shares the one instance — that
 // sharing is what a resume preserves.
