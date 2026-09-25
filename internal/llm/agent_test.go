@@ -309,3 +309,35 @@ func TestChatSendsTheLanguageTheCallerSpoke(t *testing.T) {
 		t.Fatalf("languages sent = %q, %q; want ta, then none", agent.requests[0].Language, agent.requests[1].Language)
 	}
 }
+
+func TestLongFirstSentenceGoesToTheVoiceClauseFirst(t *testing.T) {
+	cases := []struct {
+		name  string
+		reply string
+		want  []string
+	}{
+		{"hindi greeting", `{"text":"नमस्ते सोफ़िया, मैं REX हूँ, आपके प्रो अकाउंट से कॉल कर रहा हूँ। क्या आपके पास एक मिनट है?"}`,
+			[]string{"नमस्ते सोफ़िया,", "मैं REX हूँ, आपके प्रो अकाउंट से कॉल कर रहा हूँ।", "क्या आपके पास एक मिनट है?"}},
+		// A clause too short to be worth saying alone ("Hi Sofía,") is kept.
+		{"short first clause", `{"text":"Hi Sofía, this is REX calling from your Pro account. Do you have a minute?"}`,
+			[]string{"Hi Sofía, this is REX calling from your Pro account.", "Do you have a minute?"}},
+		// A comma inside a number is not a clause break.
+		{"number", `{"text":"Your payment of ₹4,999 didn't go through this morning at all. Sorry."}`,
+			[]string{"Your payment of ₹4,999 didn't go through this morning at all.", "Sorry."}},
+		// Only the reply's first sentence is split.
+		{"later sentences whole", `{"text":"Understood. I'll hold your account until Monday, and send you the link now."}`,
+			[]string{"Understood.", "I'll hold your account until Monday, and send you the link now."}},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			var got []string
+			client := newReplyAgent(t, c.reply)
+			if _, err := client.Chat(context.Background(), Turn{Text: "hi", Prompt: "hi"}, nil, func(s string) { got = append(got, s) }); err != nil {
+				t.Fatal(err)
+			}
+			if strings.Join(got, "|") != strings.Join(c.want, "|") {
+				t.Fatalf("sentences to the voice:\n got %q\nwant %q", got, c.want)
+			}
+		})
+	}
+}

@@ -252,6 +252,7 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 
 	var fullResponse strings.Builder
 	var sentenceBuf strings.Builder
+	spokeFirst := false // whether the reply's first piece has gone to the voice
 	emit := func(chunk string) {
 		if chunk == "" {
 			return
@@ -264,11 +265,23 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 		if onSentence != nil {
 			text := sentenceBuf.String()
 			if idx := findSentenceEnd(text); idx >= 0 {
-				if sentence := strings.TrimSpace(text[:idx+1]); sentence != "" {
-					onSentence(sentence)
+				sentence := text[:idx+1]
+				rest := text[idx+1:]
+				// A long first sentence goes to the voice clause first: a
+				// slow voice (Sarvam, ~1-3s a sentence) starts speaking
+				// sooner, and the rest is voiced while the clause plays.
+				if !spokeFirst {
+					if cut := firstClauseCut(sentence); cut > 0 {
+						onSentence(strings.TrimSpace(sentence[:cut]))
+						sentence = sentence[cut:]
+					}
 				}
+				if trimmed := strings.TrimSpace(sentence); trimmed != "" {
+					onSentence(trimmed)
+				}
+				spokeFirst = true
 				sentenceBuf.Reset()
-				sentenceBuf.WriteString(text[idx+1:])
+				sentenceBuf.WriteString(rest)
 			}
 		}
 	}
@@ -384,6 +397,36 @@ func readJSONReply(r io.Reader, emit func(string)) (bool, error) {
 		emit(sentence)
 	}
 	return reply.EndCall, nil
+}
+
+// firstClauseCut returns where to cut a long sentence after its first
+// clause (a comma, Arabic or CJK comma, or a dash), so the voice can start on
+// it; 0 when the sentence is short or has no clause break far enough in to
+// be worth saying on its own.
+func firstClauseCut(sentence string) int {
+	const minSentence, minClause, minRest = 40, 12, 12
+	total := utf8.RuneCountInString(sentence)
+	if total < minSentence {
+		return 0
+	}
+	runes := 0
+	for i, r := range sentence {
+		runes++
+		cut := 0
+		switch r {
+		case '،', '，', '、':
+			cut = i + utf8.RuneLen(r)
+		case ',', '—':
+			// Only as punctuation: "₹4,999" has a comma too.
+			if next := i + utf8.RuneLen(r); next < len(sentence) && sentence[next] == ' ' {
+				cut = next
+			}
+		}
+		if cut > 0 && runes >= minClause && total-runes >= minRest {
+			return cut
+		}
+	}
+	return 0
 }
 
 // splitSentences cuts text after each sentence ender that is followed by a
