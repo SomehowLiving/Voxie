@@ -5,6 +5,7 @@ so StreamCore's existing `vibevoice` TTS provider can use it by pointing
 `[vibevoice] tts_url` here -- no StreamCore code change:
 
     POST /synthesize  {"text": "...", "voice": "..."}
+                      text may start with "[voice:male-2] " and/or "[lang:hi] "
       -> 200, raw 16 kHz mono signed 16-bit little-endian PCM
     GET  /health      -> {"status": "ok", ...}
 
@@ -175,6 +176,7 @@ def _indic_script(text: str) -> str | None:
 
 
 _LANG_TAG = re.compile(r"^\s*\[lang:([a-zA-Z-]{2,8})\]\s*")
+_VOICE_TAG = re.compile(r"^\s*\[voice:([a-zA-Z0-9-]{2,20})\]\s*")
 
 
 def take_language_tag(text: str) -> tuple[str | None, str]:
@@ -185,6 +187,18 @@ def take_language_tag(text: str) -> tuple[str | None, str]:
     if not m:
         return None, text
     return m.group(1).lower()[:2], text[m.end():]
+
+
+def take_voice_tag(text: str) -> tuple[str | None, str]:
+    """The agent may prefix a line with "[voice:male-2] " to pick the persona
+    for that line: one server can speak for several companies, each with its
+    own voice, although StreamCore sends a single fixed voice name. Returns
+    the persona and the text without the tag; an unknown persona is ignored."""
+    m = _VOICE_TAG.match(text)
+    if not m:
+        return None, text
+    name = m.group(1).lower()
+    return (name if name in PERSONAS else None), text[m.end():]
 
 
 def remember_language(language: str) -> None:
@@ -443,7 +457,8 @@ def speakable_languages() -> list[str]:
 
 
 def synthesize(text: str, voice: str = "") -> bytes:
-    persona = persona_for(voice)
+    tagged_voice, text = take_voice_tag(text)
+    persona = persona_for(tagged_voice or voice)
     tagged, text = take_language_tag(text)
     language = tagged or detect_language(text)
     remember_language(language)
@@ -511,6 +526,8 @@ def health():
         "voices": {name: {"gender": p["gender"], "english": english_voice(p), "sarvam": p["sarvam"]}
                    for name, p in PERSONAS.items()},
         "languages": speakable_languages(),
+        # Lines may carry "[voice:<persona>] " to choose the persona per line.
+        "voice_tags": True,
         "sarvam": "not configured" if not _sarvam_key else ("up" if _sarvam_breaker.available() else "down"),
     }
 

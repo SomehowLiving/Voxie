@@ -48,8 +48,12 @@ uv pip uninstall --python .venv/bin/python unidic   # see "Japanese" below
 ## Languages and voices
 
 A **voice persona** is one voice across every language. Pick it per
-server with `--voice`, or per request: `POST /synthesize {"voice": "male-2"}`
-(an unknown name falls back to the server's persona).
+server with `--voice`, per request: `POST /synthesize {"voice": "male-2"}`,
+or per line: a leading `[voice:male-2]` tag (stripped before speaking, and
+before any `[lang:xx]` tag). The tag is how one server speaks in each
+company's own voice: StreamCore sends the same fixed voice name on every
+request, but passes the agent's text through. An unknown name falls back to
+the server's persona. `/health` reports `"voice_tags": true`.
 
 | Language | `female` | `male` | `female-2` | `male-2` |
 |---|---|---|---|---|
