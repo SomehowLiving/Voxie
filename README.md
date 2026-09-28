@@ -58,7 +58,7 @@ server (Go 1.25+) and quickstart (Node 20+) natively:
 docker compose up -d --build voice-router
 go build -o voxie . && cp configs/voxie.toml config.toml
 set -a && . ./.env && set +a && ./voxie &
-node examples/quickstart/server.mjs
+node quickstart/server.mjs
 ```
 
 Then open **http://localhost:8400**, click **Start call**, and speak any
@@ -72,7 +72,7 @@ without Docker: see [voice-router/README.md](voice-router/README.md).
    your app.
 2. Answer the [four request types](docs/voxie/agent-contract.md): `listen`,
    `greeting`, `chat` and `oneshot`. The demo agent in
-   [`examples/quickstart/server.mjs`](examples/quickstart/server.mjs)
+   [`quickstart/server.mjs`](quickstart/server.mjs)
    shows all four in ~60 lines.
 3. For phone calls, see [Phone calls](#phone-calls) below.
 
@@ -127,7 +127,7 @@ What was measured, per language: [docs/voxie/languages.md](docs/voxie/languages.
 | `internal/`, `main.go` | The voice server (StreamCore plus Voxie's changes; the new listener is `internal/stt/adaptive.go`, phone calls are `internal/twilio/`) |
 | `voice-router/` | Kokoro + Sarvam text-to-speech |
 | `configs/voxie.toml` | One config for every caller |
-| `examples/quickstart/` | Call page, WHIP proxy, demo agent |
+| `quickstart/` | Call page, WHIP proxy, demo agent |
 | `tools/callers/` | Scripted multilingual callers over WebRTC |
 | `docs/voxie/` | How it works, the agent contract, language measurements |
 | `docs/`, `README.streamcore.md` | Upstream StreamCore's docs, still accurate for everything Voxie didn't change |

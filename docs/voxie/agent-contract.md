@@ -102,6 +102,6 @@ By `Content-Type`:
 
 ## A minimal agent
 
-See [`examples/quickstart/server.mjs`](../../examples/quickstart/server.mjs):
+See [`quickstart/server.mjs`](../../quickstart/server.mjs):
 about 60 lines handle all four types, with Groq replying in the caller's
 language. It echoes if there's no key. Replace `think()` with your app.

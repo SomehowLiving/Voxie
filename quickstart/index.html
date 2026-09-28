@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talk to Voxie</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6a66; --line: #e3e1dc;
+    --accent: #1f6f5c; --accent-text: #ffffff; --danger: #b3372b; --you: #eef3f8; --agent: #eef6f2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514; --panel: #1f1f1d; --text: #ecebe7; --muted: #9a9993; --line: #33322f;
+      --accent: #3fae8f; --accent-text: #0e1a16; --danger: #e0685c; --you: #1e2630; --agent: #1b2923;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  label { color: var(--muted); font-size: 13px; }
+  input { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 180px; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 8px; padding: 10px 18px; cursor: pointer; background: var(--accent); color: var(--accent-text); }
+  button.hang { background: var(--danger); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  .status { margin-top: 14px; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); flex: none; }
+  .dot.listening { background: #3b82f6; } .dot.thinking { background: #d99a1e; } .dot.speaking { background: var(--accent); }
+  .dot.live { background: var(--accent); }
+  #log { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; min-height: 120px; }
+  .turn { padding: 10px 12px; border-radius: 10px; max-width: 88%; }
+  .turn .who { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 2px; }
+  .turn.you { background: var(--you); align-self: flex-end; }
+  .turn.agent { background: var(--agent); align-self: flex-start; }
+  .turn.partial { opacity: .6; font-style: italic; }
+  .note { align-self: center; color: var(--muted); font-size: 13px; text-align: center; }
+  .tips { color: var(--muted); font-size: 13px; margin-top: 20px; }
+  select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; max-width: 260px; }
+  button.secondary { background: transparent; color: var(--text); border: 1px solid var(--line); }
+  .mic { margin-top: 14px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  .meter { flex: 1; min-width: 120px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .meter > div { height: 100%; width: 0; background: var(--accent); transition: width 80ms linear; }
+  .warn { color: var(--danger); font-weight: 600; }
+  .tips li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Talk to Voxie</h1>
+  <p class="sub">A live voice call in your browser. Speak any language: Voxie hears it, answers in it, and follows you if you switch.</p>
+
+  <div class="card">
+    <div class="controls">
+      <div>
+        <label for="name">Your name</label><br>
+        <input id="name" value="Sofía" autocomplete="off">
+      </div>
+      <div>
+        <label for="language">Language on record</label><br>
+        <select id="language">
+          <option value="">Not known</option>
+          <option value="en">English</option><option value="hi">Hindi</option>
+          <option value="ta">Tamil</option><option value="te">Telugu</option><option value="bn">Bengali</option>
+          <option value="mr">Marathi</option><option value="gu">Gujarati</option><option value="kn">Kannada</option>
+          <option value="ml">Malayalam</option><option value="pa">Punjabi</option>
+          <option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option>
+          <option value="ja">Japanese</option><option value="zh">Chinese</option><option value="ko">Korean</option>
+          <option value="ar">Arabic</option><option value="tr">Turkish</option>
+        </select>
+      </div>
+      <div>
+        <label for="region">Calling from</label><br>
+        <select id="region"><option value="">Anywhere</option><option value="IN">India</option></select>
+      </div>
+      <div>
+        <label for="micSelect">Microphone</label><br>
+        <select id="micSelect"><option value="">Default microphone</option></select>
+      </div>
+      <button id="testMic" class="secondary">Test mic</button>
+      <button id="call">Start call</button>
+      <button id="hang" class="hang" disabled>Hang up</button>
+    </div>
+    <div class="mic"><span>Mic level</span><div class="meter"><div id="level"></div></div><span id="micNote">Click "Test mic" and speak: the bar should move.</span></div>
+    <div class="status"><span id="dot" class="dot"></span><span id="status">Not connected. Use headphones for the most realistic test.</span></div>
+    <div id="log"></div>
+  </div>
+
+  <ul class="tips">
+    <li><b>Listen first:</b> stay silent after connecting, and Voxie greets you after ~4s. Or say "Hello?" straight away, and it answers you instead.</li>
+    <li><b>Any language:</b> answer in Tamil, Spanish, Korean… The listener switches on your first real sentence; the "language on record" is only a starting guess.</li>
+    <li><b>Barge in:</b> start talking while Voxie is speaking. It drops its volume at once and stops if you're really interrupting.</li>
+    <li><b>Backchannel:</b> say "yeah, okay" while it talks. It should dip, then carry on.</li>
+    <li>Say "bye" to end the call.</li>
+  </ul>
+  <audio id="remote" autoplay></audio>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const log = $("log");
+let pc = null, mic = null, sessionUrl = null, partialEl = null, ended = false;
+let testStream = null, meterStop = null;
+
+// --- microphone picker and level meter ----------------------------------
+// The call can only hear what the browser actually captures. A wrong or
+// muted input device sends silence, and the agent then has nothing to answer --
+// so the page shows the level, and says so when it hears nothing.
+async function listMics() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const sel = $("micSelect");
+    const current = sel.value;
+    sel.innerHTML = '<option value="">Default microphone</option>';
+    devices.filter((d) => d.kind === "audioinput" && d.deviceId !== "default").forEach((d, i) => {
+      const o = document.createElement("option");
+      o.value = d.deviceId;
+      o.textContent = d.label || `Microphone ${i + 1}`;
+      sel.appendChild(o);
+    });
+    sel.value = current;
+  } catch {}
+}
+
+function micConstraints() {
+  const id = $("micSelect").value;
+  return { audio: { ...(id ? { deviceId: { exact: id } } : {}), echoCancellation: true, noiseSuppression: true, autoGainControl: true } };
+}
+
+function startMeter(stream) {
+  if (meterStop) meterStop();
+  const ctx = new AudioContext();
+  const analyser = ctx.createAnalyser();
+  analyser.fftSize = 1024;
+  ctx.createMediaStreamSource(stream).connect(analyser);
+  const buf = new Float32Array(analyser.fftSize);
+  let lastHeard = performance.now(), warned = false, raf = 0;
+  const tick = () => {
+    analyser.getFloatTimeDomainData(buf);
+    let peak = 0;
+    for (const v of buf) peak = Math.max(peak, Math.abs(v));
+    $("level").style.width = Math.min(100, peak * 300) + "%";
+    const now = performance.now();
+    if (peak > 0.02) {
+      lastHeard = now;
+      if (warned) { warned = false; $("micNote").textContent = "Hearing you."; $("micNote").className = ""; }
+    } else if (now - lastHeard > 6000 && !warned) {
+      warned = true;
+      $("micNote").textContent = "Not hearing anything from this microphone — pick another one above, or check it isn't muted.";
+      $("micNote").className = "warn";
+    }
+    raf = requestAnimationFrame(tick);
+  };
+  $("micNote").textContent = "Speak — the bar should move.";
+  $("micNote").className = "";
+  tick();
+  meterStop = () => { cancelAnimationFrame(raf); ctx.close(); $("level").style.width = "0"; meterStop = null; };
+}
+
+async function testMic() {
+  if (testStream) { testStream.getTracks().forEach((t) => t.stop()); testStream = null; }
+  try {
+    testStream = await navigator.mediaDevices.getUserMedia(micConstraints());
+    await listMics();
+    startMeter(testStream);
+    const label = testStream.getAudioTracks()[0]?.label;
+    if (label) $("micNote").textContent = `Using "${label}" — speak, the bar should move.`;
+  } catch (err) {
+    $("micNote").textContent = `Microphone blocked or unavailable: ${err.message || err}`;
+    $("micNote").className = "warn";
+  }
+}
+
+$("testMic").onclick = testMic;
+$("micSelect").onchange = () => { if (testStream) testMic(); };
+navigator.mediaDevices?.addEventListener?.("devicechange", listMics);
+listMics();
+
+function setStatus(text, state = "") {
+  $("status").textContent = text;
+  $("dot").className = "dot " + state;
+}
+
+function addTurn(who, text, cls) {
+  if (partialEl && who === "You") { partialEl.remove(); partialEl = null; }
+  const el = document.createElement("div");
+  el.className = "turn " + cls;
+  el.innerHTML = `<div class="who"></div><div class="text"></div>`;
+  el.querySelector(".who").textContent = who;
+  el.querySelector(".text").textContent = text;
+  log.appendChild(el);
+  el.scrollIntoView({ block: "end", behavior: "smooth" });
+  return el;
+}
+
+function addNote(text) {
+  const el = document.createElement("div");
+  el.className = "note";
+  el.textContent = text;
+  log.appendChild(el);
+  el.scrollIntoView({ block: "end", behavior: "smooth" });
+}
+
+// Both sides of every turn, from the demo agent.
+const events = new EventSource("/api/events");
+events.onmessage = (e) => {
+  const ev = JSON.parse(e.data);
+  if (ev.kind === "caller") addTurn(ev.language ? `You · heard as ${ev.language}` : "You", ev.text, "you");
+  else if (ev.kind === "agent") {
+    addTurn("Voxie", ev.text, "agent");
+    if (ev.endCall) addNote("Voxie is ending the call after this line");
+  }
+};
+
+function onDataChannelMessage(raw) {
+  let msg; try { msg = JSON.parse(raw); } catch { return; }
+  if (msg.type === "transcript" && !msg.final && msg.text) {
+    // Live words while you're still talking; replaced by the final turn.
+    if (!partialEl) partialEl = addTurn("You", "", "you partial");
+    partialEl.querySelector(".text").textContent = msg.text;
+  } else if (msg.type === "state") {
+    const labels = { listening: "Listening", thinking: "Voxie is thinking", speaking: "Voxie is speaking" };
+    if (labels[msg.state]) setStatus(labels[msg.state], msg.state);
+  }
+}
+
+async function waitForIce(pc) {
+  if (pc.iceGatheringState === "complete") return;
+  await new Promise((resolve) => {
+    const done = () => { if (pc.iceGatheringState === "complete") resolve(); };
+    pc.addEventListener("icegatheringstatechange", done);
+    setTimeout(resolve, 2000);
+  });
+}
+
+async function call() {
+  $("call").disabled = true;
+  ended = false;
+  log.innerHTML = "";
+  try {
+    setStatus("Asking for your microphone…");
+    if (testStream) { testStream.getTracks().forEach((t) => t.stop()); testStream = null; }
+    mic = await navigator.mediaDevices.getUserMedia(micConstraints());
+    await listMics();
+    startMeter(mic);
+    const micLabel = mic.getAudioTracks()[0]?.label;
+    if (micLabel) addNote(`Listening on: ${micLabel}`);
+
+    setStatus("Connecting…");
+    await fetch("/api/call", {
+      method: "POST",
+      body: JSON.stringify({ name: $("name").value, language: $("language").value, region: $("region").value }),
+    });
+
+    pc = new RTCPeerConnection();
+    mic.getTracks().forEach((t) => pc.addTrack(t, mic));
+    pc.ontrack = (e) => { $("remote").srcObject = e.streams[0] || new MediaStream([e.track]); };
+    const dc = pc.createDataChannel("events");
+    dc.onmessage = (e) => onDataChannelMessage(e.data);
+    pc.onconnectionstatechange = () => {
+      const s = pc && pc.connectionState;
+      if (s === "connected") setStatus("Connected. Say something, or wait for Voxie.", "live");
+      if ((s === "disconnected" || s === "failed" || s === "closed") && !ended) {
+        addNote(s === "failed" ? "Connection failed" : "Call ended");
+        cleanup();
+      }
+    };
+
+    await pc.setLocalDescription(await pc.createOffer());
+    await waitForIce(pc);
+    setStatus("Connecting…");
+    const resp = await fetch("/whip", {
+      method: "POST",
+      headers: { "Content-Type": "application/sdp" },
+      body: pc.localDescription.sdp,
+    });
+    if (resp.status !== 201) throw new Error(`The Voxie server answered ${resp.status}: ${await resp.text()}`);
+    sessionUrl = resp.headers.get("Location");
+    await pc.setRemoteDescription({ type: "answer", sdp: await resp.text() });
+    $("hang").disabled = false;
+  } catch (err) {
+    addNote(String(err.message || err));
+    cleanup();
+  }
+}
+
+function cleanup() {
+  ended = true;
+  if (pc) { pc.close(); pc = null; }
+  if (mic) { mic.getTracks().forEach((t) => t.stop()); mic = null; }
+  if (meterStop) meterStop();
+  if (partialEl) { partialEl.remove(); partialEl = null; }
+  $("call").disabled = false;
+  $("hang").disabled = true;
+  setStatus("Not connected");
+}
+
+async function hangUp() {
+  const url = sessionUrl;
+  sessionUrl = null;
+  addNote("You hung up");
+  cleanup();
+  if (url) fetch(url, { method: "DELETE" }).catch(() => {});
+}
+
+$("call").onclick = call;
+$("hang").onclick = hangUp;
+</script>
+</body>
+</html>

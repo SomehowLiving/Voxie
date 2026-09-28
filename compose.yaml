@@ -45,7 +45,7 @@ services:
     env_file: .env
     working_dir: /app
     volumes:
-      - ./examples/quickstart:/app:ro
+      - ./quickstart:/app:ro
     command: ["node", "server.mjs"]
     depends_on: [voxie]
 
