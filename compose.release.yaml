@@ -1,0 +1,50 @@
+# Voxie from the published images: no build, no Go or PyTorch toolchain.
+#
+#   docker login ghcr.io                                # while the images are private
+#   cp .env.example .env                                # add your keys
+#   docker compose -f compose.release.yaml up           # Linux (Docker Engine)
+#   open http://localhost:8400
+#
+# VOXIE_TAG picks a version (default: latest). Pin one in production.
+# The server and quickstart use host networking (WebRTC media needs the
+# server reachable on UDP). On Docker Desktop (Windows, WSL2, macOS) run
+# only the voice router here and the server natively: see README.
+services:
+  voxie:
+    image: ghcr.io/somehowliving/voxie:${VOXIE_TAG:-latest}
+    network_mode: host
+    env_file: .env
+    volumes:
+      - ./configs/voxie.toml:/config.toml:ro
+    restart: unless-stopped
+
+  voice-router:
+    image: ghcr.io/somehowliving/voxie-voice-router:${VOXIE_TAG:-latest}
+    ports:
+      - "8300:8300"
+    env_file: .env
+    command: ["--voice", "${VOXIE_VOICE:-${VOXIE_VOICE_GENDER:-female}}", "--default-voice", "${VOXIE_ENGLISH_VOICE:-}"]
+    volumes:
+      # Kokoro's weights download on first start into this volume.
+      - ${VOXIE_HF_CACHE:-hf-cache}:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  quickstart:
+    image: node:22-alpine
+    network_mode: host
+    env_file: .env
+    working_dir: /app
+    volumes:
+      - ./examples/quickstart:/app:ro
+    command: ["node", "server.mjs"]
+    depends_on: [voxie]
+
+volumes:
+  hf-cache:
