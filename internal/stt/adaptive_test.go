@@ -526,10 +526,14 @@ func TestAdaptiveReplaysWhatTheCallerSaidDuringTheCheck(t *testing.T) {
 	}
 	waitFor(t, func() bool { return h.log.count() == 2 })
 	indian := h.log.last()
-	indian.mu.Lock()
-	replayed := indian.frames
-	indian.mu.Unlock()
-	if replayed < 30 {
+	// The new listener exists before the replay reaches it: wait for the
+	// frames rather than reading the count once (flaky under -race).
+	frames := func() int { indian.mu.Lock(); defer indian.mu.Unlock(); return indian.frames }
+	deadline := time.Now().Add(2 * time.Second)
+	for frames() < 30 && time.Now().Before(deadline) {
+		time.Sleep(5 * time.Millisecond)
+	}
+	if replayed := frames(); replayed < 30 {
 		t.Fatalf("new listener got %d frames; the 30 spoken during the check must be replayed", replayed)
 	}
 	h.nothing(100 * time.Millisecond) // the old listener's garbage is dropped
