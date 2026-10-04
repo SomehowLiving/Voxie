@@ -19,6 +19,15 @@ const (
 	// dangling word ("and", "my number is") or mid-dictation — the caller is
 	// clearly not finished.
 	turnMergeIncomplete = 900 * time.Millisecond
+	// checkInWait is the wait after a turn that is only a check-in ("hello?",
+	// "haan hello"). Callers repeat it: live, a second "hello" landed 1.7s
+	// after the first final and was answered as a turn of its own. If the
+	// caller has made sound since the last final, the wait extends until the
+	// repeat's final arrives -- live, ~450ms after the sound stopped -- or
+	// they've been quiet for checkInFinalLag, bounded by turnMergeMax.
+	checkInWait     = 1200 * time.Millisecond
+	checkInFinalLag = 1000 * time.Millisecond
+	checkInPoll     = 100 * time.Millisecond
 )
 
 // mergeWait returns how long to hold a pending turn before answering it.
@@ -37,6 +46,17 @@ func mergeWait(text string, base time.Duration) time.Duration {
 		return turnMergeIncomplete
 	}
 	return base
+}
+
+// callerSpokeSince reports whether the caller made sound after t, within
+// the last quiet: their next words are on their way through STT.
+func (p *Pipeline) callerSpokeSince(t time.Time, quiet time.Duration) bool {
+	n := p.lastCallerSoundAt.Load()
+	if n == 0 {
+		return false
+	}
+	sound := time.Unix(0, n)
+	return sound.After(t) && time.Since(sound) < quiet
 }
 
 // runTurnBuffer debounces final transcripts into whole turns. It waits a
@@ -60,6 +80,7 @@ func (p *Pipeline) runTurnBuffer() {
 		timer      *time.Timer
 		timerC     <-chan time.Time
 		turnBegan  time.Time
+		lastFinal  time.Time
 		prefetched bool
 	)
 	stop := func() {
@@ -100,6 +121,7 @@ func (p *Pipeline) runTurnBuffer() {
 			if text == "" {
 				continue
 			}
+			lastFinal = time.Now()
 			if pending == nil {
 				merged := ev
 				merged.Text = text
@@ -124,6 +146,9 @@ func (p *Pipeline) runTurnBuffer() {
 
 			// A caller still mid-thought gets a longer grace period.
 			wait := mergeWait(pending.Text, base)
+			if isCheckIn(pending.Text) {
+				wait = checkInWait
+			}
 			if elapsed := time.Since(turnBegan); elapsed+wait > turnMergeMax {
 				if remaining := turnMergeMax - elapsed; remaining > 0 {
 					wait = remaining
@@ -141,6 +166,12 @@ func (p *Pipeline) runTurnBuffer() {
 			arm(wait)
 
 		case <-timerC:
+			// A check-in the caller is repeating: wait for the repeat's final.
+			if pending != nil && isCheckIn(pending.Text) && time.Since(turnBegan)+checkInPoll < turnMergeMax &&
+				p.callerSpokeSince(lastFinal, checkInFinalLag) {
+				arm(checkInPoll)
+				continue
+			}
 			if pending != nil {
 				log.Printf("[turn-buffer] turn complete after %dms: %q",
 					time.Since(turnBegan).Milliseconds(), pending.Text)

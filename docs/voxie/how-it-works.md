@@ -47,7 +47,10 @@ sequenceDiagram
    (`greeting_delay_ms`). If the caller speaks, the agent answers them
    instead of talking over them.
 2. **Hear.** Finals within 350ms are merged into one turn, then Voxie waits
-   for 600ms of quiet before the agent replies.
+   for 600ms of quiet before the agent replies. A turn that is only a
+   check-in ("hello?", "haan hello", "are you there?") waits 1.2s, and
+   longer while the caller is saying it again (up to 2.5s), so a repeated
+   hello gets one answer. Live, "हाँ hello… hello" had been answered twice.
 3. **Barge-in.** When the caller talks over the agent, its volume dips at
    once.
    - A real interruption stops it, and the next request says what the

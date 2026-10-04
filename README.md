@@ -12,7 +12,7 @@ Built on [StreamCore](https://github.com/streamcoreai/streamcore-server)
 
 - **Listen first.** The agent waits for the caller to speak before
   greeting. If they say "Hello?", it answers them instead of talking over
-  them.
+  them, and a "hello… hello?" gets one answer, not two.
 - **Real barge-in.** Talk over the agent and it drops its volume at once,
   then stops if you really mean it. "Yeah, okay" doesn't stop it, in six
   languages.

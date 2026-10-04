@@ -134,9 +134,10 @@ type Pipeline struct {
 	closeCallerSpokeFirst sync.Once
 
 	// lastCallerSoundAt (unix nanos, 0 = never) is when runInbound's onset
-	// VAD last heard the caller, tracked only until greetingDecided. It lets
-	// a delayed greeting hold off while the caller's first words are still
-	// in flight through STT, instead of talking over them.
+	// VAD last heard the caller while the agent wasn't speaking. It lets a
+	// delayed greeting hold off while the caller's first words are still in
+	// flight through STT, and holds a check-in turn ("hello?") while the
+	// caller is saying it again.
 	lastCallerSoundAt atomic.Int64
 	greetingDecided   atomic.Bool
 

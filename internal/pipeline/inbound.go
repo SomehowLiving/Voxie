@@ -158,10 +158,12 @@ func (p *Pipeline) runInbound() {
 	// greeting has to look at raw speech onset instead, or it talks over a
 	// caller who picked up and said "hello?". Nothing else is speaking at
 	// this point in the call, so there's no agent echo to mistake for them.
-	var onsetVAD *vad.Detector
-	if p.cfg.Pipeline.GreetingDelayMs > 0 {
-		onsetVAD = vad.NewDefault()
-	}
+	//
+	// The turn buffer reads it all call long: a caller who says "hello?" and,
+	// a second later, "hello?" again is still speaking, and their check-in
+	// is held for the repeat (see checkInWait). Sound while the agent speaks
+	// is skipped, so its own voice leaking back never holds a turn.
+	onsetVAD := vad.NewDefault()
 
 	for {
 		select {
@@ -178,11 +180,9 @@ func (p *Pipeline) runInbound() {
 				return
 			}
 
-			if onsetVAD != nil && !p.greetingDecided.Load() {
-				onsetVAD.Process(frame.Samples)
-				if onsetVAD.IsSpeaking() {
-					p.lastCallerSoundAt.Store(time.Now().UnixNano())
-				}
+			onsetVAD.Process(frame.Samples)
+			if onsetVAD.IsSpeaking() && !p.speaking.Load() {
+				p.lastCallerSoundAt.Store(time.Now().UnixNano())
 			}
 
 			// Barge-in detection with backchannel suppression.
