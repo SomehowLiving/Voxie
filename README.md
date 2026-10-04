@@ -1,8 +1,8 @@
 # Voxie
 
 **Real-time voice agents that speak the caller's language.** Voxie runs the
-call: it listens first, handles interruptions, hears 24 languages, speaks
-21, and switches speech-to-text mid-call when the caller's language needs
+call: it listens first, handles interruptions, hears 32 languages, speaks
+29, and switches speech-to-text mid-call when the caller's language needs
 it. Your app only decides what to say.
 
 Built on [StreamCore](https://github.com/streamcoreai/streamcore-server)
@@ -25,8 +25,10 @@ Built on [StreamCore](https://github.com/streamcoreai/streamcore-server)
     isn't lost.
 - **A voice for every language it speaks.** Kokoro on your GPU for
   English, Spanish, French, Italian, Portuguese, Japanese and Chinese
-  (~130ms a sentence). Piper on the CPU for German, Dutch, Russian and
-  Polish (~0.1–0.35s a sentence). Sarvam for ten Indian languages.
+  (~130ms a sentence). Piper on the CPU for German, Dutch, Russian,
+  Polish, Ukrainian, Czech, Hungarian, Swedish, Romanian, Finnish, Danish
+  and Vietnamese (~0.1–0.6s a sentence; Ukrainian up to ~2s). Sarvam for
+  ten Indian languages.
 - **Failover at every layer.** Each listener is a failover chain. The
   voice has a breaker and a health endpoint. A failed language check
   keeps the turn as heard. A provider going down degrades the call; it

@@ -59,8 +59,13 @@ var (
 	// Regional Indian languages: the Indian listener.
 	indianRegional = setOf("bn", "ta", "te", "kn", "ml", "mr", "gu", "pa", "od")
 	// World languages Deepgram hears only with the language fixed (verified;
-	// Polish: multi returned nothing, nova-3 fixed to pl heard it at 0.996).
-	fixedWorldLanguages = setOf("zh", "ko", "ar", "tr", "pl")
+	// Polish: multi returned nothing, nova-3 fixed to pl heard it at 0.996;
+	// uk/cs/hu/sv/ro/fi/da/vi: multi 0.0-0.83, fixed 0.91-1.00).
+	fixedWorldLanguages = setOf("zh", "ko", "ar", "tr", "pl", "uk", "cs", "hu", "sv", "ro", "fi", "da", "vi")
+	// World languages Whisper has named for a short Indian turn (live: a
+	// Bengali turn as Vietnamese). On a call that looks Indian, Sarvam's
+	// answer is awaited before believing them.
+	whisperIndianSlips = setOf("vi")
 )
 
 func setOf(items ...string) map[string]bool {
@@ -624,6 +629,8 @@ func (a *adaptiveClient) identifyTurn(item adaptiveItem, thorough bool) (Identif
 				return *whisper, true
 			case lang == "hi" && unsureHindi && pending("sarvam"):
 				// wait
+			case whisperIndianSlips[lang] && looksIndian && pending("sarvam"):
+				// Whisper's name for a short Indian turn: Sarvam decides.
 			case !known && !item.spec.covers(lang) && pending("sarvam"):
 				// A language no listener hears may be a Whisper slip; Sarvam may know better.
 			default:

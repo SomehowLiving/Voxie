@@ -24,9 +24,21 @@ Changes made in Voxie (see the git history from commit dc3e568 on):
 Third-party components used at runtime, under their own licenses:
 - Kokoro-82M (Apache 2.0), https://huggingface.co/hexgrad/Kokoro-82M
 - piper-tts 1.2.0 and piper-phonemize 1.1.0 (MIT), https://github.com/rhasspy/piper
-- Piper voices (each trained on a CC0 dataset), https://huggingface.co/rhasspy/piper-voices:
-  de_DE-kerstin-low, de_DE-thorsten-high, nl_BE-nathalie-medium,
-  nl_BE-rdh-medium, ru_RU-dmitri-medium, pl_PL-gosia-medium,
-  pl_PL-darkman-medium
+- Piper voices, https://huggingface.co/rhasspy/piper-voices:
+  - Trained on CC0 datasets: de_DE-kerstin-low, de_DE-thorsten-high,
+    nl_BE-nathalie-medium, nl_BE-rdh-medium, ru_RU-dmitri-medium,
+    pl_PL-gosia-medium, pl_PL-darkman-medium, cs_CZ-jirka-medium,
+    hu_HU-berta-medium, hu_HU-imre-medium, sv_SE-nst-medium,
+    ro_RO-mihai-medium, fi_FI-harri-medium, da_DK-talesyntese-medium
+  - uk_UA-tetiana-high, uk_UA-mykyta-high (Apache 2.0), by Roman
+    Stasyshyn, on https://github.com/egorsmkv/ukrainian-tts-datasets
+  - cs_CZ-kasandra-medium (CC BY 4.0), voice and recordings by Ondřej
+    Šimek, https://huggingface.co/ondrazarici/Cassandra-Kasandra-piper-cz
+  - sv_SE-alma-medium (CC BY 4.0), https://huggingface.co/yeagersthlm/piper-voice-sv-alma,
+    trained on the NST Swedish TTS dataset (Språkbanken, National Library
+    of Norway)
+  - vi_VN-vais1000-medium (CC BY 4.0), trained on the VAIS-1000
+    Vietnamese speech synthesis corpus,
+    https://ieee-dataport.org/documents/vais-1000-vietnamese-speech-synthesis-corpus
 - StreamCore python-sdk (Apache 2.0), used by tools/callers/
 - Cloud APIs: Deepgram, Sarvam AI, AssemblyAI, Groq (their terms apply)

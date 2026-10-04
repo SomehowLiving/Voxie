@@ -17,10 +17,11 @@ that generates a sentence far faster than it takes to say it.
 Languages: StreamCore sends only text, with no language, and the agent may
 speak whatever language the caller is speaking. So each sentence's language is
 detected here: by script (kana = Japanese, Han = Chinese, Devanagari =
-Hindi, Cyrillic = Russian), otherwise with a detector limited to the
+Hindi, Cyrillic = Russian or Ukrainian), otherwise with a detector limited to the
 Latin-script languages spoken here (English, Spanish, French, Italian,
-Portuguese, German, Dutch, Polish). German, Dutch, Russian and Polish are
-spoken by Piper, on the CPU. A sentence too
+Portuguese, German, Dutch, Polish, Czech, Hungarian, Swedish, Romanian,
+Finnish, Danish, Vietnamese; Cyrillic is Ukrainian or Russian by its
+letters). Languages Kokoro doesn't speak are spoken by Piper, on the CPU. A sentence too
 short or unclear to tell ("Ok.") reuses the language spoken just before.
 Each language gets a matching Kokoro voice, male or female (--voice-gender).
 
@@ -130,10 +131,10 @@ def load_spoken_names(path: str | None) -> None:
 # without this an amount is said with no currency at all. ¥ is left alone:
 # it's yen in Japanese and yuan in Chinese.
 CURRENCY_WORDS = {
-    "₹": {"en": "rupees", "es": "rupias", "fr": "roupies", "it": "rupie", "pt": "rúpias", "ja": "ルピー", "zh": "卢比", "hi": "रुपये", "de": "Rupien", "nl": "roepies", "ru": "рупий", "pl": "rupii"},
-    "$": {"en": "dollars", "es": "dólares", "fr": "dollars", "it": "dollari", "pt": "dólares", "ja": "ドル", "zh": "美元", "hi": "डॉलर", "de": "Dollar", "nl": "dollar", "ru": "долларов", "pl": "dolarów"},
-    "€": {"en": "euros", "es": "euros", "fr": "euros", "it": "euro", "pt": "euros", "ja": "ユーロ", "zh": "欧元", "hi": "यूरो", "de": "Euro", "nl": "euro", "ru": "евро", "pl": "euro"},
-    "£": {"en": "pounds", "es": "libras", "fr": "livres", "it": "sterline", "pt": "libras", "ja": "ポンド", "zh": "英镑", "hi": "पाउंड", "de": "Pfund", "nl": "pond", "ru": "фунтов", "pl": "funtów"},
+    "₹": {"en": "rupees", "es": "rupias", "fr": "roupies", "it": "rupie", "pt": "rúpias", "ja": "ルピー", "zh": "卢比", "hi": "रुपये", "de": "Rupien", "nl": "roepies", "ru": "рупий", "pl": "rupii", "uk": "рупій", "cs": "rupií", "hu": "rúpia", "sv": "rupier", "ro": "rupii", "fi": "rupiaa", "da": "rupees", "vi": "rupee"},
+    "$": {"en": "dollars", "es": "dólares", "fr": "dollars", "it": "dollari", "pt": "dólares", "ja": "ドル", "zh": "美元", "hi": "डॉलर", "de": "Dollar", "nl": "dollar", "ru": "долларов", "pl": "dolarów", "uk": "доларів", "cs": "dolarů", "hu": "dollár", "sv": "dollar", "ro": "dolari", "fi": "dollaria", "da": "dollars", "vi": "đô la"},
+    "€": {"en": "euros", "es": "euros", "fr": "euros", "it": "euro", "pt": "euros", "ja": "ユーロ", "zh": "欧元", "hi": "यूरो", "de": "Euro", "nl": "euro", "ru": "евро", "pl": "euro", "uk": "євро", "cs": "eur", "hu": "euró", "sv": "euro", "ro": "euro", "fi": "euroa", "da": "euro", "vi": "euro"},
+    "£": {"en": "pounds", "es": "libras", "fr": "livres", "it": "sterline", "pt": "libras", "ja": "ポンド", "zh": "英镑", "hi": "पाउंड", "de": "Pfund", "nl": "pond", "ru": "фунтов", "pl": "funtów", "uk": "фунтів", "cs": "liber", "hu": "font", "sv": "pund", "ro": "lire", "fi": "puntaa", "da": "pund", "vi": "bảng Anh"},
 }
 
 _detector = None
@@ -149,13 +150,15 @@ def _latin_detector():
 
         _detector = LanguageDetectorBuilder.from_languages(
             Language.ENGLISH, Language.SPANISH, Language.FRENCH, Language.ITALIAN, Language.PORTUGUESE,
-            Language.GERMAN, Language.DUTCH, Language.POLISH,
+            Language.GERMAN, Language.DUTCH, Language.POLISH, Language.CZECH, Language.HUNGARIAN,
+            Language.SWEDISH, Language.ROMANIAN, Language.FINNISH, Language.DANISH, Language.VIETNAMESE,
         ).build()
     return _detector
 
 
 _LINGUA_CODES = {"ENGLISH": "en", "SPANISH": "es", "FRENCH": "fr", "ITALIAN": "it", "PORTUGUESE": "pt",
-                 "GERMAN": "de", "DUTCH": "nl", "POLISH": "pl"}
+                 "GERMAN": "de", "DUTCH": "nl", "POLISH": "pl", "CZECH": "cs", "HUNGARIAN": "hu",
+                 "SWEDISH": "sv", "ROMANIAN": "ro", "FINNISH": "fi", "DANISH": "da", "VIETNAMESE": "vi"}
 
 
 # Unicode blocks of the Indic scripts Sarvam speaks (Devanagari is handled
@@ -221,7 +224,8 @@ def detect_language(text: str) -> str:
     elif re.search(r"[\u4e00-\u9fff]", text):
         found = "zh"
     elif re.search(r"[\u0400-\u04ff]", text):
-        found = "ru"  # Cyrillic: the only Cyrillic language spoken here
+        # Cyrillic: Ukrainian if it has a letter Russian doesn't (і ї є ґ).
+        found = "uk" if re.search(r"[іїєґІЇЄҐ]", text) else "ru"
     elif (indic := _indic_script(text)) is not None:
         found = indic
     # Devanagari letters -- not the danda "।" (U+0964/5), which lives in the
@@ -229,7 +233,7 @@ def detect_language(text: str) -> str:
     elif re.search(r"[\u0900-\u0963\u0966-\u097f]", text):
         found = "hi"  # Hindi unless a [lang:mr] tag says Marathi
     else:
-        letters = re.sub(r"[^A-Za-zÀ-ž]", "", text)
+        letters = re.sub(r"[^A-Za-zÀ-ɏḀ-ỿ]", "", text)
         found = None
         if len(letters) >= 12:
             ranked = _latin_detector().compute_language_confidence_values(text)
@@ -286,10 +290,12 @@ def english_voice(persona: dict) -> str:
 # ---------------------------------------------------------------------------
 # Piper: local voices for languages Kokoro doesn't speak. CPU, ~real time x10.
 # piper-tts 1.2.0 is MIT (later releases are GPL). Every voice here is
-# trained on a CC0 dataset; checked per voice's MODEL_CARD. Turkish, Korean
-# and Arabic have Piper voices, but only on non-commercial or unlicensed
-# data, so they stay unspoken. Transcribed back with Whisper large-v3, a
-# payment line with an amount: 0.94-1.00 (Polish gosia 1.00).
+# trained on CC0, CC BY 4.0 or Apache 2.0 data, checked per voice's
+# MODEL_CARD and credited in NOTICE. Turkish, Korean and Arabic have Piper
+# voices, but only on non-commercial or unlicensed data, so they stay
+# unspoken. Transcribed back with Whisper large-v3, a payment line with an
+# amount: 0.92-1.00. Greek is left out: its one licensed voice read back at
+# 0.82.
 PIPER_REPO = "rhasspy/piper-voices"
 PIPER_REVISION = "c10ece1aade47bb51c153c893d14e5bf8e5b7117"
 PIPER_VOICES = {
@@ -298,6 +304,15 @@ PIPER_VOICES = {
     # No CC0 female Russian voice: dmitri for both.
     "ru": {"female": "ru_RU-dmitri-medium", "male": "ru_RU-dmitri-medium"},
     "pl": {"female": "pl_PL-gosia-medium", "male": "pl_PL-darkman-medium"},
+    "uk": {"female": "uk_UA-tetiana-high", "male": "uk_UA-mykyta-high"},
+    "cs": {"female": "cs_CZ-kasandra-medium", "male": "cs_CZ-jirka-medium"},
+    "hu": {"female": "hu_HU-berta-medium", "male": "hu_HU-imre-medium"},
+    "sv": {"female": "sv_SE-alma-medium", "male": "sv_SE-nst-medium"},
+    # One licensed voice: it speaks for both genders.
+    "ro": {"female": "ro_RO-mihai-medium", "male": "ro_RO-mihai-medium"},
+    "fi": {"female": "fi_FI-harri-medium", "male": "fi_FI-harri-medium"},
+    "da": {"female": "da_DK-talesyntese-medium", "male": "da_DK-talesyntese-medium"},
+    "vi": {"female": "vi_VN-vais1000-medium", "male": "vi_VN-vais1000-medium"},
 }
 _piper: dict = {}  # voice key -> PiperVoice, once loaded
 _piper_lock = threading.Lock()  # its own: a Piper line never waits on Kokoro
@@ -644,7 +659,10 @@ def main():
                    "Olá, isto é um teste.", "こんにちは、テストです。", "你好，这是测试。", "नमस्ते, यह एक परीक्षण है।"):
         synthesize(sample)
     for language, sample in (("de", "Hallo, das ist ein Test."), ("nl", "Hallo, dit is een test."),
-                             ("ru", "Привет, это тест."), ("pl", "Cześć, to jest test.")):
+                             ("ru", "Привет, это тест."), ("pl", "Cześć, to jest test."),
+                             ("uk", "Привіт, це тест."), ("cs", "Ahoj, tohle je test."), ("hu", "Szia, ez egy teszt."),
+                             ("sv", "Hej, det här är ett test."), ("ro", "Salut, acesta este un test."),
+                             ("fi", "Hei, tämä on testi."), ("da", "Hej, det er en test."), ("vi", "Xin chào, đây là một bài kiểm tra.")):
         for key in set(PIPER_VOICES[language].values()):
             if key in _piper:
                 synthesize_piper(sample, key)

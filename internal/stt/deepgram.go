@@ -260,10 +260,11 @@ func nova3Language(locale string) string {
 		return base
 	// Checked against real audio (clean and phone-quality) with the language
 	// fixed: 0.97-1.00 confidence, word-accurate. Multi mode hears none of
-	// the Indian ones or ko/ar/tr/pl -- it returns Hindi-looking text or soup.
+	// the Indian ones or ko/ar/tr/pl, and is unsure of uk/cs/hu/sv/ro/fi/da/vi (0.0-0.83) -- it returns Hindi-looking text or soup.
 	// Malayalam is not offered by Nova-3.
 	case "hi", "ta", "te", "kn", "bn", "gu", "pa", "mr",
-		"fr", "de", "it", "pt", "nl", "ru", "ja", "ko", "ar", "tr", "pl":
+		"fr", "de", "it", "pt", "nl", "ru", "ja", "ko", "ar", "tr", "pl",
+		"uk", "cs", "hu", "sv", "ro", "fi", "da", "vi":
 		return base
 	default:
 		return "multi"

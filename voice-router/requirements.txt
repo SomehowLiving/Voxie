@@ -1,7 +1,7 @@
 # torch is installed separately, for your CUDA version (see Dockerfile / README):
 #   pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cu128
 kokoro==0.9.4
-# MIT up to 1.2.0 (later releases are GPL-3.0); voices for de, nl, ru, pl
+# MIT up to 1.2.0 (later releases are GPL-3.0): the voices Kokoro lacks
 piper-tts==1.2.0
 piper-phonemize==1.1.0
 misaki[ja,zh]==0.9.4

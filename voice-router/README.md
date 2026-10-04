@@ -68,14 +68,21 @@ the server's persona. `/health` reports `"voice_tags": true`.
 | Dutch (Piper) | `nl_BE-nathalie-medium` | `nl_BE-rdh-medium` | `nl_BE-nathalie-medium` | `nl_BE-rdh-medium` |
 | Russian (Piper) | `ru_RU-dmitri-medium` | `ru_RU-dmitri-medium` | `ru_RU-dmitri-medium` | `ru_RU-dmitri-medium` |
 | Polish (Piper) | `pl_PL-gosia-medium` | `pl_PL-darkman-medium` | `pl_PL-gosia-medium` | `pl_PL-darkman-medium` |
+| Ukrainian (Piper) | `uk_UA-tetiana-high` | `uk_UA-mykyta-high` | `uk_UA-tetiana-high` | `uk_UA-mykyta-high` |
+| Czech (Piper) | `cs_CZ-kasandra-medium` | `cs_CZ-jirka-medium` | `cs_CZ-kasandra-medium` | `cs_CZ-jirka-medium` |
+| Hungarian (Piper) | `hu_HU-berta-medium` | `hu_HU-imre-medium` | `hu_HU-berta-medium` | `hu_HU-imre-medium` |
+| Swedish (Piper) | `sv_SE-alma-medium` | `sv_SE-nst-medium` | `sv_SE-alma-medium` | `sv_SE-nst-medium` |
+| Romanian, Finnish, Danish (Piper, male) | `ro_RO-mihai-medium`, `fi_FI-harri-medium`, `da_DK-talesyntese-medium` for every persona | | | |
+| Vietnamese (Piper, female) | `vi_VN-vais1000-medium` for every persona | | | |
 | Hindi (Kokoro fallback) | `hf_alpha` | `hm_omega` | `hf_beta` | `hm_psi` |
 | Hindi, Bengali, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Punjabi, Odia | Sarvam `bulbul:v3` `priya` | Sarvam `rahul` | Sarvam `neha` | Sarvam `aditya` |
 
 Kokoro has one voice per gender for Spanish, Italian and Portuguese, and
 no male French voice, so those are shared. (Its "Santa" voices are a jolly
 character, not a second voice.) Piper has one licensed voice per gender
-for German, Dutch and Polish, and no CC0 female Russian voice, so Russian
-uses `dmitri` for every persona. Sarvam has 37 speakers; to use others, edit
+for most of its languages, and only one voice at all for Russian,
+Romanian, Finnish, Danish (male) and Vietnamese (female), which then
+speaks for every persona. Sarvam has 37 speakers; to use others, edit
 `PERSONAS` in `server.py`.
 
 Every language is warmed up at startup, and every persona's voices preloaded: each would otherwise take ~3s to
@@ -86,10 +93,13 @@ load on its first sentence, which a caller would hear as a pause.
   server strips these tags from transcripts too. Agents should send tags:
   Hindi and Marathi share a script, so the text alone can't tell them apart.
 - **Untagged text is detected:**
-  - By script: kana → Japanese, Han → Chinese, Cyrillic → Russian, and
-    each Indic script by its Unicode block. Devanagari → Hindi.
-  - Otherwise by `lingua`, limited to English, Spanish, French, Italian,
-    Portuguese, German, Dutch and Polish.
+  - By script: kana → Japanese, Han → Chinese, Cyrillic → Ukrainian if
+    it has і ї є ґ, else Russian, and each Indic script by its Unicode
+    block. Devanagari → Hindi.
+  - Otherwise by `lingua`, limited to the Latin-script languages spoken
+    here (English, Spanish, French, Italian, Portuguese, German, Dutch,
+    Polish, Czech, Hungarian, Swedish, Romanian, Finnish, Danish,
+    Vietnamese).
 - A sentence too short to tell ("Ok.") reuses the language of the last 30s.
 
 **Spoken forms:**
@@ -102,19 +112,22 @@ load on its first sentence, which a caller would hear as a pause.
   letter, and Japanese and Chinese drop or garble Latin-script words.
   `spoken_names.example.json` shows the format.
 
-## Piper: German, Dutch, Russian and Polish
+## Piper: European languages and Vietnamese
 
 Languages Kokoro doesn't speak use [Piper](https://github.com/rhasspy/piper)
-on the CPU, 0.1–0.35s a sentence (~13× real time). Its voices download
+on the CPU: German, Dutch, Russian, Polish, Ukrainian, Czech, Hungarian,
+Swedish, Romanian, Finnish, Danish and Vietnamese. 0.1–0.6s a sentence;
+the "high" voices (Ukrainian, German male) are slower, up to ~2s. Its voices download
 once at startup into the Hugging Face cache, from a pinned revision of
-`rhasspy/piper-voices` (60–110 MB each, ~500 MB in all). A voice that can't load leaves its
+`rhasspy/piper-voices` (60–110 MB each, ~1.4 GB for all 19). A voice that can't load leaves its
 language out of `/health`'s `languages`.
 
 - **Licenses:** `piper-tts` is pinned to 1.2.0, the last MIT release (later
-  ones are GPL-3.0). Each voice is trained on a CC0 dataset, checked in its
-  model card. Piper's Turkish and Korean voices are non-commercial (CC
+  ones are GPL-3.0). Each voice is trained on CC0, CC BY 4.0 or Apache 2.0
+  data, checked in its model card and credited in `NOTICE`. Piper's Turkish and Korean voices are non-commercial (CC
   BY-NC-SA) and its Arabic voice's data has no license, so those
-  languages have no voice here.
+  languages have no voice here. Greek's one licensed voice read back at
+  0.82, too unclear to use.
 - **Checked** by transcribing back with Whisper large-v3: a payment line
   matched at 0.94–1.00, and "€1.249,50" was read right in all four
   languages for both genders.

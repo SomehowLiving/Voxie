@@ -176,6 +176,8 @@ func TestAdaptiveStartsFromTheCallersHint(t *testing.T) {
 		"ml-IN": {indian: true, language: "ml"},
 		"zh":    {language: "zh"},
 		"pl":    {language: "pl"},
+		"uk-UA": {language: "uk"},
+		"vi":    {language: "vi"},
 		"od":    {indian: true, language: "od"},
 		"or":    {indian: true, language: "od"}, // ISO 639-1 Odia
 		"or-IN": {indian: true, language: "od"},
@@ -566,5 +568,28 @@ func TestAdaptiveDoesNotCheckSpeechTheListenerIsHearing(t *testing.T) {
 	h.nothing(100 * time.Millisecond)
 	if groq.callCount() != 0 {
 		t.Fatal("no-transcript check fired although the listener was sending words")
+	}
+}
+
+// Whisper's "vi" moves a Vietnamese caller to Deepgram fixed vi. On a call
+// that looks Indian it waits for Sarvam (Whisper has called Bengali "vi"),
+// and stands when Sarvam names no Indian language.
+func TestAdaptiveVietnameseCaller(t *testing.T) {
+	for _, indian := range []bool{false, true} {
+		groq := &fakeIdentifier{id: Identification{Language: "vi", Text: "Xin chào"}}
+		sarvam := &fakeIdentifier{id: Identification{Language: "en", Text: "sin chow"}, delay: 80 * time.Millisecond}
+		h := newHarness(t, listenerSpec{}, indian, namedIdentifier{"groq", groq.fn()}, namedIdentifier{"sarvam", sarvam.fn()})
+		h.speak(60)
+		h.log.last().emit(deepgramFinal("Sin chow", "en", 0.5))
+		if got := h.next(); got.Language != "vi" {
+			t.Fatalf("indian=%v: got %+v", indian, got)
+		}
+		waitFor(t, func() bool { return h.log.count() == 2 })
+		if spec := h.log.last().spec; spec != (listenerSpec{language: "vi"}) {
+			t.Fatalf("indian=%v: switched to %s", indian, spec)
+		}
+		if indian && sarvam.callCount() == 0 {
+			t.Error("an Indian call should hear Sarvam out before believing Whisper's vi")
+		}
 	}
 }

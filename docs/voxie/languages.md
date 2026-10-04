@@ -11,7 +11,7 @@ noise). Real human callers will score lower; nobody has measured that yet.
 | English, Spanish, French, Italian, Portuguese, Japanese | Deepgram multi | Kokoro |
 | German, Dutch, Russian | Deepgram multi | Piper (CPU) |
 | Chinese | Deepgram fixed `zh` (after identification) | Kokoro |
-| Polish | Deepgram fixed `pl` (after identification) | Piper (CPU) |
+| Polish, Ukrainian, Czech, Hungarian, Swedish, Romanian, Finnish, Danish, Vietnamese | Deepgram fixed (after identification) | Piper (CPU) |
 | Korean, Arabic, Turkish | Deepgram fixed (after identification) | – (no voice; answer in English) |
 | Hindi, Hinglish, Indian English | Deepgram multi | Sarvam (Kokoro fallback) |
 | Tamil, Telugu, Bengali, Gujarati, Punjabi, Kannada, Marathi, Malayalam | Sarvam (after identification) | Sarvam (Marathi: Kokoro fallback) |
@@ -44,6 +44,9 @@ voice (`bulbul:v3`, clean audio), since Google TTS has no Odia:
 | de, nl, ru | Stayed on Deepgram multi; answered by Piper in the caller's language | – |
 | pl, nothing on record | Multi heard "Hello, Ktomovie?"; Groq identified Polish, switched to Deepgram fixed `pl` on the first turn | 0.51s |
 | pl on record | Started on Deepgram fixed `pl`, every turn heard in Polish | – |
+| cs, hu, sv, ro, fi, da, vi | Identified on the first turn → Deepgram fixed, answered by Piper | 0.37–0.71s |
+| uk | Short "Алло, хто це?" identified as Czech; the next turn as Ukrainian → Deepgram fixed `uk` | 0.53s, 0.54s |
+| ta on an Indian number (after adding vi) | Sarvam identified Tamil, switched on the first turn | 0.54s |
 | Groq key rejected | Sarvam identified Telugu, and the call switched | 0.58s |
 | Groq and Sarvam both failing | Turns kept as heard; the call completed | – |
 
@@ -61,13 +64,24 @@ languages, for both genders ("€1.249,50" → "1.249,50 Euro"). Deepgram
 multi returns nothing for Polish; fixed to `pl` it heard Piper's Polish at
 0.996.
 
+The second Piper batch (Ukrainian, Czech, Hungarian, Swedish, Romanian,
+Finnish, Danish, Vietnamese) read the same line back at 0.92–1.00; Deepgram
+fixed to each heard it at 0.91–1.00, multi at 0.0–0.83. Piper's "high"
+voices are slower: Ukrainian took 0.9–2.2s a sentence, the others 0.1–0.6s.
+Greek was left out: its one licensed voice read back at 0.82.
+
 ## Known gaps
 
 - **Only synthetic voices tested.** The next step is a pilot with real
   people on real phone lines.
 - **No voice** for Korean, Arabic or Turkish. Piper has voices for them,
   but trained on non-commercial or unlicensed data.
-- **No female Russian voice:** both genders use Piper's `dmitri`.
+- **One voice gender** for Russian, Romanian, Finnish and Danish (male)
+  and Vietnamese (female): Piper has no other licensed voice.
+- **Short Slavic greetings can be misidentified:** a Ukrainian "Алло, хто
+  це?" was called Czech, and corrected on the next turn. Whisper names
+  Bengali "vi" too, so on Indian calls a "vi" waits for Sarvam.
+- **No Greek voice:** Piper's licensed one was too unclear (0.82).
 - **A call that starts on Sarvam** (a regional Indian language on record)
   can't notice a caller who speaks a world language: Sarvam turns their
   words into English.

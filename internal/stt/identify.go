@@ -139,6 +139,7 @@ var whisperLanguages = map[string]string{
 	"hindi": "hi", "tamil": "ta", "telugu": "te", "kannada": "kn", "malayalam": "ml",
 	"bengali": "bn", "gujarati": "gu", "panjabi": "pa", "punjabi": "pa", "marathi": "mr",
 	"odia": "od", "oriya": "od",
+	"czech": "cs", "hungarian": "hu", "romanian": "ro", "finnish": "fi", "danish": "da",
 }
 
 // whisperLanguage accepts a name ("Tamil") or a code ("ta").
