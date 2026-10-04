@@ -27,7 +27,8 @@ noise). Real human callers will score lower; nobody has measured that yet.
 
 ## Live calls with the adaptive listener
 
-One config, scripted callers over WebRTC:
+One config, scripted callers over WebRTC. The Odia caller is Sarvam's own
+voice (`bulbul:v3`, clean audio), since Google TTS has no Odia:
 
 | Caller | What happened | Check time |
 |---|---|---|
@@ -37,6 +38,8 @@ One config, scripted callers over WebRTC:
 | zh (clean and phone) | Identified on the first turn → Deepgram fixed zh | 0.48–0.55s |
 | ko, ar, tr | Identified on the first turn → Deepgram fixed | 0.40–0.42s |
 | Wrong language on record (fr, Tamil caller) | Corrected on the first turn | 0.58s |
+| od on record (as `od` or ISO `or`) | Started on Sarvam, every turn heard in Odia | – |
+| od, nothing on record | Heard as Hindi by multi; Sarvam identified Odia, switched on the first turn | 0.65s |
 | Groq key rejected | Sarvam identified Telugu, and the call switched | 0.58s |
 | Groq and Sarvam both failing | Turns kept as heard; the call completed | – |
 
