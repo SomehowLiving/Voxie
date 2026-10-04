@@ -215,13 +215,13 @@ createServer(<span class="k">async</span> (req, res) =&gt; {
             <p>Both halves of Voxie are on GitHub's container registry, built for linux/amd64 with the Apache&nbsp;2.0 licence and StreamCore's notice inside. Pin a version in production.</p>
           </div>
           <ul class="image-list">
-            <li><div><b>voxie</b><span>The server: hearing, turn-taking, barge-in · about 740 MB</span></div><code>ghcr.io/somehowliving/voxie:023435f</code></li>
-            <li><div><b>voxie-voice-router</b><span>The voice: Kokoro, Piper and Sarvam, needs an NVIDIA GPU · about 4.8 GB</span></div><code>ghcr.io/somehowliving/voxie-voice-router:023435f</code></li>
+            <li><div><b>voxie</b><span>The server: hearing, turn-taking, barge-in · about 740 MB</span></div><code>ghcr.io/somehowliving/voxie:56d3a3b</code></li>
+            <li><div><b>voxie-voice-router</b><span>The voice: Kokoro, Piper and Sarvam, needs an NVIDIA GPU · about 4.8 GB</span></div><code>ghcr.io/somehowliving/voxie-voice-router:56d3a3b</code></li>
           </ul>
           <div class="code" data-lang="bash"><button class="copy" type="button">Copy</button>
-<pre><code>docker pull ghcr.io/somehowliving/voxie:023435f
-docker pull ghcr.io/somehowliving/voxie-voice-router:023435f
-VOXIE_TAG=023435f docker compose -f compose.release.yaml up</code></pre></div>
+<pre><code>docker pull ghcr.io/somehowliving/voxie:56d3a3b
+docker pull ghcr.io/somehowliving/voxie-voice-router:56d3a3b
+VOXIE_TAG=56d3a3b docker compose -f compose.release.yaml up</code></pre></div>
         </div>
         <div class="tips">
           <article class="glass"><h3>Reply in the caller's language</h3><p>Start each sentence with <code>[lang:xx]</code>, for example <code>[lang:ta]</code>. Hindi and Marathi share a script, so text alone can't tell them apart. Answer only in languages the router's <code>GET /health</code> lists right now.</p></article>
