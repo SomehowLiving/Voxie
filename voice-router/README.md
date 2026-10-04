@@ -1,4 +1,4 @@
-# Voice router: Kokoro (local GPU) + Sarvam (Indian languages)
+# Voice router: Kokoro (local GPU), Piper (local CPU) + Sarvam (Indian languages)
 
 A text-to-speech server for Voxie. It speaks the same HTTP contract as the
 bundled VibeVoice sidecar, so the server uses it through its existing
@@ -64,12 +64,18 @@ the server's persona. `/health` reports `"voice_tags": true`.
 | Portuguese | `pf_dora` | `pm_alex` | `pf_dora` | `pm_alex` |
 | Japanese | `jf_alpha` | `jm_kumo` | `jf_nezumi` | `jm_kumo` |
 | Chinese | `zf_xiaobei` | `zm_yunxi` | `zf_xiaoni` | `zm_yunjian` |
+| German (Piper) | `de_DE-kerstin-low` | `de_DE-thorsten-high` | `de_DE-kerstin-low` | `de_DE-thorsten-high` |
+| Dutch (Piper) | `nl_BE-nathalie-medium` | `nl_BE-rdh-medium` | `nl_BE-nathalie-medium` | `nl_BE-rdh-medium` |
+| Russian (Piper) | `ru_RU-dmitri-medium` | `ru_RU-dmitri-medium` | `ru_RU-dmitri-medium` | `ru_RU-dmitri-medium` |
+| Polish (Piper) | `pl_PL-gosia-medium` | `pl_PL-darkman-medium` | `pl_PL-gosia-medium` | `pl_PL-darkman-medium` |
 | Hindi (Kokoro fallback) | `hf_alpha` | `hm_omega` | `hf_beta` | `hm_psi` |
 | Hindi, Bengali, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Punjabi, Odia | Sarvam `bulbul:v3` `priya` | Sarvam `rahul` | Sarvam `neha` | Sarvam `aditya` |
 
 Kokoro has one voice per gender for Spanish, Italian and Portuguese, and
 no male French voice, so those are shared. (Its "Santa" voices are a jolly
-character, not a second voice.) Sarvam has 37 speakers; to use others, edit
+character, not a second voice.) Piper has one licensed voice per gender
+for German, Dutch and Polish, and no CC0 female Russian voice, so Russian
+uses `dmitri` for every persona. Sarvam has 37 speakers; to use others, edit
 `PERSONAS` in `server.py`.
 
 Every language is warmed up at startup, and every persona's voices preloaded: each would otherwise take ~3s to
@@ -80,10 +86,10 @@ load on its first sentence, which a caller would hear as a pause.
   server strips these tags from transcripts too. Agents should send tags:
   Hindi and Marathi share a script, so the text alone can't tell them apart.
 - **Untagged text is detected:**
-  - By script: kana → Japanese, Han → Chinese, and each Indic script by
-    its Unicode block. Devanagari → Hindi.
-  - Otherwise by `lingua`, limited to English, Spanish, French, Italian
-    and Portuguese.
+  - By script: kana → Japanese, Han → Chinese, Cyrillic → Russian, and
+    each Indic script by its Unicode block. Devanagari → Hindi.
+  - Otherwise by `lingua`, limited to English, Spanish, French, Italian,
+    Portuguese, German, Dutch and Polish.
 - A sentence too short to tell ("Ok.") reuses the language of the last 30s.
 
 **Spoken forms:**
@@ -95,6 +101,23 @@ load on its first sentence, which a caller would hear as a pause.
   Spanish, Italian and Portuguese spell an all-caps name out letter by
   letter, and Japanese and Chinese drop or garble Latin-script words.
   `spoken_names.example.json` shows the format.
+
+## Piper: German, Dutch, Russian and Polish
+
+Languages Kokoro doesn't speak use [Piper](https://github.com/rhasspy/piper)
+on the CPU, 0.1–0.35s a sentence (~13× real time). Its voices download
+once at startup into the Hugging Face cache, from a pinned revision of
+`rhasspy/piper-voices` (60–110 MB each, ~500 MB in all). A voice that can't load leaves its
+language out of `/health`'s `languages`.
+
+- **Licenses:** `piper-tts` is pinned to 1.2.0, the last MIT release (later
+  ones are GPL-3.0). Each voice is trained on a CC0 dataset, checked in its
+  model card. Piper's Turkish and Korean voices are non-commercial (CC
+  BY-NC-SA) and its Arabic voice's data has no license, so those
+  languages have no voice here.
+- **Checked** by transcribing back with Whisper large-v3: a payment line
+  matched at 0.94–1.00, and "€1.249,50" was read right in all four
+  languages for both genders.
 
 ## Sarvam, and what happens when it fails
 

@@ -9,9 +9,10 @@ noise). Real human callers will score lower; nobody has measured that yet.
 | Language | Heard by | Spoken by |
 |---|---|---|
 | English, Spanish, French, Italian, Portuguese, Japanese | Deepgram multi | Kokoro |
-| German, Dutch, Russian | Deepgram multi | – (no voice; answer in English) |
+| German, Dutch, Russian | Deepgram multi | Piper (CPU) |
 | Chinese | Deepgram fixed `zh` (after identification) | Kokoro |
-| Korean, Arabic, Turkish | Deepgram fixed (after identification) | – |
+| Polish | Deepgram fixed `pl` (after identification) | Piper (CPU) |
+| Korean, Arabic, Turkish | Deepgram fixed (after identification) | – (no voice; answer in English) |
 | Hindi, Hinglish, Indian English | Deepgram multi | Sarvam (Kokoro fallback) |
 | Tamil, Telugu, Bengali, Gujarati, Punjabi, Kannada, Marathi, Malayalam | Sarvam (after identification) | Sarvam (Marathi: Kokoro fallback) |
 | Odia | Sarvam | Sarvam |
@@ -40,6 +41,9 @@ voice (`bulbul:v3`, clean audio), since Google TTS has no Odia:
 | Wrong language on record (fr, Tamil caller) | Corrected on the first turn | 0.58s |
 | od on record (as `od` or ISO `or`) | Started on Sarvam, every turn heard in Odia | – |
 | od, nothing on record | Heard as Hindi by multi; Sarvam identified Odia, switched on the first turn | 0.65s |
+| de, nl, ru | Stayed on Deepgram multi; answered by Piper in the caller's language | – |
+| pl, nothing on record | Multi heard "Hello, Ktomovie?"; Groq identified Polish, switched to Deepgram fixed `pl` on the first turn | 0.51s |
+| pl on record | Started on Deepgram fixed `pl`, every turn heard in Polish | – |
 | Groq key rejected | Sarvam identified Telugu, and the call switched | 0.58s |
 | Groq and Sarvam both failing | Turns kept as heard; the call completed | – |
 
@@ -50,11 +54,20 @@ were detected correctly at 0.95–0.99, amounts included. So was every
 Sarvam `bulbul:v3` language. Sarvam takes 1.3–2s per sentence and Kokoro
 ~130ms, so Indian-language replies start later.
 
+Piper (German, Dutch, Russian, Polish; CPU, 0.1–0.35s a sentence) was
+checked the same way with Whisper large-v3: a payment line in each language
+matched the text at 0.94–1.00, and amounts in € were read right in all four
+languages, for both genders ("€1.249,50" → "1.249,50 Euro"). Deepgram
+multi returns nothing for Polish; fixed to `pl` it heard Piper's Polish at
+0.996.
+
 ## Known gaps
 
 - **Only synthetic voices tested.** The next step is a pilot with real
   people on real phone lines.
-- **No voice** for German, Dutch, Russian, Korean, Arabic or Turkish.
+- **No voice** for Korean, Arabic or Turkish. Piper has voices for them,
+  but trained on non-commercial or unlicensed data.
+- **No female Russian voice:** both genders use Piper's `dmitri`.
 - **A call that starts on Sarvam** (a regional Indian language on record)
   can't notice a caller who speaks a world language: Sarvam turns their
   words into English.

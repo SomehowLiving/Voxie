@@ -17,8 +17,10 @@ that generates a sentence far faster than it takes to say it.
 Languages: StreamCore sends only text, with no language, and the agent may
 speak whatever language the caller is speaking. So each sentence's language is
 detected here: by script (kana = Japanese, Han = Chinese, Devanagari =
-Hindi), otherwise with a detector limited to the Latin-script languages
-Kokoro speaks (English, Spanish, French, Italian, Portuguese). A sentence too
+Hindi, Cyrillic = Russian), otherwise with a detector limited to the
+Latin-script languages spoken here (English, Spanish, French, Italian,
+Portuguese, German, Dutch, Polish). German, Dutch, Russian and Polish are
+spoken by Piper, on the CPU. A sentence too
 short or unclear to tell ("Ok.") reuses the language spoken just before.
 Each language gets a matching Kokoro voice, male or female (--voice-gender).
 
@@ -128,10 +130,10 @@ def load_spoken_names(path: str | None) -> None:
 # without this an amount is said with no currency at all. ¥ is left alone:
 # it's yen in Japanese and yuan in Chinese.
 CURRENCY_WORDS = {
-    "₹": {"en": "rupees", "es": "rupias", "fr": "roupies", "it": "rupie", "pt": "rúpias", "ja": "ルピー", "zh": "卢比", "hi": "रुपये"},
-    "$": {"en": "dollars", "es": "dólares", "fr": "dollars", "it": "dollari", "pt": "dólares", "ja": "ドル", "zh": "美元", "hi": "डॉलर"},
-    "€": {"en": "euros", "es": "euros", "fr": "euros", "it": "euro", "pt": "euros", "ja": "ユーロ", "zh": "欧元", "hi": "यूरो"},
-    "£": {"en": "pounds", "es": "libras", "fr": "livres", "it": "sterline", "pt": "libras", "ja": "ポンド", "zh": "英镑", "hi": "पाउंड"},
+    "₹": {"en": "rupees", "es": "rupias", "fr": "roupies", "it": "rupie", "pt": "rúpias", "ja": "ルピー", "zh": "卢比", "hi": "रुपये", "de": "Rupien", "nl": "roepies", "ru": "рупий", "pl": "rupii"},
+    "$": {"en": "dollars", "es": "dólares", "fr": "dollars", "it": "dollari", "pt": "dólares", "ja": "ドル", "zh": "美元", "hi": "डॉलर", "de": "Dollar", "nl": "dollar", "ru": "долларов", "pl": "dolarów"},
+    "€": {"en": "euros", "es": "euros", "fr": "euros", "it": "euro", "pt": "euros", "ja": "ユーロ", "zh": "欧元", "hi": "यूरो", "de": "Euro", "nl": "euro", "ru": "евро", "pl": "euro"},
+    "£": {"en": "pounds", "es": "libras", "fr": "livres", "it": "sterline", "pt": "libras", "ja": "ポンド", "zh": "英镑", "hi": "पाउंड", "de": "Pfund", "nl": "pond", "ru": "фунтов", "pl": "funtów"},
 }
 
 _detector = None
@@ -146,12 +148,14 @@ def _latin_detector():
         from lingua import Language, LanguageDetectorBuilder
 
         _detector = LanguageDetectorBuilder.from_languages(
-            Language.ENGLISH, Language.SPANISH, Language.FRENCH, Language.ITALIAN, Language.PORTUGUESE
+            Language.ENGLISH, Language.SPANISH, Language.FRENCH, Language.ITALIAN, Language.PORTUGUESE,
+            Language.GERMAN, Language.DUTCH, Language.POLISH,
         ).build()
     return _detector
 
 
-_LINGUA_CODES = {"ENGLISH": "en", "SPANISH": "es", "FRENCH": "fr", "ITALIAN": "it", "PORTUGUESE": "pt"}
+_LINGUA_CODES = {"ENGLISH": "en", "SPANISH": "es", "FRENCH": "fr", "ITALIAN": "it", "PORTUGUESE": "pt",
+                 "GERMAN": "de", "DUTCH": "nl", "POLISH": "pl"}
 
 
 # Unicode blocks of the Indic scripts Sarvam speaks (Devanagari is handled
@@ -216,6 +220,8 @@ def detect_language(text: str) -> str:
         found = "ja"
     elif re.search(r"[\u4e00-\u9fff]", text):
         found = "zh"
+    elif re.search(r"[\u0400-\u04ff]", text):
+        found = "ru"  # Cyrillic: the only Cyrillic language spoken here
     elif (indic := _indic_script(text)) is not None:
         found = indic
     # Devanagari letters -- not the danda "।" (U+0964/5), which lives in the
@@ -223,7 +229,7 @@ def detect_language(text: str) -> str:
     elif re.search(r"[\u0900-\u0963\u0966-\u097f]", text):
         found = "hi"  # Hindi unless a [lang:mr] tag says Marathi
     else:
-        letters = re.sub(r"[^A-Za-zÀ-ÿ]", "", text)
+        letters = re.sub(r"[^A-Za-zÀ-ž]", "", text)
         found = None
         if len(letters) >= 12:
             ranked = _latin_detector().compute_language_confidence_values(text)
@@ -275,6 +281,59 @@ def english_voice(persona: dict) -> str:
     if _english_override and persona is PERSONAS[_persona]:
         return _english_override
     return persona["english"]
+
+
+# ---------------------------------------------------------------------------
+# Piper: local voices for languages Kokoro doesn't speak. CPU, ~real time x10.
+# piper-tts 1.2.0 is MIT (later releases are GPL). Every voice here is
+# trained on a CC0 dataset; checked per voice's MODEL_CARD. Turkish, Korean
+# and Arabic have Piper voices, but only on non-commercial or unlicensed
+# data, so they stay unspoken. Transcribed back with Whisper large-v3, a
+# payment line with an amount: 0.94-1.00 (Polish gosia 1.00).
+PIPER_REPO = "rhasspy/piper-voices"
+PIPER_REVISION = "c10ece1aade47bb51c153c893d14e5bf8e5b7117"
+PIPER_VOICES = {
+    "de": {"female": "de_DE-kerstin-low", "male": "de_DE-thorsten-high"},
+    "nl": {"female": "nl_BE-nathalie-medium", "male": "nl_BE-rdh-medium"},
+    # No CC0 female Russian voice: dmitri for both.
+    "ru": {"female": "ru_RU-dmitri-medium", "male": "ru_RU-dmitri-medium"},
+    "pl": {"female": "pl_PL-gosia-medium", "male": "pl_PL-darkman-medium"},
+}
+_piper: dict = {}  # voice key -> PiperVoice, once loaded
+_piper_lock = threading.Lock()  # its own: a Piper line never waits on Kokoro
+
+
+def piper_voice(language: str, persona: dict) -> str:
+    return PIPER_VOICES[language][persona["gender"]]
+
+
+def load_piper() -> None:
+    """Downloads (once, into the Hugging Face cache) and loads every Piper
+    voice. A voice that fails to load leaves its language unspoken."""
+    from huggingface_hub import hf_hub_download
+    from piper import PiperVoice
+
+    for key in sorted({k for voices in PIPER_VOICES.values() for k in voices.values()}):
+        locale, name, quality = key.split("-")
+        path = f"{locale[:2]}/{locale}/{name}/{quality}/{key}.onnx"
+        try:
+            onnx = hf_hub_download(PIPER_REPO, path, revision=PIPER_REVISION)
+            hf_hub_download(PIPER_REPO, path + ".json", revision=PIPER_REVISION)
+            _piper[key] = PiperVoice.load(onnx, use_cuda=False)
+        except Exception as exc:
+            logger.warning("couldn't load Piper voice %s: %s", key, exc)
+
+
+def synthesize_piper(text: str, key: str) -> bytes:
+    voice = _piper[key]
+    with _piper_lock:
+        raw = b"".join(voice.synthesize_stream_raw(text))
+    audio = np.frombuffer(raw, dtype="<i2").astype(np.float32) / 32768
+    rate = voice.config.sample_rate
+    if rate != TARGET_SAMPLE_RATE:
+        g = np.gcd(rate, TARGET_SAMPLE_RATE)
+        audio = resample_poly(audio, TARGET_SAMPLE_RATE // g, rate // g)
+    return (np.clip(audio, -1.0, 1.0) * 32767).astype("<i2").tobytes()
 
 
 def voice_for(language: str, persona: dict) -> tuple[str, str]:
@@ -451,6 +510,7 @@ def account_problem(exc: urllib.error.HTTPError) -> bool:
 def speakable_languages() -> list[str]:
     """What this server can voice right now; an agent should only answer in these."""
     languages = ["en", *VOICES]
+    languages += [lang for lang, voices in PIPER_VOICES.items() if all(k in _piper for k in voices.values())]
     if sarvam_available():
         languages += sorted(SARVAM_LANGUAGES - set(languages))
     return languages
@@ -475,6 +535,12 @@ def synthesize(text: str, voice: str = "") -> bytes:
         if language not in KOKORO_FALLBACK:
             raise RuntimeError(f"no voice available for {language}: Sarvam is down or not configured")
         language = KOKORO_FALLBACK[language]
+    if language in PIPER_VOICES:
+        key = piper_voice(language, persona)
+        if key not in _piper:
+            raise RuntimeError(f"no voice available for {language}: Piper voice {key} isn't loaded")
+        logger.info("language %s -> Piper %s", language, key)
+        return synthesize_piper(normalize(text, language), key)
     lang, kokoro_voice = voice_for(language, persona)
     logger.info("language %s -> voice %s", language, kokoro_voice)
     text = normalize(text, language)
@@ -569,6 +635,7 @@ def main():
         except Exception as exc:
             logger.warning("Sarvam voice check failed at startup: %s", exc)
             _sarvam_breaker.failure()
+    load_piper()
     synthesize("Hello, this is a warm up.")
     # Every other language too: each loads its own text-to-phoneme pipeline
     # and voice on first use (~3s), which a caller would otherwise hear as a
@@ -576,6 +643,11 @@ def main():
     for sample in ("Hola, esto es una prueba.", "Bonjour, ceci est un test.", "Ciao, questa è una prova.",
                    "Olá, isto é um teste.", "こんにちは、テストです。", "你好，这是测试。", "नमस्ते, यह एक परीक्षण है।"):
         synthesize(sample)
+    for language, sample in (("de", "Hallo, das ist ein Test."), ("nl", "Hallo, dit is een test."),
+                             ("ru", "Привет, это тест."), ("pl", "Cześć, to jest test.")):
+        for key in set(PIPER_VOICES[language].values()):
+            if key in _piper:
+                synthesize_piper(sample, key)
     # The other personas share those pipelines; only their voice packs are
     # still to load, which is quick and needs no synthesis.
     for persona in PERSONAS.values():
@@ -587,9 +659,10 @@ def main():
             except Exception as exc:
                 logger.warning("couldn't preload voice %s: %s", kokoro_voice, exc)
     logger.info(
-        "ready (voice %s, English %s; Sarvam %s)",
+        "ready (voice %s, English %s; Piper %d/%d voices; Sarvam %s)",
         _persona,
         english_voice(PERSONAS[_persona]),
+        len(_piper), len({k for v in PIPER_VOICES.values() for k in v.values()}),
         ("on for " + ", ".join(sorted(SARVAM_LANGUAGES)) if sarvam_available() else "DOWN -- Indian languages other than Hindi can't be spoken")
         if _sarvam_key
         else "off: SARVAM_API_KEY not set",

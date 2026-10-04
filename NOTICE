@@ -18,10 +18,15 @@ Changes made in Voxie (see the git history from commit dc3e568 on):
 - Fixes to the bundled VibeVoice sidecars for a fully local setup.
 - Phone calls through Twilio Media Streams (internal/twilio/), on a media
   interface that WebRTC calls now use too (internal/pipeline/media.go).
-- New: voice-router/ (Kokoro + Sarvam text-to-speech), configs/,
+- New: voice-router/ (Kokoro, Piper + Sarvam text-to-speech), configs/,
   examples/quickstart/, tools/callers/, compose.yaml, docs/voxie/.
 
 Third-party components used at runtime, under their own licenses:
 - Kokoro-82M (Apache 2.0), https://huggingface.co/hexgrad/Kokoro-82M
+- piper-tts 1.2.0 and piper-phonemize 1.1.0 (MIT), https://github.com/rhasspy/piper
+- Piper voices (each trained on a CC0 dataset), https://huggingface.co/rhasspy/piper-voices:
+  de_DE-kerstin-low, de_DE-thorsten-high, nl_BE-nathalie-medium,
+  nl_BE-rdh-medium, ru_RU-dmitri-medium, pl_PL-gosia-medium,
+  pl_PL-darkman-medium
 - StreamCore python-sdk (Apache 2.0), used by tools/callers/
 - Cloud APIs: Deepgram, Sarvam AI, AssemblyAI, Groq (their terms apply)

@@ -1,8 +1,8 @@
 # Voxie
 
 **Real-time voice agents that speak the caller's language.** Voxie runs the
-call: it listens first, handles interruptions, hears 23 languages, speaks
-17, and switches speech-to-text mid-call when the caller's language needs
+call: it listens first, handles interruptions, hears 24 languages, speaks
+21, and switches speech-to-text mid-call when the caller's language needs
 it. Your app only decides what to say.
 
 Built on [StreamCore](https://github.com/streamcoreai/streamcore-server)
@@ -25,7 +25,8 @@ Built on [StreamCore](https://github.com/streamcoreai/streamcore-server)
     isn't lost.
 - **A voice for every language it speaks.** Kokoro on your GPU for
   English, Spanish, French, Italian, Portuguese, Japanese and Chinese
-  (~130ms a sentence). Sarvam for ten Indian languages.
+  (~130ms a sentence). Piper on the CPU for German, Dutch, Russian and
+  Polish (~0.1–0.35s a sentence). Sarvam for ten Indian languages.
 - **Failover at every layer.** Each listener is a failover chain. The
   voice has a breaker and a health endpoint. A failed language check
   keeps the turn as heard. A provider going down degrades the call; it
@@ -125,7 +126,7 @@ What was measured, per language: [docs/voxie/languages.md](docs/voxie/languages.
 | Path | |
 |---|---|
 | `internal/`, `main.go` | The voice server (StreamCore plus Voxie's changes; the new listener is `internal/stt/adaptive.go`, phone calls are `internal/twilio/`) |
-| `voice-router/` | Kokoro + Sarvam text-to-speech |
+| `voice-router/` | Kokoro, Piper + Sarvam text-to-speech |
 | `configs/voxie.toml` | One config for every caller |
 | `quickstart/` | Call page, WHIP proxy, demo agent |
 | `tools/callers/` | Scripted multilingual callers over WebRTC |
@@ -149,8 +150,9 @@ go test ./...
 - A turn the listener may have misheard waits for language
   identification (0.4–1s), usually only the caller's first real turn.
   Confident Hindi is checked in the background, without waiting.
-- No voice yet for German, Dutch, Russian, Korean, Arabic or Turkish.
-  They're understood, but should be answered in English.
+- No voice yet for Korean, Arabic or Turkish. They're understood, but
+  should be answered in English. (Piper's voices for them are trained on
+  non-commercial or unlicensed data.)
 - Free API tiers run out quickly under multilingual load. Plan on paid
   tiers for Groq and Sarvam.
 

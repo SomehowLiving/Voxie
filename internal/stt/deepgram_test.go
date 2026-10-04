@@ -28,6 +28,7 @@ func TestNova3LanguageStripsLocale(t *testing.T) {
 		"hi-IN": "hi",
 		"ta-IN": "ta",
 		"ar":    "ar",
+		"pl-PL": "pl",
 		// Malayalam isn't offered by Nova-3; unverified codes stay multi.
 		"ml-IN": "multi",
 		"mi-NZ": "multi",

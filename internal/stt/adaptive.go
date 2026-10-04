@@ -58,8 +58,9 @@ var (
 	multiLanguages = setOf("en", "es", "fr", "de", "it", "pt", "nl", "ru", "ja", "hi")
 	// Regional Indian languages: the Indian listener.
 	indianRegional = setOf("bn", "ta", "te", "kn", "ml", "mr", "gu", "pa", "od")
-	// World languages Deepgram hears only with the language fixed (verified).
-	fixedWorldLanguages = setOf("zh", "ko", "ar", "tr")
+	// World languages Deepgram hears only with the language fixed (verified;
+	// Polish: multi returned nothing, nova-3 fixed to pl heard it at 0.996).
+	fixedWorldLanguages = setOf("zh", "ko", "ar", "tr", "pl")
 )
 
 func setOf(items ...string) map[string]bool {
