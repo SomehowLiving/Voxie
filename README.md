@@ -1,7 +1,7 @@
 # Voxie
 
 **Real-time voice agents that speak the caller's language.** Voxie runs the
-call: it listens first, handles interruptions, hears 21 languages, speaks
+call: it listens first, handles interruptions, hears 23 languages, speaks
 17, and switches speech-to-text mid-call when the caller's language needs
 it. Your app only decides what to say.
 
