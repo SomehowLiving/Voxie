@@ -175,6 +175,9 @@ func TestAdaptiveStartsFromTheCallersHint(t *testing.T) {
 		"ta":    {indian: true, language: "ta"},
 		"ml-IN": {indian: true, language: "ml"},
 		"zh":    {language: "zh"},
+		"od":    {indian: true, language: "od"},
+		"or":    {indian: true, language: "od"}, // ISO 639-1 Odia
+		"or-IN": {indian: true, language: "od"},
 	}
 	for hint, want := range cases {
 		if got := startListener(Hint{Language: hint}); got != want {

@@ -116,11 +116,15 @@ func postForm(ctx context.Context, url string, body io.Reader, contentType strin
 	return json.NewDecoder(resp.Body).Decode(out)
 }
 
-// baseLanguage turns "ta-IN" into "ta".
+// baseLanguage turns "ta-IN" into "ta". Odia is "od" throughout (Sarvam's
+// code); ISO 639-1's "or", which an app's caller record may carry, maps to it.
 func baseLanguage(code string) string {
 	code = strings.ToLower(strings.TrimSpace(code))
 	if i := strings.IndexAny(code, "-_"); i > 0 {
 		code = code[:i]
+	}
+	if code == "or" {
+		return "od"
 	}
 	return code
 }
