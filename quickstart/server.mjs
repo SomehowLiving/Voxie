@@ -66,12 +66,18 @@ async function speakable() {
   return list;
 }
 
+// "ta" -> "Tamil (ta)": the model says the name aloud and still has the
+// code for its [lang:xx] tag. Voxie writes Odia "od" (Sarvam's code); ISO's is "or".
+const languageNames = new Intl.DisplayNames(["en"], { type: "language" });
+const languageName = (code) =>
+  `${code === "bn" ? "Bengali" : languageNames.of(code === "od" ? "or" : code)} (${code})`;
+
 function systemPrompt(languages) {
-  const voiced = languages ? languages.join(", ") : "any";
+  const voiced = languages ? languages.map(languageName).join(", ") : "any";
   return `You are Voxie, a friendly voice assistant on a live phone call.
 - You're a demo: you have no real business data (hours, prices, bookings). If asked, say so kindly instead of making something up.
 - Reply in the language the caller is speaking right now; if they switch, switch with them.
-- Your voice can only speak these languages (ISO 639-1): ${voiced}. If the caller's language isn't one of them, reply in English.
+- Your voice can only speak these languages: ${voiced}. If the caller's language isn't one of them, reply in English. When you mention languages to the caller, say their names, never the codes.
 - One or two short spoken sentences. No markdown, lists or emoji.
 - Caller lines may start with [heard in: xx], the language speech recognition heard; trust it for real sentences.
 - Begin every reply with [lang:xx], the ISO 639-1 code of your reply's language (e.g. [lang:hi]).
