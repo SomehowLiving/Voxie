@@ -564,3 +564,80 @@ func TestAdaptiveDoesNotCheckSpeechTheListenerIsHearing(t *testing.T) {
 		t.Fatal("no-transcript check fired although the listener was sending words")
 	}
 }
+
+func TestAdaptiveSwitchesFromIndianToWorldForSpanishCaller(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "es", Text: "Hola, ¿cómo estás?", Source: "groq"}}
+	h := newHarness(t, listenerSpec{indian: true, language: "ta"}, true, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(TranscriptResult{Text: "Hola como estas", IsFinal: true, Confidence: 0.8, Language: "en", Provider: "sarvam"})
+	if got := h.next(); got.Text != "Hola, ¿cómo estás?" || got.Language != "es" {
+		t.Fatalf("got %+v, want Spanish text from identifier", got)
+	}
+	waitFor(t, func() bool { return h.log.count() == 2 })
+	if spec := h.log.last().spec; spec != (listenerSpec{}) {
+		t.Fatalf("switched to %s, want world multi listener", spec)
+	}
+}
+
+func TestAdaptiveSwitchesFromIndianToDeepgramFixedForKoreanCaller(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "ko", Text: "다시 전화하지 마세요", Source: "groq"}}
+	h := newHarness(t, listenerSpec{indian: true, language: "ta"}, true, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(TranscriptResult{Text: "Korean speech misheard as English", IsFinal: true, Confidence: 0.85, Language: "en-IN", Provider: "sarvam"})
+	if got := h.next(); got.Text != "다시 전화하지 마세요" || got.Language != "ko" {
+		t.Fatalf("got %+v, want Korean text from identifier", got)
+	}
+	waitFor(t, func() bool { return h.log.count() == 2 })
+	if spec := h.log.last().spec; spec != (listenerSpec{language: "ko"}) {
+		t.Fatalf("switched to %s, want Deepgram fixed ko listener", spec)
+	}
+}
+
+func TestAdaptiveIndianEnglishCallerStaysOnIndian(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "en", Text: "Please call me back tomorrow", Source: "groq"}}
+	h := newHarness(t, listenerSpec{indian: true, language: "hi"}, true, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(TranscriptResult{Text: "Please call me back tomorrow", IsFinal: true, Confidence: 0.95, Language: "en-IN", Provider: "sarvam"})
+	if got := h.next(); got.Text != "Please call me back tomorrow" {
+		t.Fatalf("got %+v, want Sarvam transcript preserved", got)
+	}
+	// Caller must stay on Indian listener without switching
+	if h.log.count() != 1 {
+		t.Fatalf("listener count = %d, want 1 (stay on Indian)", h.log.count())
+	}
+	// After agreeing turns, it should settle
+	h.speak(60)
+	h.log.last().emit(TranscriptResult{Text: "I am free at five pm", IsFinal: true, Confidence: 0.95, Language: "en-IN", Provider: "sarvam"})
+	h.next()
+	if !h.a.settled() {
+		t.Fatal("expected language to settle after agreeing turns")
+	}
+}
+
+func TestAdaptiveMislabelledIndianTurnDoesNotSwitchFromIndian(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "vi", Text: "whisper mislabel", Source: "groq"}}
+	sarvam := &fakeIdentifier{id: Identification{Language: "bn", Text: "দয়া করে পরে ফোন করুন", Source: "sarvam"}}
+	h := newHarness(t, listenerSpec{indian: true, language: "bn"}, true, namedIdentifier{"groq", groq.fn()}, namedIdentifier{"sarvam", sarvam.fn()})
+	h.speak(60)
+	h.log.last().emit(TranscriptResult{Text: "misheard words", IsFinal: true, Confidence: 0.8, Language: "en", Provider: "sarvam"})
+	if got := h.next(); got.Language != "bn" {
+		t.Fatalf("got language %q, want bn", got.Language)
+	}
+	// Sarvam's Indic detection overruled Whisper's "vi", staying on Indian listener
+	if h.log.count() != 1 {
+		t.Fatalf("listener count = %d, want 1 (stay on Indian)", h.log.count())
+	}
+}
+
+func TestAdaptiveIndianListenerFallsBackWhenGroqFails(t *testing.T) {
+	groq := &fakeIdentifier{err: errors.New("groq rate limit")}
+	h := newHarness(t, listenerSpec{indian: true, language: "ta"}, true, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(TranscriptResult{Text: "Foreign words", IsFinal: true, Confidence: 0.9, Language: "en", Provider: "sarvam"})
+	if got := h.next(); got.Text != "Foreign words" {
+		t.Fatalf("got %+v, want original Sarvam text preserved on error", got)
+	}
+	if h.log.count() != 1 {
+		t.Fatalf("listener count = %d, want 1 (stay on Sarvam)", h.log.count())
+	}
+}

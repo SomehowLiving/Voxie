@@ -52,9 +52,9 @@ Sarvam `bulbul:v3` language. Sarvam takes 1.3–2s per sentence and Kokoro
 - **Only synthetic voices tested.** The next step is a pilot with real
   people on real phone lines.
 - **No voice** for German, Dutch, Russian, Korean, Arabic or Turkish.
-- **A call that starts on Sarvam** (a regional Indian language on record)
-  can't notice a caller who speaks a world language: Sarvam turns their
-  words into English.
+- **Calls starting on Sarvam now support bidirectional adaptive switching** to world
+  languages (Deepgram multi or fixed) when a caller speaks a non-Indian language,
+  checking English/unlabeled turns via Groq Whisper before the language is settled.
 - **Free tiers run out.** Groq's daily token limits and Sarvam's credits
   both ran out during testing. The fallbacks kept calls going, but plan
   on paid tiers.

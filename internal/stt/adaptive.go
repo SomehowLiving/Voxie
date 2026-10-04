@@ -452,7 +452,11 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 	if item.spec.covers(id.Language) {
 		log.Printf("[stt:adaptive] checked turn (%s): %s says %s in %s; %s hears it", heard, id.Source, id.Language, elapsed, item.spec)
 		a.agree(id.Language)
-		a.release(item)
+		if id.Language != "" && item.final != nil && (item.final.Language == "en" || item.final.Language == "en-IN" || item.final.Language == "") && isIndian(id.Language) && id.Text != "" {
+			a.onResult(TranscriptResult{Text: id.Text, IsFinal: true, Language: id.Language, Provider: id.Source})
+		} else {
+			a.release(item)
+		}
 		return
 	}
 	next, known := listenerFor(id.Language)
@@ -519,17 +523,29 @@ func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int) checkKind {
 	if len(a.ids) == 0 || a.checks >= adaptiveMaxChecks {
 		return checkNone
 	}
-	// The rules read Deepgram's confidence and language labels. Sarvam's
-	// "confidence" is its language probability, and its misses (a world
-	// language turned into English) can't be seen from its output.
-	if r.Provider != "deepgram" {
-		return checkNone
-	}
 	// "haan", "ok": too little audio to identify, and cheap to mishear.
 	// Measured in voice, not words: a Chinese sentence is one "word", and
 	// "喂，你好，请问是哪位？" came back from multi as the five-character
 	// "真是呀为，".
 	if voiced < shortTurnFrames {
+		return checkNone
+	}
+
+	// On the Indian listener before the language is settled: Sarvam turns
+	// world languages (es, fr, de, zh, ko...) into English ("en" / "en-IN").
+	// Check long-enough English turns so a world-language caller can switch
+	// to the world listener. Indian-language turns from Sarvam ("ta", "te", etc.)
+	// are trusted and not checked.
+	if r.Provider == "sarvam" || a.spec.indian {
+		lang := baseLanguage(r.Language)
+		if !a.settled() && (lang == "en" || lang == "") {
+			return checkHold
+		}
+		return checkNone
+	}
+
+	// The rules below read Deepgram's confidence and language labels.
+	if r.Provider != "deepgram" {
 		return checkNone
 	}
 	if r.Confidence > 0 && r.Confidence < a.minConfidence {
