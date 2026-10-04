@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Voxie: voice agents that speak your caller's language</title>
+  <meta name="description" content="Voxie is open-source voice infrastructure for real-time agents. It runs the call (listening, turn-taking, interruptions and the voice) in 17 spoken languages, switches speech-to-text mid-call when the caller's language needs it, and leaves your app to decide what to say." />
+  <link rel="canonical" href="https://voxieai.vercel.app/" />
+  <meta name="theme-color" content="#f5f7fb" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Voxie" />
+  <meta property="og:url" content="https://voxieai.vercel.app/" />
+  <meta property="og:title" content="Voxie: voice agents that speak your caller's language" />
+  <meta property="og:description" content="Open-source voice infrastructure: listen first, real barge-in, a listener per call, and a voice for 17 languages. Your app only decides what to say." />
+  <meta property="og:image" content="https://voxieai.vercel.app/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://voxieai.vercel.app/og.png" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="/img/hero.webp" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Voxie","applicationCategory":"DeveloperApplication","operatingSystem":"Linux","url":"https://voxieai.vercel.app/","codeRepository":"https://github.com/SomehowLiving/Voxie","license":"https://www.apache.org/licenses/LICENSE-2.0","description":"Open-source voice infrastructure for real-time agents: it runs the call in 17 spoken languages and leaves your app to decide what to say.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","description":"Open source (Apache 2.0)"}}
+  </script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="gh" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.23 1.87.87 2.33.67.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></symbol></svg>
+
+  <header class="nav" id="top">
+    <a class="brand" href="#top" aria-label="Voxie home">Voxie</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#product">Product</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#integrate">Integrate</a>
+      <a href="#languages">Languages</a>
+      <a href="https://github.com/SomehowLiving/Voxie/tree/main/docs/voxie" rel="noopener">Docs</a>
+    </nav>
+    <div class="nav-right">
+      <a class="nav-gh" href="https://github.com/SomehowLiving/Voxie" rel="noopener" aria-label="Star Voxie on GitHub"><svg class="gh" aria-hidden="true"><use href="#gh"/></svg><span class="nav-gh-t">Star</span><span class="stars" hidden></span></a>
+      <a class="btn btn-dark btn-sm" href="#integrate">Get started <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-art liquid" aria-hidden="true" data-img="/img/hero.webp" data-pos="0.62 0.5" data-zoom="1.18"></div>
+      <div class="wrap hero-inner">
+        <p class="kicker">Open-source voice infrastructure</p>
+        <h1 id="hero-title">Voice agents that speak <span class="grad">your caller's</span> language.</h1>
+        <p class="lede">Voxie runs the call: listening, turn-taking, interruptions and the voice, in 17 languages. It switches speech-to-text mid-call when the caller's language needs it. Your app only decides what to say.</p>
+        <div class="actions">
+          <a class="btn btn-dark" href="#integrate">Get started <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn btn-soft" href="https://github.com/SomehowLiving/Voxie" rel="noopener"><svg class="gh" aria-hidden="true"><use href="#gh"/></svg>Star on GitHub<span class="stars" hidden></span></a>
+        </div>
+        <ul class="checks">
+          <li>Listens first</li><li>Real barge-in</li><li>17 languages spoken</li><li>Apache 2.0</li>
+        </ul>
+      </div>
+      <p class="hero-callout" aria-hidden="true">Hears the caller.<br />Answers in<br />their language.</p>
+    </section>
+
+    <section class="providers" aria-label="Providers Voxie works with">
+      <p class="label">Hears and speaks through</p>
+      <ul class="brands"><li style="--c:#13EF95">Deepgram</li><li style="--c:#AEBBFF">Sarvam</li><li style="--c:#3156E8">AssemblyAI</li><li style="--c:#F55036">Groq</li><li style="--c:#1A1A1A">Kokoro</li><li style="--c:#F22F46">Twilio</li><li style="--c:#FF6600">WebRTC</li><li style="--c:#1A1A1A">StreamCore</li></ul>
+    </section>
+
+    <section class="wrap cards4" id="product" aria-label="What Voxie does">
+      <article class="glass">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg>
+        <h3>Real-time conversations</h3>
+        <p>Listens first, dips its voice the moment you talk over it, and starts speaking before the whole reply is voiced.</p>
+      </article>
+      <article class="glass">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+        <h3>Multilingual by default</h3>
+        <p>A listener per call: a misheard turn is identified by language and moved to the listener that hears it.</p>
+      </article>
+      <article class="glass">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg>
+        <h3>Developer first</h3>
+        <p>Four request types over HTTP. Every turn arrives with the language it was heard in. You reply with text.</p>
+      </article>
+      <article class="glass">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <h3>Resilient by design</h3>
+        <p>Failover at every layer. A provider going down degrades the call; it doesn't end it.</p>
+      </article>
+    </section>
+
+    <section class="real" aria-labelledby="real-title">
+      <div class="real-art liquid" aria-hidden="true" data-img="/img/phone.webp" data-pos="0.72 0.5" data-zoom="1"></div>
+      <div class="wrap real-inner">
+        <div class="real-copy">
+          <p class="kicker">Turn conversations into action</p>
+          <h2 id="real-title">Build voice agents for the <span class="grad">real world.</span></h2>
+          <p>From support lines to payment reminders, Voxie handles the hard parts of a live call, so your agent can focus on getting things done.</p>
+          <a class="btn btn-dark" href="#how">See how a call works <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+        <ul class="callouts">
+          <li class="c1"><b>Listens first</b><span>If the caller says "Hello?", it answers them instead of talking over them.</span></li>
+          <li class="c2"><b>Real barge-in</b><span>"Yeah, okay" doesn't stop it. A real interruption does.</span></li>
+          <li class="c3"><b>Speaks their language</b><span>Kokoro and Sarvam voices, one sentence at a time.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="wrap section" id="how" aria-labelledby="how-title">
+      <div class="head">
+        <p class="kicker">How a call works</p>
+        <h2 id="how-title">Voxie runs the call. Your app decides what to say.</h2>
+      </div>
+      <ol class="flow">
+        <li class="glass"><span class="step-k">01 · Caller</span><h3>Browser or phone</h3><p>WebRTC (WHIP) from a browser, Twilio Media Streams for phone calls, or any SIP trunk through sip-server.</p></li>
+        <li class="glass"><span class="step-k">02 · Voxie server <code>:8080</code></span><h3>Hears and takes turns</h3><p>Speech detection, turn-taking, barge-in, echo guard, and speech-to-text that adapts to the caller.</p></li>
+        <li class="glass"><span class="step-k">03 · Your agent</span><h3>Decides what to say</h3><p>Voxie posts each turn to one HTTP endpoint of yours, with its language. You reply with text.</p></li>
+        <li class="glass"><span class="step-k">04 · Voice router <code>:8300</code></span><h3>Speaks it</h3><p>Sentence by sentence: Kokoro on the GPU in ~130ms a sentence, Sarvam for Indian languages.</p></li>
+      </ol>
+    </section>
+
+    <section class="wrap section" id="use-cases" aria-labelledby="uc-title">
+      <div class="head head-row">
+        <h2 id="uc-title">One runtime.<br />Endless conversations.</h2>
+        <div>
+          <p>Give any app a voice: Voxie brings the call, the listening and the voice; your agent brings the knowledge and the tools.</p>
+          <a class="btn btn-line btn-sm" href="https://github.com/SomehowLiving/Voxie/tree/main/quickstart" rel="noopener">See the quickstart <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <div class="uc-grid">
+        <article class="uc"><img src="/img/uc-support.webp" alt="" loading="lazy" width="800" height="447" /><div><h3>Customer support</h3><p>Answer questions in the caller's language, and hand off to a person when they ask.</p></div></article>
+        <article class="uc"><img src="/img/uc-reminders.webp" alt="" loading="lazy" width="800" height="447" /><div><h3>Payment reminders</h3><p>A polite call about a failed payment. Softknock's REX runs its calls on Voxie.</p></div></article>
+        <article class="uc"><img src="/img/uc-productivity.webp" alt="" loading="lazy" width="800" height="447" /><div><h3>Sales and lead qualification</h3><p>Call back every lead in minutes, qualify them, and book the meeting.</p></div></article>
+        <article class="uc"><img src="/img/uc-healthcare.webp" alt="" loading="lazy" width="800" height="447" /><div><h3>Scheduling and reminders</h3><p>Confirm, move or cancel appointments over the phone, in ten Indian languages and more.</p></div></article>
+      </div>
+    </section>
+
+    <section class="section band" id="integrate" aria-labelledby="integrate-title">
+      <div class="wrap">
+        <div class="head">
+          <p class="kicker">Integrate</p>
+          <h2 id="integrate-title">Three steps to a voice agent.</h2>
+          <p>Voxie is open source. The images are published; the rest is your own app.</p>
+        </div>
+        <div class="steps">
+          <div class="step glass">
+            <div class="step-text">
+              <span class="num">1</span>
+              <h3>Run Voxie</h3>
+              <p>Add your provider keys and start the server and the voice router. You need keys for Deepgram, Groq and Sarvam (AssemblyAI is optional), and an NVIDIA GPU for the voice router.</p>
+            </div>
+            <div class="code" data-lang="bash"><button class="copy" type="button">Copy</button>
+<pre><code>git clone https://github.com/SomehowLiving/Voxie.git && cd Voxie
+cp .env.example .env                        <span class="c"># DEEPGRAM_API_KEY, GROQ_API_KEY, SARVAM_API_KEY</span>
+docker compose -f compose.release.yaml up   <span class="c"># server :8080 · voice router :8300 · test page :8400</span></code></pre></div>
+          </div>
+          <div class="step glass">
+            <div class="step-text">
+              <span class="num">2</span>
+              <h3>Point it at your app</h3>
+              <p>One config for every caller. Set your agent's URL and a shared key; Voxie sends it as a bearer token on every request.</p>
+            </div>
+            <div class="code" data-lang="toml"><button class="copy" type="button">Copy</button>
+<pre><code><span class="k">[agent]</span>
+url = <span class="s">"https://your-app.example.com/voice/agent"</span>
+api_key = <span class="s">"…"</span>        <span class="c"># or STREAMCORE_AGENT_API_KEY</span>
+
+<span class="k">[stt]</span>
+provider = <span class="s">"adaptive"</span>   <span class="c"># a listener per call</span></code></pre></div>
+          </div>
+          <div class="step glass">
+            <div class="step-text">
+              <span class="num">3</span>
+              <h3>Answer four requests</h3>
+              <p>Voxie posts each event of the call to your endpoint and speaks what you send back.</p>
+              <table class="types">
+                <thead><tr><th><code>type</code></th><th>When</th><th>Reply</th></tr></thead>
+                <tbody>
+                  <tr><td><code>listen</code></td><td>Before speech-to-text starts</td><td><code>{ language?, region? }</code></td></tr>
+                  <tr><td><code>greeting</code></td><td>The caller stayed silent</td><td><code>{ text }</code></td></tr>
+                  <tr><td><code>chat</code></td><td>The caller finished a turn</td><td><code>{ text, end_call? }</code></td></tr>
+                  <tr><td><code>oneshot</code></td><td>Background work</td><td><code>{ text: "" }</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="code" data-lang="js"><button class="copy" type="button">Copy</button>
+<pre><code><span class="c">// A whole agent: Node 20+, no dependencies.</span>
+<span class="k">import</span> { createServer } <span class="k">from</span> <span class="s">"node:http"</span>;
+
+createServer(<span class="k">async</span> (req, res) =&gt; {
+  <span class="k">let</span> body = <span class="s">""</span>;
+  <span class="k">for await</span> (<span class="k">const</span> chunk <span class="k">of</span> req) body += chunk;
+  <span class="k">const</span> turn = JSON.parse(body);   <span class="c">// { session_id, resource_id, type, text, language }</span>
+
+  <span class="k">let</span> reply = { text: <span class="s">""</span> };
+  <span class="k">if</span> (turn.type === <span class="s">"listen"</span>) reply = {};   <span class="c">// or what you know: { language: "hi", region: "IN" }</span>
+  <span class="k">if</span> (turn.type === <span class="s">"greeting"</span>) reply = { text: <span class="s">"[lang:en] Hi, this is Voxie. How can I help?"</span> };
+  <span class="k">if</span> (turn.type === <span class="s">"chat"</span>) reply = { text: <span class="k">await</span> think(turn.text, turn.language) };
+
+  res.writeHead(<span class="n">200</span>, { <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span> });
+  res.end(JSON.stringify(reply));
+}).listen(<span class="n">9101</span>);
+
+<span class="k">async function</span> think(text, language = <span class="s">"en"</span>) {   <span class="c">// your app goes here</span>
+  <span class="k">return</span> <span class="s">`[lang:${language}] You said: ${text}`</span>;
+}</code></pre></div>
+          </div>
+        </div>
+        <div class="images glass">
+          <div class="images-text">
+            <p class="kicker">Published images</p>
+            <h3>Pull it, don't build it.</h3>
+            <p>Both halves of Voxie are on GitHub's container registry, built for linux/amd64 with the Apache&nbsp;2.0 licence and StreamCore's notice inside. Pin a version in production.</p>
+          </div>
+          <ul class="image-list">
+            <li><div><b>voxie</b><span>The server: hearing, turn-taking, barge-in · about 740 MB</span></div><code>ghcr.io/somehowliving/voxie:845a2f1</code></li>
+            <li><div><b>voxie-voice-router</b><span>The voice: Kokoro and Sarvam, needs an NVIDIA GPU · about 4.8 GB</span></div><code>ghcr.io/somehowliving/voxie-voice-router:845a2f1</code></li>
+          </ul>
+          <div class="code" data-lang="bash"><button class="copy" type="button">Copy</button>
+<pre><code>docker pull ghcr.io/somehowliving/voxie:845a2f1
+docker pull ghcr.io/somehowliving/voxie-voice-router:845a2f1
+VOXIE_TAG=845a2f1 docker compose -f compose.release.yaml up</code></pre></div>
+        </div>
+        <div class="tips">
+          <article class="glass"><h3>Reply in the caller's language</h3><p>Start each sentence with <code>[lang:xx]</code>, for example <code>[lang:ta]</code>. Hindi and Marathi share a script, so text alone can't tell them apart. Answer only in languages the router's <code>GET /health</code> lists right now.</p></article>
+          <article class="glass"><h3>Phone calls through Twilio</h3><p>Set <code>TWILIO_AUTH_TOKEN</code>, then connect the call's audio to Voxie. No SIP trunk and no public IP: a public URL is enough.</p>
+            <div class="code code-sm" data-lang="xml"><button class="copy" type="button">Copy</button>
+<pre><code>&lt;Response&gt;&lt;Connect&gt;&lt;Stream url=<span class="s">"wss://&lt;voxie-host&gt;/twilio/media"</span>&gt;
+  &lt;Parameter name=<span class="s">"resource_id"</span> value=<span class="s">"+919812345678"</span>/&gt;
+&lt;/Stream&gt;&lt;/Connect&gt;&lt;/Response&gt;</code></pre></div></article>
+          <article class="glass"><h3>Stream your replies</h3><p>Reply as <code>text/event-stream</code> and Voxie voices the first sentence while the rest is on its way. Send <code>{"end_call": true}</code> to hang up once the goodbye has played.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="langs liquid" id="languages" aria-labelledby="languages-title" data-img="/img/globe.webp" data-pos="1 0.5" data-zoom="1">
+      <div class="wrap langs-inner">
+        <p class="kicker">Languages, measured</p>
+        <h2 id="languages-title">17 languages spoken.<br />6 more understood.</h2>
+        <p class="sub">Every result comes from real provider APIs, tested with scripted callers on clean and phone-quality audio.</p>
+        <div class="tabs" role="tablist" aria-label="Languages">
+          <button role="tab" aria-selected="true" aria-controls="spoken" id="tab-spoken">Spoken (17)</button>
+          <button role="tab" aria-selected="false" aria-controls="understood" id="tab-understood" tabindex="-1">Understood (6)</button>
+        </div>
+        <div id="spoken" role="tabpanel" aria-labelledby="tab-spoken">
+          <ul class="lang-list">
+            <li class="w">English</li><li class="w">Spanish</li><li class="w">French</li><li class="w">Italian</li><li class="w">Portuguese</li><li class="w">Japanese</li><li class="w">Chinese</li>
+            <li class="i">Hindi</li><li class="i">Tamil</li><li class="i">Telugu</li><li class="i">Bengali</li><li class="i">Gujarati</li><li class="i">Punjabi</li><li class="i">Kannada</li><li class="i">Marathi</li><li class="i">Malayalam</li><li class="i">Odia</li>
+          </ul>
+        </div>
+        <div id="understood" role="tabpanel" aria-labelledby="tab-understood" hidden>
+          <ul class="lang-list"><li class="u">German</li><li class="u">Dutch</li><li class="u">Russian</li><li class="u">Korean</li><li class="u">Arabic</li><li class="u">Turkish</li></ul>
+          <p class="note">No voice for these yet: your agent hears them, and answers in English.</p>
+        </div>
+      </div>
+      <div class="langs-chips" aria-hidden="true">
+        <span class="chip" style="left:66%;top:16%">English</span>
+        <span class="chip" style="left:88%;top:30%">हिन्दी</span>
+        <span class="chip" style="left:57%;top:47%">日本語</span>
+        <span class="chip" style="left:90%;top:66%">Español</span>
+        <span class="chip" style="left:62%;top:80%">தமிழ்</span>
+      </div>
+    </section>
+
+    <section class="results liquid" aria-labelledby="results-title" data-img="/img/waves.webp" data-pos="0.5 0.6" data-zoom="1">
+      <div class="wrap results-inner">
+        <div>
+          <p class="kicker kicker-light">Real voices. Measured results.</p>
+          <h2 id="results-title">More human conversations.<br /><span>Real numbers.</span></h2>
+          <p>Measured with real APIs and scripted callers, never guessed.</p>
+        </div>
+        <dl class="stats">
+          <div><dt>24 / 24</dt><dd>Languages named correctly</dd></div>
+          <div><dt>0.4–1s</dt><dd>To catch a misheard turn</dd></div>
+          <div><dt>~130ms</dt><dd>Per sentence of voice</dd></div>
+          <div><dt>17</dt><dd>Languages spoken</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="wrap section limits" aria-labelledby="limits-title">
+      <div class="head">
+        <p class="kicker">Honest limits</p>
+        <h2 id="limits-title">What we haven't proven yet.</h2>
+      </div>
+      <ul>
+        <li>Tested mostly with synthetic voices, clean and at phone quality, plus a real phone call through Twilio to an Indian mobile. A pilot with real callers is next.</li>
+        <li>A turn that may have been misheard waits 0.4–1s for its language to be identified, usually only the caller's first real turn.</li>
+        <li>The voice router needs an NVIDIA GPU, and free API tiers run out quickly under multilingual load: plan on paid tiers for Groq and Sarvam.</li>
+      </ul>
+    </section>
+
+    <section class="access" id="access" aria-labelledby="access-title">
+      <div class="wrap access-card glass">
+        <div>
+          <p class="kicker">Hosted and enterprise</p>
+          <h2 id="access-title">Want us to run it for you?</h2>
+          <p>Hosted Voxie, or help taking it to production on your own servers. Tell us what you're building and we'll get back to you.</p>
+        </div>
+        <form class="access-form" novalidate>
+          <label><span class="lbl">Work email</span><input name="email" type="email" autocomplete="email" required placeholder="you@company.com" /></label>
+          <label><span class="lbl">Company <em>(optional)</em></span><input name="company" autocomplete="organization" placeholder="Acme" /></label>
+          <label><span class="lbl">What are you building? <em>(optional)</em></span><textarea name="use_case" rows="3" placeholder="A support line that answers in Hindi and Tamil…"></textarea></label>
+          <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <button class="btn btn-dark" type="submit">Talk to us <span class="arr" aria-hidden="true">→</span></button>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <span class="brand brand-sm">Voxie</span>
+    <span>Built on <a href="https://github.com/streamcoreai/streamcore-server" rel="noopener">StreamCore</a> · Apache 2.0</span>
+    <span class="footer-links"><a href="https://github.com/SomehowLiving/Voxie" rel="noopener">GitHub</a><a href="https://github.com/SomehowLiving/Voxie/tree/main/docs/voxie" rel="noopener">Docs</a><a href="#top">Back to top</a></span>
+  </footer>
+
+  <script src="/main.js" defer></script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
