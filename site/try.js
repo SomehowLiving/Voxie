@@ -96,7 +96,12 @@ function onEvent(raw) {
   let msg;
   try { msg = JSON.parse(raw); } catch { return; }
   if (msg.type === "transcript" && msg.text) {
-    if (!partialEl) partialEl = addTurn("You", "", "you partial");
+    if (!partialEl) {
+      // Only the latest exchange is shown: your words and Voxie's reply.
+      log.innerHTML = "";
+      agentEl = null;
+      partialEl = addTurn("You", "", "you partial");
+    }
     partialEl.querySelector(".text").textContent = msg.text;
     if (msg.final) { partialEl.classList.remove("partial"); partialEl = null; agentEl = null; }
   } else if (msg.type === "response" && msg.text) {
