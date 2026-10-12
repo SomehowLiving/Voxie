@@ -47,3 +47,4 @@
   .try-grid, .try-tips { grid-template-columns: 1fr; }
   .try-hero { padding-top: 64px; }
 }
+.field .lbl em { font-style: normal; color: var(--ink-3); }

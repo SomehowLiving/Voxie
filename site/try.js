@@ -166,7 +166,11 @@ async function call() {
     try {
       resp = await fetch(base + "/whip", { method: "POST", headers: { "Content-Type": "application/sdp" }, body: pc.localDescription.sdp });
     } catch {
-      throw new Error(`Couldn't reach a Voxie server at ${base}. Is it running, and did you allow this page to reach it?`);
+      const port = new URL(base).port;
+      if (port === "8400" || port === "8410" || port === "9101") {
+        throw new Error(`${base} is the quickstart's call page or demo agent, not the Voxie server. Use the server's address: http://localhost:8080 by default.`);
+      }
+      throw new Error(`Couldn't reach a Voxie server at ${base}. Is it running (port 8080 by default), and did you allow this page to reach it?`);
     }
     if (resp.status === 429) throw new Error("Too many calls right now. Try again in a minute.");
     if (resp.status === 503) throw new Error("Voxie is busy with other calls. Try again shortly.");
