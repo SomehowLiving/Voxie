@@ -22,6 +22,11 @@ const AGENT_PORT = Number(process.env.AGENT_PORT ?? 9101);
 const AGENT_KEY = process.env.STREAMCORE_AGENT_API_KEY ?? "";
 const GROQ_KEY = process.env.GROQ_API_KEY ?? "";
 const MODEL = process.env.QUICKSTART_MODEL ?? "openai/gpt-oss-20b";
+// OpenAI backs Groq up: asked when Groq fails, or hasn't answered within
+// HEDGE_MS (the first reply wins). Unset OPENAI_API_KEY to use Groq alone.
+const OPENAI_KEY = process.env.OPENAI_API_KEY ?? "";
+const OPENAI_MODEL = process.env.QUICKSTART_OPENAI_MODEL ?? "gpt-4.1-mini";
+const HEDGE_MS = Number(process.env.QUICKSTART_HEDGE_MS ?? 1200);
 // The voice router's health: which languages it can speak right now.
 const VOICE_HEALTH = process.env.VOICE_HEALTH_URL ?? "http://127.0.0.1:8300/health";
 
@@ -97,26 +102,65 @@ async function think(history) {
 }
 
 async function ask(history, languages) {
-  if (!GROQ_KEY) {
+  if (!GROQ_KEY && !OPENAI_KEY) {
     // No model configured: prove the pipeline works by echoing.
     const last = history.at(-1)?.content ?? "";
     return { text: `You said: ${last}`, endCall: /\b(bye|goodbye)\b/i.test(last) };
   }
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [{ role: "system", content: systemPrompt(languages) }, ...history],
-      max_completion_tokens: 400,
-      ...(MODEL.startsWith("openai/gpt-oss") ? { reasoning_effort: "low" } : {}),
-    }),
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!res.ok) throw new Error(`Groq ${res.status}: ${(await res.text()).slice(0, 200)}`);
-  const reply = (await res.json()).choices?.[0]?.message?.content?.trim() ?? "";
+  const messages = [{ role: "system", content: systemPrompt(languages) }, ...history];
+  const reply = await hedged(messages);
   const endCall = /\[end\]\s*$/i.test(reply);
   return { text: reply.replace(/\[end\]\s*$/i, "").trim(), endCall };
+}
+
+// One chat completion from an OpenAI-compatible endpoint.
+async function complete(name, url, key, model, messages, signal) {
+  const started = Date.now();
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model,
+      messages,
+      max_completion_tokens: 400,
+      ...(model.startsWith("openai/gpt-oss") ? { reasoning_effort: "low" } : {}),
+    }),
+    signal,
+  });
+  if (!res.ok) throw new Error(`${name} ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const text = (await res.json()).choices?.[0]?.message?.content?.trim() ?? "";
+  if (!text) throw new Error(`${name} returned no text`);
+  console.log(`${ts()} [llm] ${name} answered in ${Date.now() - started}ms`);
+  return text;
+}
+
+// Groq first; OpenAI if Groq fails or is slower than HEDGE_MS. First reply wins.
+function hedged(messages) {
+  const providers = [];
+  if (GROQ_KEY) providers.push(() => complete("groq", "https://api.groq.com/openai/v1/chat/completions", GROQ_KEY, MODEL, messages, abort.signal));
+  if (OPENAI_KEY) providers.push(() => complete("openai", "https://api.openai.com/v1/chat/completions", OPENAI_KEY, OPENAI_MODEL, messages, abort.signal));
+  const abort = new AbortController();
+  const timeout = setTimeout(() => abort.abort(), 8000);
+  return new Promise((resolve, reject) => {
+    let pending = 0, done = false, next = 0, timer;
+    const errors = [];
+    const launch = () => {
+      if (done || next >= providers.length) return;
+      pending++;
+      providers[next++]().then((text) => {
+        if (done) return;
+        done = true; clearTimeout(timer); clearTimeout(timeout); abort.abort();
+        resolve(text);
+      }, (err) => {
+        errors.push(err.message || String(err));
+        if (done) return;
+        if (--pending === 0 && next >= providers.length) { done = true; clearTimeout(timer); clearTimeout(timeout); reject(new Error(errors.join("; "))); }
+        else { clearTimeout(timer); launch(); }
+      });
+      if (next < providers.length) timer = setTimeout(launch, HEDGE_MS);
+    };
+    launch();
+  });
 }
 
 // The [lang:xx] tag tells the voice router which voice to use; the page and
@@ -181,7 +225,7 @@ createServer(async (req, res) => {
     console.error(`${ts()} [agent] ${err}`);
     res.writeHead(500, { "Content-Type": "application/json" }).end('{"error":"internal"}');
   }
-}).listen(AGENT_PORT, () => console.log(`${ts()} demo agent on :${AGENT_PORT}${GROQ_KEY ? ` (Groq ${MODEL})` : " (echo mode: set GROQ_API_KEY for real replies)"}`));
+}).listen(AGENT_PORT, () => console.log(`${ts()} demo agent on :${AGENT_PORT}${GROQ_KEY || OPENAI_KEY ? ` (${[GROQ_KEY && `Groq ${MODEL}`, OPENAI_KEY && `OpenAI ${OPENAI_MODEL}${GROQ_KEY ? ` after ${HEDGE_MS}ms` : ""}`].filter(Boolean).join(", then ")})` : " (echo mode: set GROQ_API_KEY or OPENAI_API_KEY for real replies)"}`));
 
 // --- the page, and WHIP forwarded to Voxie with the caller's identity ---------
 async function forwardWhip(req, res) {
