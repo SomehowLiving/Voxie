@@ -43,6 +43,9 @@ func (p *Pipeline) runAgent() {
 			}
 
 			log.Printf("[agent] user: %s", ev.Text)
+			if ev.Language != "" && len(strings.Fields(ev.Text)) > 2 {
+				p.turnLanguage.Store(ev.Language)
+			}
 			p.closeCallerSpokeFirst.Do(func() { close(p.callerSpokeFirst) })
 			// A turn that lands while the reply is still playing cuts it off
 			// just as a barge-in does: the app hears what the caller heard.
@@ -71,7 +74,10 @@ func (p *Pipeline) isPassiveAcknowledgement(ev TranscriptEvent) bool {
 	// Said into silence, an acknowledgement is a real (if minimal) turn — the
 	// caller is handing the floor back and deserves a reply. Only one spoken
 	// over the agent is passive.
-	if !ev.OverAgentSpeech || !isAcknowledgementOnly(ev.Text) {
+	if !ev.OverAgentSpeech {
+		return false
+	}
+	if !isAcknowledgementOnly(ev.Text) && !p.isMisScriptedShortReply(ev) {
 		return false
 	}
 
@@ -83,6 +89,37 @@ func (p *Pipeline) isPassiveAcknowledgement(ev TranscriptEvent) bool {
 	}
 
 	return true
+}
+
+// indicLanguages are the languages Sarvam's auto-detection mixes up on very
+// short words.
+var indicLanguages = map[string]bool{"hi": true, "bn": true, "ta": true, "te": true, "kn": true, "ml": true, "mr": true, "gu": true, "pa": true, "od": true}
+
+// isMisScriptedShortReply reports a one- or two-word reply, spoken over the
+// agent, that came back labelled as a different Indian language from the
+// call's. Sarvam detects the language per utterance, and on a single word it
+// often picks the wrong script: live, a Tamil caller's "சரி" came back as
+// Kannada "ಸರಿ" and "ஆமா" as Gujarati "આમાં" -- a real Gujarati word, so it
+// cut the agent off. A caller who really switches language says a sentence.
+func (p *Pipeline) isMisScriptedShortReply(ev TranscriptEvent) bool {
+	call, _ := p.turnLanguage.Load().(string)
+	heard := baseLang(ev.Language)
+	call = baseLang(call)
+	if call == "" || heard == "" || heard == call {
+		return false
+	}
+	if !indicLanguages[call] || !indicLanguages[heard] {
+		return false
+	}
+	return len(strings.Fields(normalizedTranscriptText(ev.Text))) <= 2
+}
+
+// baseLang turns "ta-IN" into "ta".
+func baseLang(code string) string {
+	if i := strings.IndexAny(code, "-_"); i > 0 {
+		code = code[:i]
+	}
+	return strings.ToLower(code)
 }
 
 // respond runs the LLM → TTS → outbound flow for a single user utterance.
@@ -477,12 +514,20 @@ func (p *Pipeline) setSpeaking(speaking bool) {
 
 // agentSpeechRecent reports whether the agent is speaking, or stopped recently
 // enough that a caller utterance arriving now was plausibly spoken over it.
-func (p *Pipeline) agentSpeechRecent() bool {
+func (p *Pipeline) agentSpeechRecent() bool { return p.agentSpeechWithin(backchannelGrace) }
+
+// finalsOnlyBackchannelGrace is backchannelGrace for a listener that sends
+// only finished sentences, which land seconds after the words.
+const finalsOnlyBackchannelGrace = 3 * time.Second
+
+// agentSpeechWithin reports whether the agent is speaking or stopped less
+// than grace ago.
+func (p *Pipeline) agentSpeechWithin(grace time.Duration) bool {
 	if p.speaking.Load() {
 		return true
 	}
 	endedAt := p.speechEndedAt.Load()
-	return endedAt != 0 && time.Since(time.Unix(0, endedAt)) < backchannelGrace
+	return endedAt != 0 && time.Since(time.Unix(0, endedAt)) < grace
 }
 
 // registerResponse installs cancel as the cancel func for generation gen,

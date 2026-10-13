@@ -76,7 +76,14 @@ func (p *Pipeline) runInbound() {
 			// Sampled here, not in runAgent: the turn buffer may hold this
 			// final for up to turnMergeMax, by which point the agent has
 			// finished and the talking-over question can no longer be asked.
-			ev.OverAgentSpeech = p.agentSpeechRecent()
+			// Sarvam sends only finished sentences, seconds after the words
+			// were spoken: live, a Tamil "சரி சரி" said over the agent arrived
+			// after it had stopped and was answered as a turn.
+			grace := backchannelGrace
+			if result.Provider == "sarvam" {
+				grace = finalsOnlyBackchannelGrace
+			}
+			ev.OverAgentSpeech = p.agentSpeechWithin(grace)
 			hasPartialText.Store(false)
 			latestPartial.Store("text", "")
 			// The utterance is over, so a tool that fired on it may fire again

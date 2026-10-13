@@ -194,6 +194,8 @@ type Pipeline struct {
 	// Interruption tracking
 	lastAgentText   atomic.Value // string — accumulates current response text
 	interruptedText atomic.Value // string — what the caller heard of a reply they cut off
+	// turnLanguage is the language of the caller's last full sentence.
+	turnLanguage atomic.Value // string
 	// ledger records which sentences of the current response actually played.
 	ledger playbackLedger
 	// lifecycleEmittedGen guarantees one completion event per response

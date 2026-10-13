@@ -28,7 +28,7 @@ func normalizedTranscriptText(s string) string {
 			b.WriteByte(' ')
 		}
 	}
-	return strings.Join(strings.Fields(b.String()), " ")
+	return normalizeNasal(strings.Join(strings.Fields(b.String()), " "))
 }
 
 // lastWord returns the final word of an utterance, lowercased and stripped of
@@ -245,7 +245,61 @@ var backchannelWordTokens = map[string]bool{
 	"ja": true, "genau": true, "gut": true, "richtig": true, "verstehe": true, "klar": true, "stimmt": true,
 	// Hindi, as speech-to-text writes it in Latin script
 	"haan": true, "han": true, "ha": true, "accha": true, "acha": true, "theek": true, "thik": true, "hai": true, "ji": true,
+	"haanji": true, "achha": true, "sahi": true,
 }
+
+// Native-script backchannels for every language Voxie hears. Speech-to-text
+// writes Indian languages in their own scripts (Deepgram: "हां", not "haan"),
+// so the Latin list above never matched them: live, "हाँ", "अच्छा" and
+// "हाँ जी" each stopped the agent and were answered as turns. Nasal marks
+// are normalized first (candrabindu → anusvara), so "हाँ" and "हां" are one
+// word. As above, a turn is a backchannel only if EVERY token is listed.
+func init() {
+	for _, w := range strings.Fields(`
+		हां जी अच्छा अच्छी ठीक है हम्म हम्म्म हूं ओके सही बिल्कुल वाह अरे हांजी
+		हो होय बरं बरोबर आहे
+		হ্যাং হ্যা হুম আচ্ছা ঠিক আছে জি
+		ஆமா ஆம் ஆமாம் சரி சரிங்க ம்ம் ஓகே
+		అవును సరే ఓకే హా ఆ మ్మ్ అలాగే
+		ಹೌದು ಸರಿ ಹೂಂ ಓಕೆ ಹಾ ಆಯ್ತು
+		അതെ ശരി ഓക്കെ ഉം ആ
+		હા હાં બરાબર સારું ઠીક છે જી
+		ਹਾਂ ਜੀ ਅੱਛਾ ਠੀਕ ਹੈ ਹਾਂਜੀ
+		ହଂ ଠିକ ଅଛି ହଉ
+		はい うん ええ そうですね なるほど そうそう はいはい うんうん へえ
+		嗯 对 好 是的 好的 对对 嗯嗯 明白
+		네 응 예 그렇군요 맞아요
+		نعم اه ايوه أيوه طيب تمام صح
+		evet tamam hı anladım peki
+		да ага угу ну понятно хорошо ясно
+		так зрозуміло добре
+		tak aha dobrze jasne mhm rozumiem
+		oké precies klopt prima
+		ano jo jasně dobře
+		igen jó értem persze
+		precis okej jaha
+		da bine sigur
+		joo kyllä niin okei aivan
+		jo præcis netop
+		vâng dạ ừ đúng rồi được
+	`) {
+		backchannelWordTokens[normalizeNasal(w)] = true
+	}
+}
+
+// candrabindu → anusvara per Indian script: speech-to-text writes "haan" both
+// ways (हाँ / हां), and the backchannel list has one spelling.
+var nasalFold = strings.NewReplacer(
+	"\u0901", "\u0902", // Devanagari
+	"\u0981", "\u0982", // Bengali
+	"\u0A01", "\u0A02", // Gurmukhi
+	"\u0A81", "\u0A82", // Gujarati
+	"\u0B01", "\u0B02", // Odia
+	"\u0C01", "\u0C02", // Telugu
+	"\u0C81", "\u0C82", // Kannada
+)
+
+func normalizeNasal(s string) string { return nasalFold.Replace(s) }
 
 // bargeInCommandTokens are words that interrupt the agent on their own, no
 // matter what else the utterance contains.
