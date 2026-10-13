@@ -48,3 +48,4 @@
   .try-hero { padding-top: 64px; }
 }
 .field .lbl em { font-style: normal; color: var(--ink-3); }
+.turn.aside { margin-left: 22px; padding: 7px 11px; font-size: 13.5px; background: rgba(61, 111, 224, .04); border-style: dashed; }

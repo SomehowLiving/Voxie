@@ -95,14 +95,23 @@ function addNote(text) {
 }
 const clean = (s) => s.replace(/\[(lang|voice):[^\]]*\]\s*/g, "");
 
+let voxieState = "", asideEl = null;
 function onEvent(raw) {
   let msg;
   try { msg = JSON.parse(raw); } catch { return; }
   if (msg.type === "transcript" && msg.text) {
+    if (voxieState === "speaking" && agentEl) {
+      // Said while Voxie talks: shown under its reply, which stays. A "yeah"
+      // or "haan" is ignored and the reply goes on; a real interruption
+      // becomes the next exchange once Voxie stops to answer it.
+      if (!asideEl) asideEl = addTurn("You, over Voxie", "", "you aside");
+      asideEl.querySelector(".text").textContent = msg.text;
+      return;
+    }
     if (!partialEl) {
       // Only the latest exchange is shown: your words and Voxie's reply.
       log.innerHTML = "";
-      agentEl = null;
+      agentEl = asideEl = null;
       partialEl = addTurn("You", "", "you partial");
     }
     partialEl.querySelector(".text").textContent = msg.text;
@@ -114,7 +123,17 @@ function onEvent(raw) {
   } else if (msg.type === "state") {
     const labels = { listening: "Listening", thinking: "Voxie is thinking", speaking: "Voxie is speaking" };
     if (labels[msg.state]) setStatus(labels[msg.state], msg.state);
-    if (msg.state === "listening") agentEl = null;
+    if (msg.state === "thinking" && asideEl) {
+      // The caller cut in and Voxie is answering them: their words start the
+      // next exchange.
+      const said = asideEl.querySelector(".text").textContent;
+      log.innerHTML = "";
+      partialEl = asideEl = null;
+      addTurn("You", said, "you");
+    }
+    if (msg.state === "thinking" || msg.state === "listening") agentEl = null;
+    if (msg.state === "listening") asideEl = null;
+    voxieState = msg.state;
   }
 }
 
