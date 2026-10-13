@@ -10,5 +10,6 @@
 //   Empty shows a placeholder.
 window.VOXIE_TRY = {
   server: "",
-  video: "",
+  video: "/media/voxie-demo.mp4",
+  poster: "/media/voxie-demo-poster.jpg",  // still shown before the video plays
 };

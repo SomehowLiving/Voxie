@@ -37,6 +37,9 @@ for (const btn of document.querySelectorAll(".copy")) {
     v.controls = true;
     v.preload = "metadata";
     v.playsInline = true;
+    if (cfg.poster) v.poster = cfg.poster;
+    // take the video's own shape (the demo is 1280x1000, not 16:9)
+    v.addEventListener("loadedmetadata", () => { if (v.videoWidth) frame.style.aspectRatio = `${v.videoWidth} / ${v.videoHeight}`; });
     frame.appendChild(v);
   }
 })();
