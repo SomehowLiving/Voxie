@@ -223,7 +223,11 @@ func NewDeepgramClient(ctx context.Context, cfg config.DeepgramConfig, onResult 
 
 	cb := &deepgramCallback{onResult: onResult}
 
-	ws, err := websocketv1.NewUsingCallbackWithCancel(sttCtx, cancel, cfg.APIKey, &clientinterfaces.ClientOptions{}, tOptions, cb)
+	// KeepAlive while no audio flows: Deepgram closes a stream that gets
+	// nothing for ~10 s (close 1011). Live, a browser that sent no packets
+	// during pure-digital silence lost the connection, and the caller's next
+	// sentence with it.
+	ws, err := websocketv1.NewUsingCallbackWithCancel(sttCtx, cancel, cfg.APIKey, &clientinterfaces.ClientOptions{EnableKeepAlive: true}, tOptions, cb)
 	if err != nil {
 		cancel()
 		return nil, fmt.Errorf("deepgram client: %w", err)
