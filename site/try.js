@@ -84,7 +84,7 @@ function addTurn(who, text, cls) {
   t.textContent = text;
   el.append(b, t);
   log.appendChild(el);
-  el.scrollIntoView({ block: "end", behavior: "smooth" });
+  el.scrollIntoView({ block: "nearest", behavior: "smooth" }); // only if it is out of view
   return el;
 }
 function addNote(text) {

@@ -31,7 +31,7 @@
 .meter { height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
 .meter span { display: block; height: 100%; width: 0; background: var(--blue); transition: width .08s linear; }
 
-.log { margin-top: 14px; display: grid; gap: 8px; }
+.log { margin-top: 14px; display: grid; gap: 8px; align-content: start; min-height: 200px; } /* room for both bubbles: a new turn never resizes the card */
 .turn { padding: 10px 12px; border-radius: 12px; font-size: 14.5px; background: #fff; border: 1px solid var(--line); }
 .turn b { display: block; font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px; }
 .turn.you { background: rgba(61, 111, 224, .06); }
