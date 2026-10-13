@@ -317,6 +317,30 @@ var bargeInCommandTokens = map[string]bool{
 	"pare": true, "não": true, "nao": true,
 	"warte": true, "warten": true, "stopp": true, "halt": true, "nein": true,
 	"ruko": true, "rukiye": true, "nahi": true, "nahin": true,
+	// "Sorry, …" / "Excuse me, …" open an interruption: live, "sorry to cut
+	// in" waited for "cut in" before the agent stopped (1.3 s).
+	"sorry": true, "excuse": true,
+}
+
+// Native-script "wait / stop / no" for the other languages Voxie hears.
+// As above, only words that don't mean something else.
+func init() {
+	for _, w := range strings.Fields(`
+		रुको रुकिए रुकें ठहरिए ठहरो नहीं नही थांबा नाही
+		থামুন থামো না দাঁড়ান
+		இருங்க நில்லுங்க வேண்டாம் இல்லை
+		ఆగండి ఆగు వద్దు కాదు
+		ನಿಲ್ಲಿ ತಡೆಯಿರಿ ಬೇಡ ಇಲ್ಲ
+		നിർത്തൂ നിൽക്കൂ വേണ്ട ഇല്ല
+		રોકો ઊભા ના નહીં
+		ਰੁਕੋ ਨਹੀਂ
+		ରୁହନ୍ତୁ ନାହିଁ
+		待って ちょっと いいえ 等等 等一下 停 不是 잠깐 잠깐만요 아니요
+		подождите стоп нет зачекайте ні czekaj stój nie wacht nee počkejte ne
+		várjon nem vänta nej stai nu odota ei vent dừng khoan không
+	`) {
+		bargeInCommandTokens[normalizeNasal(w)] = true
+	}
 }
 
 // bargeInWeakTokens carry no content on their own, so they don't count toward

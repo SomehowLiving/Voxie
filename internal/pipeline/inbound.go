@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -71,6 +72,15 @@ func (p *Pipeline) runInbound() {
 
 	sttCallback := func(result stt.TranscriptResult) {
 		ev := TranscriptEvent{Text: result.Text, Final: result.IsFinal, Language: result.Language}
+		// The agent's own voice coming back (a speakerphone, a phone line
+		// without echo cancellation) is transcribed like the caller. If what
+		// was heard is mostly the agent's own recent words, it's dropped.
+		if p.agentSpeechWithin(time.Duration(echoGraceSeconds*float64(time.Second))) && isEchoOfAgent(result.Text, p.agentRecentText()) {
+			if result.IsFinal {
+				log.Printf("[inbound] dropped an echo of the agent's own voice: %q", result.Text)
+			}
+			return
+		}
 		if result.IsFinal {
 			ev.TurnStart = time.Now()
 			// Sampled here, not in runAgent: the turn buffer may hold this
@@ -134,6 +144,14 @@ func (p *Pipeline) runInbound() {
 	partialsEmitter, _ := sttClient.(stt.PartialsEmitter)
 	emitsPartials := func() bool { return partialsEmitter == nil || partialsEmitter.EmitsPartials() }
 
+	// rawBargeVAD is the barge-in detector without the echo guard's bound.
+	// The bound makes a caller clear the agent's own output level, so a
+	// quieter caller couldn't interrupt (live: stops took 1.5-2.8 s, landing
+	// only in the agent's pauses). Partial text that isn't the agent's own
+	// words proves the sound is the caller, so with such text this detector
+	// is enough. Without text (Sarvam) the guarded detector still decides.
+	rawBargeVAD := vad.NewBargeIn()
+
 	// Backchannel suppression state machine
 	var bargeInPending bool
 	var bargeInStart time.Time
@@ -196,12 +214,38 @@ func (p *Pipeline) runInbound() {
 			// Uses the fast bargeInVAD (60ms onset) for responsiveness.
 			if *p.cfg.Pipeline.BargeIn {
 				p.bargeInVAD.Process(frame.Samples)
+				rawBargeVAD.Process(frame.Samples)
+				speakingNow := p.bargeInVAD.IsSpeaking() ||
+					(emitsPartials() && hasPartialText.Load() && rawBargeVAD.IsSpeaking())
 				if !p.bargeInVAD.IsSpeaking() {
 					vadSpeechSince = time.Time{}
 				} else if vadSpeechSince.IsZero() {
 					vadSpeechSince = time.Now()
 				}
 
+				fire := func(why string) {
+					log.Printf("[inbound] barge-in %s", why)
+					bargeInPending = false
+					p.maybeRestoreDuck()
+					p.bargeInVAD.Reset()
+					rawBargeVAD.Reset()
+					select {
+					case p.interruptCh <- struct{}{}:
+					default:
+					}
+				}
+				if bargeInPending && emitsPartials() {
+					// Words that already mean something ("wait, what are your
+					// hours") stop the agent now; only acknowledgements wait out
+					// the window.
+					partial, _ := latestPartial.Load("text")
+					partialStr, _ := partial.(string)
+					readbackHold := p.readbackBargeInGuardEnabled() && p.readbackInProgress() && !isStrongBargeInCommand(partialStr)
+					if isMeaningfulBargeInTranscript(partialStr) && !readbackHold {
+						fire(fmt.Sprintf("confirmed by the caller's words: %q", partialStr))
+						continue
+					}
+				}
 				if bargeInPending {
 					elapsed := time.Since(bargeInStart)
 					// Past the window, speech whose partial text is still
@@ -231,7 +275,7 @@ func (p *Pipeline) runInbound() {
 						case p.interruptCh <- struct{}{}:
 						default:
 						}
-					} else if !p.bargeInVAD.IsSpeaking() {
+					} else if !speakingNow {
 						// Speech ended within the window — check for backchannel.
 						// A finals-only provider has no partial text here, so
 						// every burst that ends inside the window classifies as
@@ -265,7 +309,7 @@ func (p *Pipeline) runInbound() {
 						}
 					}
 					// else: still speaking within window, keep waiting
-				} else if p.bargeInVAD.IsSpeaking() && p.speaking.Load() &&
+				} else if speakingNow && p.speaking.Load() &&
 					((emitsPartials() && hasPartialText.Load()) || (!emitsPartials() && time.Since(vadSpeechSince) >= finalsOnlyOnset)) {
 					// Conditions met — start backchannel suppression window.
 					// A finals-only provider opens the window on VAD alone,
