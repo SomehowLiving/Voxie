@@ -22,7 +22,7 @@ This extends upstream StreamCore's "bring your own agent" contract
   "type": "chat",
   "text": "मुझे दोबारा फ़ोन मत करना",
   "language": "hi",
-  "interrupted_text": "…what the agent was saying when cut off",
+  "interrupted_text": "Your appointment is on Mon…",
   "summary": "…rolling digest of earlier turns"
 }
 ```
@@ -37,9 +37,15 @@ This extends upstream StreamCore's "bring your own agent" contract
   language. Treat it as a strong hint, not a verdict on the whole call. A
   one-word "Hello" is labelled English whatever the caller speaks, so
   switch your reply language only on a real sentence.
-- **`interrupted_text`** is present when the caller cut the agent off. It
-  says what they actually heard, so don't assume the whole last reply
-  landed.
+- **`interrupted_text`** is present when the caller cut the agent off,
+  by talking over it or by finishing a new turn while it was still
+  speaking. It's what they heard: the sentences that played in full, then
+  the played part of the one they cut, ending at a word with "…". Voxie
+  counts the audio actually sent for each sentence, less ~200 ms still in
+  flight, and assumes an even pace within a sentence, so the cut-off word is
+  an estimate. Replace your stored copy of the last reply with it: the rest
+  was never heard. It's absent if the reply had finished playing, or if
+  the caller cut in before any of it was heard.
 
 ## The four types
 

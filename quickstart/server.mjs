@@ -101,6 +101,9 @@ async function think(history) {
   return reply;
 }
 
+const GOODBYE = /\b(bye|goodbye|that's all|adi[oó]s|chao|au revoir|tsch[uü]ss|auf wiedersehen|ciao|arrivederci|tchau|do widzenia|dzi[eę]kuj[eę]|tot ziens|hej d[aå]|näkemiin|farvel|la revedere|naschledanou)\b|さようなら|じゃあね|再见|拜拜|안녕히|до свидания|до побачення|अलविदा|बाय|ठीक है धन्यवाद|போய் வருகிறேன்|பை|నమస్తే బై|বিদায়/i;
+const saysGoodbye = (text) => GOODBYE.test(text);
+
 async function ask(history, languages) {
   if (!GROQ_KEY && !OPENAI_KEY) {
     // No model configured: prove the pipeline works by echoing.
@@ -109,7 +112,9 @@ async function ask(history, languages) {
   }
   const messages = [{ role: "system", content: systemPrompt(languages) }, ...history];
   const reply = await hedged(messages);
-  const endCall = /\[end\]\s*$/i.test(reply);
+  // Small models sometimes add [end] mid-conversation: hang up only when the
+  // caller's last words sound like a goodbye.
+  const endCall = /\[end\]\s*$/i.test(reply) && saysGoodbye(history.at(-1)?.content ?? "");
   return { text: reply.replace(/\[end\]\s*$/i, "").trim(), endCall };
 }
 
@@ -187,6 +192,12 @@ async function handleAgent(req) {
       const said = (req.text ?? "").trim();
       if (!said) return { text: "" };
       publish({ kind: "caller", text: said, language: req.language });
+      if (req.interrupted_text) {
+        // The caller cut the last reply off: remember only what they heard.
+        console.log(`${ts()} [agent] caller interrupted; Voxie says they heard: ${JSON.stringify(req.interrupted_text)}`);
+        const last = call.history.at(-1);
+        if (last?.role === "assistant") last.content = `${req.interrupted_text} [the caller cut in here]`;
+      }
       // Voxie says which language it heard; the model gets it as a hint --
       // only on a real sentence: a one-word "No," may be labelled English
       // whatever the caller speaks.

@@ -7,6 +7,9 @@ import "time"
 type PCMFrame struct {
 	Samples      []int16
 	NewTalkspurt bool // true on first frame of a new TTS utterance
+	// heard is the response sentence this frame belongs to (nil for tones and
+	// realtime audio); the sender counts it as played once it's on the wire.
+	heard *heardSegment
 }
 
 // TranscriptEvent carries an STT result through the pipeline.

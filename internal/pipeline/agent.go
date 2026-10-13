@@ -44,15 +44,15 @@ func (p *Pipeline) runAgent() {
 
 			log.Printf("[agent] user: %s", ev.Text)
 			p.closeCallerSpokeFirst.Do(func() { close(p.callerSpokeFirst) })
+			// A turn that lands while the reply is still playing cuts it off
+			// just as a barge-in does: the app hears what the caller heard.
+			p.captureHeard()
 			gen := p.supersedeResponse()
 			p.sendEvent(stateMsg{Type: "state", State: "thinking"})
 			go func() { defer p.recoverPanic("respond"); p.respond(gen, ev.Text, ev.Language, ev.TurnStart) }()
 
 		case <-p.interruptCh:
-			// Capture what agent was saying for interruption context
-			if txt, _ := p.lastAgentText.Load().(string); txt != "" {
-				p.interruptedText.Store(txt)
-			}
+			p.captureHeard()
 			log.Println("[agent] interrupted (barge-in)")
 			p.supersedeResponse()
 		}
@@ -104,6 +104,7 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 		cancel()
 		p.finishResponse(gen)
 	}()
+	p.ledger.reset(gen)
 
 	// NOTE: speaking flag is set in synthesizeSentences when first TTS audio
 	// is actually produced, not here. This prevents false barge-in triggers
@@ -127,10 +128,12 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 			turn.Prompt = fmt.Sprintf("[You were interrupted mid-response. The user said: '%s'. Respond to what they said — do not continue or repeat your previous answer.]", userText)
 		} else {
 			// Longer interruption — include brief context of what agent was saying.
-			if len(interrupted) > 150 {
-				interrupted = "..." + interrupted[len(interrupted)-150:]
+			// The tail of what was heard is where the caller cut in.
+			context := interrupted
+			if r := []rune(context); len(r) > 200 {
+				context = "…" + string(r[len(r)-200:])
 			}
-			turn.Prompt = fmt.Sprintf("[You were interrupted while saying: '%s'. The user said: '%s'. Address what the user said.]", interrupted, userText)
+			turn.Prompt = fmt.Sprintf("[You were interrupted. The user heard only: '%s'. The user said: '%s'. Address what the user said.]", context, userText)
 		}
 		turn.InterruptedText = interrupted
 	}
@@ -206,7 +209,7 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 	go func() {
 		defer wg.Done()
 		defer p.recoverPanic("synthesizeSentences")
-		p.synthesizeSentences(respCtx, sentences, turnStart)
+		p.synthesizeSentences(respCtx, gen, sentences, turnStart)
 	}()
 
 	llmFirstToken := true
@@ -269,7 +272,7 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 
 // synthesizeSentences reads sentences from the channel, calls TTS for each,
 // and pushes the resulting PCM frames into outPCMCh for the sender goroutine.
-func (p *Pipeline) synthesizeSentences(ctx context.Context, sentences <-chan string, turnStart time.Time) {
+func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentences <-chan string, turnStart time.Time) {
 	emittedTTSTiming := false
 	emittedSpeaking := false
 
@@ -279,10 +282,14 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, sentences <-chan str
 	// which would insert an audible click every chunk.
 	var leftover []int16
 	talkspurtSent := false
+	var seg *heardSegment // the sentence being synthesized, for the playback ledger
 
 	emitFrame := func(frame PCMFrame) bool {
 		select {
 		case p.outPCMCh <- frame:
+			if frame.heard != nil {
+				frame.heard.frames.Add(1)
+			}
 			if !emittedTTSTiming && p.cfg.Pipeline.Debug && !turnStart.IsZero() {
 				emittedTTSTiming = true
 				p.sendEvent(timingMsg{
@@ -315,6 +322,10 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, sentences <-chan str
 		// never hears it — and mapped to provider voice controls when the
 		// configured TTS supports them.
 		controls, clean := tts.ParseVoiceTag(sentence)
+		if seg != nil {
+			seg.done.Store(true)
+		}
+		seg = p.ledger.sentence(gen, clean)
 
 		// Stream so audio starts playing as soon as the first PCM chunk
 		// arrives, instead of waiting for the whole sentence to synthesize.
@@ -353,6 +364,7 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, sentences <-chan str
 				frame := PCMFrame{
 					Samples:      make([]int16, audio.FrameSize),
 					NewTalkspurt: !talkspurtSent,
+					heard:        seg,
 				}
 				copy(frame.Samples, samples[i:i+audio.FrameSize])
 				talkspurtSent = true
@@ -372,10 +384,26 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, sentences <-chan str
 		frame := PCMFrame{
 			Samples:      make([]int16, audio.FrameSize),
 			NewTalkspurt: !talkspurtSent,
+			heard:        seg,
 		}
 		copy(frame.Samples, leftover)
 		emitFrame(frame)
 	}
+	if seg != nil {
+		seg.done.Store(true)
+	}
+}
+
+// captureHeard records, for the caller's next turn, what they heard of a
+// reply that is being cut off. Nothing is recorded if the reply had finished
+// playing: then it wasn't an interruption.
+func (p *Pipeline) captureHeard() {
+	if !p.ledger.unheard() {
+		return
+	}
+	heard := p.ledger.heard()
+	p.interruptedText.Store(heard)
+	log.Printf("[agent] cut off; the caller heard: %q", heard)
 }
 
 // waitOutboundDrain waits until the outbound PCM channel is empty, meaning
@@ -690,12 +718,13 @@ func (p *Pipeline) greet(text string) {
 	// greeting off with "yeah, okay" had their turn dropped as a passive
 	// acknowledgement -- leaving dead air after the greeting was stopped.
 	p.lastAgentText.Store(tts.StripVoiceTags(text))
+	p.ledger.reset(gen)
 
 	sentences := make(chan string, 1)
 	sentences <- text
 	close(sentences)
 
-	p.synthesizeSentences(ctx, sentences, time.Time{})
+	p.synthesizeSentences(ctx, gen, sentences, time.Time{})
 }
 
 // greetingText returns the appropriate greeting based on call direction.

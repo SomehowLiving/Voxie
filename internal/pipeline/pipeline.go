@@ -193,7 +193,9 @@ type Pipeline struct {
 
 	// Interruption tracking
 	lastAgentText   atomic.Value // string — accumulates current response text
-	interruptedText atomic.Value // string — what agent was saying when interrupted
+	interruptedText atomic.Value // string — what the caller heard of a reply they cut off
+	// ledger records which sentences of the current response actually played.
+	ledger playbackLedger
 	// lifecycleEmittedGen guarantees one completion event per response
 	// generation; latestLifecycleTurn rejects late plugin output from an older
 	// turn when a newer turn has already completed.

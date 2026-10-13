@@ -104,6 +104,10 @@ func (p *Pipeline) encodeAndSend(frame PCMFrame) {
 		if p.ctx.Err() == nil {
 			log.Printf("[sender] write error: %v", err)
 		}
+		return
+	}
+	if frame.heard != nil {
+		frame.heard.sent.Add(1)
 	}
 }
 

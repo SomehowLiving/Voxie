@@ -35,7 +35,7 @@ Each request is JSON:
   "type": "chat",
   "text": "what the caller said",
   "system": "skill text appended by the server, if any",
-  "interrupted_text": "what the agent was saying when cut off",
+  "interrupted_text": "what the caller heard before cutting in…",
   "context": ["retrieved chunk", "…"],
   "summary": "rolling digest of earlier turns"
 }
