@@ -49,3 +49,5 @@
 }
 .field .lbl em { font-style: normal; color: var(--ink-3); }
 .turn.aside { margin-left: 22px; padding: 7px 11px; font-size: 13.5px; background: rgba(61, 111, 224, .04); border-style: dashed; }
+.video-tabs { margin-bottom: 14px; }
+.video-caption { margin: 12px 2px 0; font-size: 14px; color: var(--ink-2); }

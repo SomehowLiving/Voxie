@@ -15,33 +15,49 @@ for (const btn of document.querySelectorAll(".copy")) {
   });
 }
 
-// --- demo video ------------------------------------------------------------
-(function video() {
-  const src = String(cfg.video || "").trim();
-  if (!src) return;
-  let url;
-  try { url = new URL(src, location.href); } catch { return; }
-  if (url.protocol !== "https:" && url.origin !== location.origin) return;
-  const frame = $("videoFrame");
+// --- demo videos: one tab each ------------------------------------------------
+(function videos() {
+  const list = (cfg.videos || (cfg.video ? [{ label: "Demo", src: cfg.video, poster: cfg.poster }] : []))
+    .map((v) => { try { return { ...v, url: new URL(String(v.src || ""), location.href) }; } catch { return null; } })
+    .filter((v) => v && (v.url.protocol === "https:" || v.url.origin === location.origin));
+  if (!list.length) return;
+  const frame = $("videoFrame"), tabs = $("videoTabs"), caption = $("videoCaption");
   $("videoEmpty").remove();
-  if (/(^|\.)youtube(-nocookie)?\.com$/.test(url.hostname) && url.pathname.startsWith("/embed/")) {
-    const f = document.createElement("iframe");
-    f.src = url.href;
-    f.title = "Voxie demo";
-    f.allow = "encrypted-media; picture-in-picture; fullscreen";
-    f.loading = "lazy";
-    frame.appendChild(f);
-  } else {
-    const v = document.createElement("video");
-    v.src = url.href;
-    v.controls = true;
-    v.preload = "metadata";
-    v.playsInline = true;
-    if (cfg.poster) v.poster = cfg.poster;
-    // take the video's own shape (the demo is 1280x1000, not 16:9)
-    v.addEventListener("loadedmetadata", () => { if (v.videoWidth) frame.style.aspectRatio = `${v.videoWidth} / ${v.videoHeight}`; });
-    frame.appendChild(v);
+  let current = null;
+  function show(i) {
+    const v = list[i];
+    if (current) { current.pause?.(); current.remove(); }
+    frame.style.aspectRatio = "";
+    if (/(^|\.)youtube(-nocookie)?\.com$/.test(v.url.hostname) && v.url.pathname.startsWith("/embed/")) {
+      current = document.createElement("iframe");
+      current.src = v.url.href; current.title = v.label || "Voxie demo";
+      current.allow = "encrypted-media; picture-in-picture; fullscreen"; current.loading = "lazy";
+    } else {
+      current = document.createElement("video");
+      current.src = v.url.href; current.controls = true; current.preload = "metadata"; current.playsInline = true;
+      if (v.poster) current.poster = v.poster;
+      // take the video's own shape (the demos are portrait, not 16:9)
+      current.addEventListener("loadedmetadata", () => { if (current.videoWidth) frame.style.aspectRatio = `${current.videoWidth} / ${current.videoHeight}`; });
+    }
+    frame.appendChild(current);
+    caption.textContent = v.caption || ""; caption.hidden = !v.caption;
+    [...tabs.children].forEach((b, j) => { b.setAttribute("aria-selected", String(j === i)); b.tabIndex = j === i ? 0 : -1; });
   }
+  if (list.length > 1) {
+    list.forEach((v, i) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.setAttribute("role", "tab"); b.textContent = v.label || `Demo ${i + 1}`;
+      b.addEventListener("click", () => show(i));
+      b.addEventListener("keydown", (e) => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        const j = (i + (e.key === "ArrowRight" ? 1 : list.length - 1)) % list.length;
+        show(j); tabs.children[j].focus();
+      });
+      tabs.appendChild(b);
+    });
+    tabs.hidden = false;
+  }
+  show(0);
 })();
 
 // --- which Voxie server ----------------------------------------------------

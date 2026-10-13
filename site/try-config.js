@@ -10,6 +10,11 @@
 //   Empty shows a placeholder.
 window.VOXIE_TRY = {
   server: "",
-  video: "/media/voxie-demo.mp4",
-  poster: "/media/voxie-demo-poster.jpg",  // still shown before the video plays
+  // Demo videos, one tab each: { label, src, poster, caption }.
+  videos: [
+    { label: "Languages", src: "/media/voxie-demo.mp4", poster: "/media/voxie-demo-poster.jpg",
+      caption: "One call in English, French, Spanish, Japanese, Hindi and Tamil. Voxie switches listener the moment the caller does." },
+    { label: "Interruptions", src: "/media/voxie-interruptions.mp4", poster: "/media/voxie-interruptions-poster.jpg",
+      caption: "\"Yeah\" and \"haan\" don't stop Voxie; \"wait\" and \"नहीं रुकिए\" do, and it answers what the caller said instead." },
+  ],
 };
