@@ -307,6 +307,20 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 	}
 }
 
+// ttsStallTimeout: a voice that sends nothing for this long, before or during
+// a sentence, has stalled; the sentence is skipped rather than leaving the
+// caller in silence. Generous, since the voice router returns a whole long
+// sentence at once.
+var ttsStallTimeout = 8 * time.Second
+
+func truncateRunes(s string, n int) string {
+	r := []rune(s)
+	if len(r) <= n {
+		return s
+	}
+	return string(r[:n]) + "…"
+}
+
 // synthesizeSentences reads sentences from the channel, calls TTS for each,
 // and pushes the resulting PCM frames into outPCMCh for the sender goroutine.
 func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentences <-chan string, turnStart time.Time) {
@@ -366,30 +380,55 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 
 		// Stream so audio starts playing as soon as the first PCM chunk
 		// arrives, instead of waiting for the whole sentence to synthesize.
+		sctx, scancel := context.WithCancel(ctx)
 		var stream <-chan tts.StreamChunk
 		var err error
 		if cs, ok := p.ttsClient.(tts.ControllableStreamer); ok && !controls.IsZero() {
-			stream, err = cs.SynthesizeStreamWithControls(ctx, clean, controls)
+			stream, err = cs.SynthesizeStreamWithControls(sctx, clean, controls)
 		} else {
-			stream, err = p.ttsClient.SynthesizeStream(ctx, clean)
+			stream, err = p.ttsClient.SynthesizeStream(sctx, clean)
 		}
 		if err != nil {
+			scancel()
 			if ctx.Err() == nil {
 				log.Printf("[agent] TTS stream error: %v", err)
 			}
 			return
 		}
 
-		for chunk := range stream {
+		// A voice that stops sending without an error would otherwise leave
+		// the caller in silence until they hang up. Only time spent waiting
+		// on the voice counts, not time spent pacing audio out.
+		stall := time.NewTimer(ttsStallTimeout)
+		received := 0
+		for {
+			var chunk tts.StreamChunk
+			var ok bool
+			select {
+			case chunk, ok = <-stream:
+			case <-stall.C:
+				log.Printf("[agent] TTS stalled: no audio for %s after %d bytes; skipping the sentence %q",
+					ttsStallTimeout, received, truncateRunes(clean, 60))
+				scancel()
+				ok = false
+			case <-ctx.Done():
+				ok = false
+			}
+			if !ok {
+				break
+			}
 			if chunk.Err != nil {
+				scancel()
 				if ctx.Err() == nil {
 					log.Printf("[agent] TTS error: %v", chunk.Err)
 				}
 				return
 			}
 			if ctx.Err() != nil {
+				scancel()
 				return
 			}
+			received += len(chunk.PCM)
 
 			samples := append(leftover, audio.Linear16BytesToPCM(chunk.PCM)...)
 			leftover = nil
@@ -406,12 +445,25 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 				copy(frame.Samples, samples[i:i+audio.FrameSize])
 				talkspurtSent = true
 				if !emitFrame(frame) {
+					scancel()
 					return
 				}
 			}
 			if i < len(samples) {
 				leftover = append([]int16{}, samples[i:]...)
 			}
+			if !stall.Stop() {
+				select {
+				case <-stall.C:
+				default:
+				}
+			}
+			stall.Reset(ttsStallTimeout)
+		}
+		stall.Stop()
+		scancel()
+		if ctx.Err() != nil {
+			return
 		}
 	}
 

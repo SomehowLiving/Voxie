@@ -558,9 +558,14 @@ func sanitizeToolName(name string) string {
 	}, name)
 }
 
+// truncate shortens s to at most max bytes for a log line, cutting at a
+// character boundary so a Hindi or Tamil reply isn't split mid-character.
 func truncate(s string, max int) string {
 	if len(s) <= max {
 		return s
+	}
+	for max > 0 && !utf8.RuneStart(s[max]) {
+		max--
 	}
 	return s[:max] + "..."
 }
