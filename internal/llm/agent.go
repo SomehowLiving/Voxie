@@ -70,11 +70,22 @@ type agentClient struct {
 	// endCall is set when a chat reply carries "end_call": true (JSON replies
 	// only) and consumed by TakeEndCall.
 	endCall atomic.Bool
+	// outcome is a chat reply's "outcome", consumed by TakeOutcome.
+	outcome atomic.Pointer[Outcome]
 }
 
 // TakeEndCall implements CallEnder: whether the last chat reply asked to end
 // the call, clearing the flag so it applies to exactly one response.
 func (c *agentClient) TakeEndCall() bool { return c.endCall.Swap(false) }
+
+// TakeOutcome implements OutcomeReporter.
+func (c *agentClient) TakeOutcome() *Outcome { return c.outcome.Swap(nil) }
+
+// replyMeta is what a chat reply says besides its text.
+type replyMeta struct {
+	EndCall bool
+	Outcome *Outcome
+}
 
 // NewAgentClient returns a Client that proxies turns to an external agent
 // endpoint. timeoutMs bounds a whole turn including streaming the reply;
@@ -296,17 +307,20 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 
 	contentType := resp.Header.Get("Content-Type")
 	switch {
-	case strings.HasPrefix(contentType, "text/event-stream"):
-		var endCall bool
-		endCall, err = readSSE(resp.Body, emit)
-		if endCall && payload.Type == "chat" {
-			c.endCall.Store(true)
+	case strings.HasPrefix(contentType, "text/event-stream"), strings.HasPrefix(contentType, "application/json"):
+		var meta replyMeta
+		if strings.HasPrefix(contentType, "text/event-stream") {
+			meta, err = readSSE(resp.Body, emit)
+		} else {
+			meta, err = readJSONReply(resp.Body, emit)
 		}
-	case strings.HasPrefix(contentType, "application/json"):
-		var endCall bool
-		endCall, err = readJSONReply(resp.Body, emit)
-		if endCall && payload.Type == "chat" {
-			c.endCall.Store(true)
+		if payload.Type == "chat" {
+			if meta.EndCall {
+				c.endCall.Store(true)
+			}
+			if meta.Outcome != nil {
+				c.outcome.Store(meta.Outcome)
+			}
 		}
 	default:
 		err = readTextStream(resp.Body, emit)
@@ -326,8 +340,8 @@ func (c *agentClient) do(ctx context.Context, payload agentRequest, onChunk func
 // readSSE emits the payload of each "data:" line. A line is treated as JSON
 // {"delta": "…"} when it parses as an object; anything else is raw text, so
 // trivial agents can just print data lines without JSON-encoding.
-func readSSE(r io.Reader, emit func(string)) (bool, error) {
-	endCall := false
+func readSSE(r io.Reader, emit func(string)) (replyMeta, error) {
+	var meta replyMeta
 	scanner := bufio.NewScanner(r)
 	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
 	for scanner.Scan() {
@@ -338,24 +352,28 @@ func readSSE(r io.Reader, emit func(string)) (bool, error) {
 		}
 		data = strings.TrimPrefix(data, " ")
 		if data == "[DONE]" {
-			return endCall, nil
+			return meta, nil
 		}
 		if strings.HasPrefix(data, "{") {
 			var event struct {
-				Delta   string `json:"delta"`
-				EndCall bool   `json:"end_call"`
+				Delta   string   `json:"delta"`
+				EndCall bool     `json:"end_call"`
+				Outcome *Outcome `json:"outcome"`
 			}
 			if json.Unmarshal([]byte(data), &event) == nil {
 				// {"end_call": true}, on its own or with the last delta,
 				// works as in a JSON reply: end once the reply has played.
-				endCall = endCall || event.EndCall
+				meta.EndCall = meta.EndCall || event.EndCall
+				if event.Outcome != nil {
+					meta.Outcome = event.Outcome
+				}
 				emit(event.Delta)
 				continue
 			}
 		}
 		emit(data)
 	}
-	return endCall, scanner.Err()
+	return meta, scanner.Err()
 }
 
 // readTextStream emits raw bytes as they arrive, holding back any trailing
@@ -387,19 +405,21 @@ func readTextStream(r io.Reader, emit func(string)) error {
 }
 
 // readJSONReply emits a buffered JSON reply's text and reports whether it
-// also asked to end the call ("end_call": true) after this line is spoken.
-func readJSONReply(r io.Reader, emit func(string)) (bool, error) {
+// also asked to end the call ("end_call": true) after this line is spoken,
+// and any "outcome" it carried.
+func readJSONReply(r io.Reader, emit func(string)) (replyMeta, error) {
 	body, err := io.ReadAll(io.LimitReader(r, 1<<20))
 	if err != nil {
-		return false, err
+		return replyMeta{}, err
 	}
 	var reply struct {
-		Text     string `json:"text"`
-		Response string `json:"response"`
-		EndCall  bool   `json:"end_call"`
+		Text     string   `json:"text"`
+		Response string   `json:"response"`
+		EndCall  bool     `json:"end_call"`
+		Outcome  *Outcome `json:"outcome"`
 	}
 	if err := json.Unmarshal(body, &reply); err != nil {
-		return false, fmt.Errorf("parse json reply: %w", err)
+		return replyMeta{}, fmt.Errorf("parse json reply: %w", err)
 	}
 	text := reply.Text
 	if text == "" {
@@ -413,7 +433,7 @@ func readJSONReply(r io.Reader, emit func(string)) (bool, error) {
 	for _, sentence := range splitSentences(text) {
 		emit(sentence)
 	}
-	return reply.EndCall, nil
+	return replyMeta{EndCall: reply.EndCall, Outcome: reply.Outcome}, nil
 }
 
 // leadingLangTag returns a sentence's "[lang:xx] " prefix, if it has one.

@@ -416,3 +416,34 @@ func TestDropLastTurn(t *testing.T) {
 		t.Errorf("got %v", got)
 	}
 }
+
+// An app can say how the call went, in a JSON reply or a streamed one; the
+// outcome applies once.
+func TestChatReplyOutcome(t *testing.T) {
+	client := newReplyAgent(t, `{"text":"You're booked for eight.","outcome":{"success":true,"reason":"booked"}}`)
+	if _, err := client.Chat(context.Background(), Turn{Text: "eight", Prompt: "eight"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	o := client.(OutcomeReporter).TakeOutcome()
+	if o == nil || o.Success == nil || !*o.Success || o.Reason != "booked" {
+		t.Fatalf("outcome %+v", o)
+	}
+	if client.(OutcomeReporter).TakeOutcome() != nil {
+		t.Fatal("an outcome must be taken once")
+	}
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		for _, event := range []string{`{"delta":"Sorry, we're full."}`, `{"outcome":{"success":false,"reason":"no_tables"}}`, `[DONE]`} {
+			fmt.Fprintf(w, "data: %s\n\n", event)
+		}
+	}))
+	t.Cleanup(srv.Close)
+	streamed := NewAgentClient(srv.URL, "", 0, "")
+	if _, err := streamed.Chat(context.Background(), Turn{Text: "eight", Prompt: "eight"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if o := streamed.(OutcomeReporter).TakeOutcome(); o == nil || o.Success == nil || *o.Success || o.Reason != "no_tables" {
+		t.Fatalf("streamed outcome %+v", o)
+	}
+}

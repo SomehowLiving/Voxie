@@ -114,6 +114,20 @@ type CallEnder interface {
 	TakeEndCall() bool
 }
 
+// Outcome is an app's verdict on a call: whether it reached its goal, and a
+// short label for why ("booked", "no_answer").
+type Outcome struct {
+	Success *bool  `json:"success,omitempty"`
+	Reason  string `json:"reason,omitempty"`
+}
+
+// OutcomeReporter is an optional capability for a Client whose backend can
+// say how the call went. TakeOutcome returns (and clears) the outcome the
+// most recent Chat reply carried, or nil.
+type OutcomeReporter interface {
+	TakeOutcome() *Outcome
+}
+
 // NewClient returns an LLM client for the configured provider.
 //
 // resourceID is who is on the call, empty when nobody was identified. Only the
