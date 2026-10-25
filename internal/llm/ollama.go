@@ -118,6 +118,11 @@ func (c *ollamaClient) Chat(ctx context.Context, turn Turn, onChunk func(string)
 	// Prompt, not Text — see the openai client.
 	userText := turn.Prompt
 	c.mu.Lock()
+	if turn.ReplacesLastTurn {
+		c.history = dropLastTurn(c.history,
+			func(m api.Message) bool { return m.Role == "user" },
+			func(m api.Message) bool { return len(m.ToolCalls) > 0 || m.Role == "tool" })
+	}
 	c.history = append(c.history, api.Message{
 		Role:    "user",
 		Content: userText,

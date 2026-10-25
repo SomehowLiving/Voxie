@@ -7,6 +7,7 @@ package pipeline
 import (
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 // ---------------------------------------------------------------------------
@@ -146,21 +147,36 @@ func isStrongBargeInCommand(s string) bool {
 // complete thought. Used to shrink the merge window for the common case.
 // Trailing quotes/brackets after the terminal mark are tolerated.
 func endsTerminal(s string) bool {
-	trimmed := strings.TrimRight(strings.TrimSpace(s), "'\")]}")
+	trimmed := strings.TrimRight(strings.TrimSpace(s), "'\")]}」』")
 	if trimmed == "" {
 		return false
 	}
-	switch trimmed[len(trimmed)-1] {
-	case '.', '!', '?':
+	r, _ := utf8.DecodeLastRuneInString(trimmed)
+	switch r {
+	case '.', '!', '?', '。', '！', '？', '।', '॥':
 		return true
 	}
 	return false
 }
 
 // endsIncomplete reports whether the utterance trails off mid-thought, e.g. on
-// a conjunction, article, or filler word.
+// a conjunction, article, or filler word, or on a comma. Live, "Mi número de
+// pedido es" and "明日の予約ですが、" were answered before the caller went on.
 func endsIncomplete(s string) bool {
-	return incompleteTailWords[lastWord(s)]
+	t := strings.TrimSpace(s)
+	if strings.HasSuffix(t, ",") || strings.HasSuffix(t, "、") || strings.HasSuffix(t, "，") {
+		return true
+	}
+	if incompleteTailWords[lastWord(s)] {
+		return true
+	}
+	t = strings.TrimRight(t, ".。 ")
+	for _, suffix := range incompleteTailSuffixes {
+		if strings.HasSuffix(t, suffix) {
+			return true
+		}
+	}
+	return false
 }
 
 // endsDictation reports whether the pending turn text looks like an
@@ -376,6 +392,44 @@ var incompleteTailWords = map[string]bool{
 	"will": true, "would": true, "can": true, "could": true, "shall": true, "should": true,
 	"may": true, "might": true, "must": true,
 	"i": true, "you": true, "he": true, "she": true, "we": true, "they": true, "it": true,
+
+	// Other languages: only words a finished sentence can't end on.
+	// Spanish
+	"y": true, "o": true, "pero": true, "porque": true, "que": true, "de": true, "del": true,
+	"al": true, "en": true, "con": true, "por": true, "para": true, "el": true, "la": true,
+	"los": true, "las": true, "un": true, "una": true, "mi": true, "mis": true, "tu": true,
+	"su": true, "es": true, "si": true, "cuando": true,
+	// French
+	"et": true, "ou": true, "mais": true, "parce": true, "qui": true, "du": true, "des": true,
+	"à": true, "au": true, "aux": true, "dans": true, "pour": true, "avec": true, "sur": true,
+	"par": true, "le": true, "les": true, "une": true, "mon": true, "ma": true, "mes": true,
+	"est": true, "sont": true, "je": true, "nous": true, "vous": true, "quand": true,
+	// German (not separable particles like "auf", "mit": "Ich komme mit";
+	// "an" is English's article, so an unpunctuated "Ich rufe Sie an" waits
+	// the longer window -- a delay, not a wrong answer)
+	"und": true, "oder": true, "aber": true, "weil": true, "dass": true, "wenn": true,
+	"der": true, "das": true, "dem": true, "den": true, "eine": true, "einen": true,
+	"einem": true, "mein": true, "meine": true, "ist": true, "sind": true, "ich": true,
+	"für": true, "von": true,
+	// Italian and Portuguese
+	"e": true, "perché": true, "che": true, "di": true, "della": true,
+	"il": true, "lo": true, "gli": true, "per": true, "è": true, "sono": true,
+	// (not "no", "da": "No", "Ich bin da" end sentences)
+	"mas": true, "dos": true, "ao": true, "em": true,
+	"na": true, "com": true, "os": true, "uma": true,
+	"meu": true, "minha": true, "é": true, "são": true,
+	// Hindi
+	"और": true, "या": true, "लेकिन": true, "कि": true, "क्योंकि": true, "का": true,
+	"की": true, "के": true, "को": true, "से": true, "में": true, "ने": true, "मेरा": true,
+	"मेरी": true, "मेरे": true, "अगर": true, "जब": true,
+}
+
+// incompleteTailSuffixes end a mid-sentence clause in languages written
+// without spaces: Japanese "…ですが" ("…but"), "…ので", Korean "…는데",
+// "…지만", "…고". Not Japanese "て": "待って" is a whole sentence.
+var incompleteTailSuffixes = []string{
+	"が", "けど", "けれど", "ので", "を", "に", "は",
+	"는데", "지만", "니까", "하고", "이고",
 }
 
 // dictationTailWords are tokens that signal the caller is mid-dictation of

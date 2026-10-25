@@ -140,13 +140,27 @@ var whisperLanguages = map[string]string{
 	"bengali": "bn", "gujarati": "gu", "panjabi": "pa", "punjabi": "pa", "marathi": "mr",
 	"odia": "od", "oriya": "od",
 	"czech": "cs", "hungarian": "hu", "romanian": "ro", "finnish": "fi", "danish": "da",
+	"norwegian": "no", "slovak": "sk", "slovenian": "sl", "croatian": "hr", "serbian": "sr",
+	"bulgarian": "bg", "catalan": "ca", "lithuanian": "lt", "latvian": "lv", "estonian": "et",
+	"swahili": "sw", "tagalog": "tl", "filipino": "tl", "afrikaans": "af", "amharic": "am",
+	"burmese": "my", "khmer": "km", "lao": "lo", "sinhala": "si", "sinhalese": "si",
 }
 
-// whisperLanguage accepts a name ("Tamil") or a code ("ta").
+// whisperLanguage accepts a name ("Tamil") or a code ("ta"). Groq's Whisper
+// can answer with an ISO 639 name: live, Greek came back as
+// "modern greek (1453-)", and the turn was lost.
 func whisperLanguage(name string) string {
 	name = strings.ToLower(strings.TrimSpace(name))
+	if i := strings.Index(name, "("); i > 0 {
+		name = strings.TrimSpace(name[:i])
+	}
 	if code, ok := whisperLanguages[name]; ok {
 		return code
+	}
+	if i := strings.LastIndex(name, " "); i > 0 {
+		if code, ok := whisperLanguages[name[i+1:]]; ok {
+			return code
+		}
 	}
 	return baseLanguage(name)
 }

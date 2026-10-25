@@ -387,3 +387,32 @@ func TestSplitSentencesKeepsPunctuationWithItsSentence(t *testing.T) {
 		}
 	}
 }
+
+func TestChatSaysWhenItReplacesTheLastTurn(t *testing.T) {
+	agent := newCaptureAgent(t)
+	client := agent.client("")
+	turn := Turn{Text: "I want to... book a table for two", Prompt: "I want to... book a table for two", ReplacesLastTurn: true}
+	if _, err := client.Chat(context.Background(), turn, nil, nil); err != nil {
+		t.Fatalf("Chat: %v", err)
+	}
+	if !agent.requests[0].ReplacesLastTurn {
+		t.Error("replaces_last_turn not sent")
+	}
+}
+
+func TestDropLastTurn(t *testing.T) {
+	type m struct{ role string }
+	isUser := func(x m) bool { return x.role == "user" }
+	isTool := func(x m) bool { return x.role == "tool" }
+	h := []m{{"system"}, {"user"}, {"assistant"}, {"user"}, {"assistant"}}
+	if got := dropLastTurn(h, isUser, isTool); len(got) != 3 {
+		t.Errorf("got %v; want the last user message and its reply dropped", got)
+	}
+	withTool := []m{{"user"}, {"assistant"}, {"tool"}, {"assistant"}}
+	if got := dropLastTurn(withTool, isUser, isTool); len(got) != 4 {
+		t.Errorf("got %v; a turn whose tool ran must be kept", got)
+	}
+	if got := dropLastTurn([]m{{"system"}}, isUser, isTool); len(got) != 1 {
+		t.Errorf("got %v", got)
+	}
+}

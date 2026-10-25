@@ -54,6 +54,21 @@ func (l *playbackLedger) sentence(gen uint64, text string) *heardSegment {
 	return s
 }
 
+// heardFrames is how many frames of response gen the caller has heard: 0 if
+// it hasn't started, or its audio is still on its way.
+func (l *playbackLedger) heardFrames(gen uint64) int64 {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	if l.gen != gen {
+		return 0 // the response hasn't opened its ledger yet
+	}
+	var sent int64
+	for _, s := range l.segments {
+		sent += s.sent.Load()
+	}
+	return max(sent-heardLatencyFrames, 0)
+}
+
 // unheard reports whether some of the response's audio never reached the
 // caller: the response was cut off rather than finished.
 func (l *playbackLedger) unheard() bool {

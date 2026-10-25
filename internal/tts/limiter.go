@@ -145,6 +145,20 @@ func (c *limitedClient) SynthesizeStreamWithControls(ctx context.Context, text s
 	})
 }
 
+// SynthesizeStreamLanguage forwards the sentence's language through the
+// limiter to a provider that takes one.
+func (c *limitedClient) SynthesizeStreamLanguage(ctx context.Context, text, language string, vc VoiceControls) (<-chan StreamChunk, error) {
+	return c.limitedStream(ctx, func() (<-chan StreamChunk, error) {
+		if ls, ok := c.inner.(LanguageStreamer); ok {
+			return ls.SynthesizeStreamLanguage(ctx, text, language, vc)
+		}
+		if cs, ok := c.inner.(ControllableStreamer); ok {
+			return cs.SynthesizeStreamWithControls(ctx, text, vc)
+		}
+		return c.inner.SynthesizeStream(ctx, text)
+	})
+}
+
 // limitedStream runs start under a held limiter slot and relays the
 // resulting stream, releasing the slot when the stream closes.
 func (c *limitedClient) limitedStream(ctx context.Context, start func() (<-chan StreamChunk, error)) (<-chan StreamChunk, error) {

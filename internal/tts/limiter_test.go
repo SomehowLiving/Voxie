@@ -153,3 +153,17 @@ func TestLimitedClientSynthesizeReleases(t *testing.T) {
 		t.Fatalf("InUse = %d after Synthesize, want 0", got)
 	}
 }
+
+// A provider without a language parameter, behind a one-slot limiter, must
+// take that one slot only: asking for a second would wait forever.
+func TestLimitedClientLanguageFallbackTakesOneSlot(t *testing.T) {
+	lc := newLimitedClient(&fakeStreamClient{}, newConcurrencyLimiter(1)).(LanguageStreamer)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	ch, err := lc.SynthesizeStreamLanguage(ctx, "hi", "en", VoiceControls{})
+	if err != nil {
+		t.Fatalf("err = %v; the fallback waited for a second slot", err)
+	}
+	for range ch {
+	}
+}

@@ -85,8 +85,8 @@ greeting = ""           # Spoken when a session connects
 greeting_outgoing = ""  # Spoken for outbound SIP calls; falls back to greeting
 debug = false           # Emit timing events over the DataChannel and log a per-turn latency breakdown
 user_speech_quiet_ms = 600   # Quiet period after the caller stops before the agent speaks
-turn_merge_ms = 350          # Debounce window for merging finals into one turn. Raise if the agent
-                             # answers callers halfway through a sentence; lower if replies feel slow
+turn_merge_ms = 350          # Wait for more of the sentence after a final that doesn't end in . ! ? -- a
+                             # punctuated one is answered at once (a late second piece is still joined)
 # rag_prefetch = false                    # Start retrieval during the merge window instead of after it
 # readback_bargein_guard_enabled = false  # Ignore weak barge-ins while the agent reads values back
 # greeting_delay_ms = 4000                # Hold the greeting this long to let the caller speak first;
@@ -140,7 +140,15 @@ min_confidence = 0.85                         # any Deepgram turn below this is 
 provider = "openai"     # Supported: openai, ollama, agent
 
 [tts]
-provider = "cartesia"   # Supported: aliyun, cartesia, deepgram, elevenlabs, mimo, minimax, speechify, telnyx, vibevoice, volcengine
+provider = "cartesia"   # Supported: aliyun, cartesia, deepgram, elevenlabs, failover, mimo, minimax, speechify, telnyx, vibevoice, volcengine
+failover = []           # With provider = "failover": voices in order of preference, e.g. ["vibevoice", "cartesia"]. Each
+                        # sentence goes to the first available one; a voice that errors, is rate limited or out of
+                        # credit, or doesn't start speaking in time is skipped and the sentence goes to the next
+languages = {}          # Per-language order, overriding failover for that language: { hi = ["cartesia", "vibevoice"] }
+first_audio_timeout_ms = 3000  # No audio within this and the sentence goes to the next voice
+cooldown_ms = 30000     # How long a failed voice is skipped (out of credit: 10 min; key rejected: until restart)
+client_choice = false   # Let a call pick one of the configured voices (?voice=name on /whip; GET /voices lists them).
+                        # Off by default: a caller could otherwise choose the most expensive one
 
 # Provider credentials
 

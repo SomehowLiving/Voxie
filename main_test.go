@@ -431,3 +431,22 @@ func TestDeveloperPluginsStayOffWhenNeitherWasEnabled(t *testing.T) {
 		}
 	}
 }
+
+func TestVoicesListsTheChainAndWhetherACallMayChoose(t *testing.T) {
+	cfg := &config.Config{}
+	cfg.TTS.Provider = "failover"
+	cfg.TTS.Failover = []string{"vibevoice", "cartesia"}
+	cfg.TTS.ClientChoice = true
+	rec := httptest.NewRecorder()
+	voicesHandler(cfg)(rec, httptest.NewRequest(http.MethodGet, "/voices", nil))
+	var got struct {
+		Voices    []string `json:"voices"`
+		Choosable bool     `json:"choosable"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatal(err)
+	}
+	if len(got.Voices) != 2 || got.Voices[0] != "vibevoice" || !got.Choosable {
+		t.Fatalf("got %+v", got)
+	}
+}

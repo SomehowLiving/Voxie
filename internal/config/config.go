@@ -362,6 +362,26 @@ type LLMConfig struct {
 
 type TTSConfig struct {
 	Provider string `toml:"provider"`
+
+	// Failover is the ordered provider list when Provider is "failover":
+	// each sentence goes to the first available provider, and moves on when
+	// one errors, is rate limited or out of credit, or doesn't start
+	// speaking within FirstAudioTimeoutMs. Order by preference or cost.
+	Failover []string `toml:"failover"`
+	// Languages overrides the order per language ([tts.languages] hi =
+	// ["cartesia", "vibevoice"]), read from a sentence's "[lang:xx]" tag.
+	Languages map[string][]string `toml:"languages"`
+	// FirstAudioTimeoutMs: no audio from a provider within this (default
+	// 3000) and the sentence goes to the next one.
+	FirstAudioTimeoutMs int `toml:"first_audio_timeout_ms"`
+	// CooldownMs: how long a provider that failed is skipped (default
+	// 30000; out of credit: 10 min; key rejected: until restart).
+	CooldownMs int `toml:"cooldown_ms"`
+	// ClientChoice lets a call ask for one of the configured voices
+	// (?voice=cartesia on the WHIP URL), which then goes first in the chain
+	// for that call. Off by default: a client could otherwise choose the
+	// most expensive voice. Only voices already configured can be chosen.
+	ClientChoice bool `toml:"client_choice"`
 }
 
 // SarvamConfig is Sarvam AI's speech-to-text (https://docs.sarvam.ai),
