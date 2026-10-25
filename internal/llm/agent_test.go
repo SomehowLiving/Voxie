@@ -375,3 +375,15 @@ func TestStreamedReplyIsVoicedAsItArrivesAndCanEndTheCall(t *testing.T) {
 		t.Fatal(`{"end_call": true} in a streamed reply must end the call`)
 	}
 }
+
+func TestSplitSentencesKeepsPunctuationWithItsSentence(t *testing.T) {
+	got := splitSentences("हम एक साथ सीखेंगे, ठीक है? (Hum ek saath seekhenge, theek hai?)")
+	if len(got) != 2 || got[1] != "(Hum ek saath seekhenge, theek hai?)" {
+		t.Fatalf("got %q; a lone closing bracket must not be a sentence", got)
+	}
+	for _, p := range splitSentences(`Say "नमस्ते." Then repeat it.`) {
+		if !hasWords(p) {
+			t.Fatalf("%q has nothing to say", p)
+		}
+	}
+}

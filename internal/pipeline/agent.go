@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"github.com/streamcoreai/streamcore-server/internal/audio"
 	"github.com/streamcoreai/streamcore-server/internal/llm"
@@ -359,6 +360,11 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 		// never hears it — and mapped to provider voice controls when the
 		// configured TTS supports them.
 		controls, clean := tts.ParseVoiceTag(sentence)
+		if !speakable(clean) {
+			// Nothing a voice can say (")", "…"): sent anyway, it comes back
+			// as a burst of noise.
+			continue
+		}
 		if seg != nil {
 			seg.done.Store(true)
 		}
@@ -779,4 +785,15 @@ func (p *Pipeline) greetingText() string {
 		return p.cfg.Pipeline.GreetingOutgoing
 	}
 	return p.cfg.Pipeline.Greeting
+}
+
+// speakable reports whether a sentence has a letter or digit once its voice
+// and language tags are removed.
+func speakable(sentence string) bool {
+	for _, r := range tts.StripVoiceTags(sentence) {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			return true
+		}
+	}
+	return false
 }
