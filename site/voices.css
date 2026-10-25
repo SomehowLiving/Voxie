@@ -49,3 +49,69 @@
   .v-panel { padding: 20px 16px; }
   .v-text { font-size: 18px; padding: 14px 16px; }
 }
+
+/* Ratings: the line on each card, the voice's detail panel, the rating form. */
+.v-rate-link { margin: 14px 0 0; color: var(--ink-2); font-size: 15px; }
+.v-rate-link a { color: var(--blue); }
+.v-name { all: unset; cursor: pointer; font-weight: 500; font-size: 15px; border-bottom: 1px dashed rgba(20, 30, 60, .25); }
+.v-name:hover { border-bottom-color: var(--ink); }
+.v-name:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 3px; }
+.v-score { margin-top: 6px; font-size: 12.5px; color: var(--ink-3); }
+.v-score:empty { display: none; }
+.v-score b { color: var(--ink); font-weight: 500; }
+.r-show { position: relative; display: inline-block; color: rgba(20, 30, 60, .15); letter-spacing: 1px; line-height: 1; }
+.r-show::before { content: "★★★★★"; position: absolute; inset: 0; width: var(--p); overflow: hidden; color: #e0a526; white-space: nowrap; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.v-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 28px; border: 1px solid var(--line); border-radius: var(--r); background: #fff; color: var(--ink); box-shadow: var(--shadow); }
+.v-dialog::backdrop { background: rgba(14, 17, 22, .35); }
+.v-dialog h2 { font: 500 26px var(--font); margin: 4px 0 6px; }
+.v-dialog h3 { font: 500 12px var(--font); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px; }
+.v-dialog section { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 18px; }
+.v-dialog section p { margin: 0 0 6px; font-size: 14.5px; color: var(--ink-2); }
+.d-close { position: absolute; top: 14px; right: 16px; border: 0; background: none; font-size: 26px; line-height: 1; color: var(--ink-3); cursor: pointer; }
+.d-status { margin: 0 0 14px; color: var(--ink-2); font-size: 14.5px; }
+.d-muted, .v-dialog .d-muted { color: var(--ink-3); font-size: 13.5px; }
+.d-scores { display: grid; gap: 8px; margin: 0 0 10px; }
+.d-scores div { display: grid; grid-template-columns: 130px 1fr; align-items: center; }
+.d-scores dt { font-size: 14px; color: var(--ink-2); }
+.d-scores dd { margin: 0; font-size: 14px; }
+.d-scores .r-show { font-size: 17px; margin-right: 6px; }
+
+.r-form { display: grid; gap: 14px; }
+.r-questions { display: grid; gap: 10px; }
+.r-q, .r-about { border: 0; padding: 0; margin: 0; }
+.r-q { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.r-q legend { float: left; display: grid; font-size: 14px; }
+.r-q-ask { color: var(--ink-3); font-size: 12.5px; }
+/* Highest star first in the markup, shown right-to-left: a checked or hovered
+   star lights itself and every star before it. */
+.r-stars { display: inline-flex; flex-direction: row-reverse; }
+.r-stars input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.r-stars label { font-size: 26px; line-height: 1; padding: 0 2px; color: rgba(20, 30, 60, .18); cursor: pointer; }
+.r-stars input:checked ~ label, .r-stars label:hover, .r-stars label:hover ~ label { color: #e0a526; }
+.r-stars input:focus-visible + label { outline: 2px solid var(--blue); outline-offset: 1px; border-radius: 4px; }
+.r-about { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+.r-about legend { float: left; margin-right: 6px; }
+.r-field { display: grid; gap: 6px; font-size: 14px; }
+.r-field input, .r-field textarea { font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.r-error { color: #b42318; font-size: 13.5px; margin: 0; }
+
+@media (max-width: 720px) {
+  .v-dialog { padding: 22px 18px; }
+  .d-scores div { grid-template-columns: 110px 1fr; }
+}
+
+/* /rate: blind rating. */
+.rate-stage { display: grid; gap: 18px; }
+.rate-h { font: 500 24px var(--font); margin: 0; }
+.rate-top { display: grid; gap: 10px; }
+.rate-progress { height: 4px; border-radius: 4px; background: rgba(20, 30, 60, .07); overflow: hidden; }
+.rate-progress span { display: block; height: 100%; background: var(--blue); }
+.rate-stage .v-text { margin: 0; }
+.rate-play { justify-self: start; }
+.rate-about { max-width: 520px; }
+.rate-reveal { display: grid; gap: 10px; margin: 0; padding-left: 22px; }
+.rate-reveal li { font-size: 15px; }
+.rate-reveal li > span { margin-right: 8px; }
+.v-pill:disabled { opacity: .4; cursor: default; }

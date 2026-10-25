@@ -44,6 +44,7 @@
       <p class="kicker">Explore voices</p>
       <h1>Hear every voice Voxie speaks with.</h1>
       <p class="lede" id="lede">Every voice reads the same two lines in its language. Voxie's own voices run on your hardware; the others are providers you plug in with a key.</p>
+      <p class="v-rate-link" id="rateLink" hidden>Click a voice's name to see its ratings. Or <a href="/rate">rate voices blind</a>, without seeing who made them.</p>
     </section>
 
     <section class="wrap v-controls" aria-label="Choose a language and provider">
@@ -71,6 +72,11 @@
     <span>Built on <a href="https://github.com/streamcoreai/streamcore-server" rel="noopener">StreamCore</a> · Apache 2.0</span>
     <span class="footer-links"><a href="/">Home</a><a href="/try">Try</a><a href="https://github.com/SomehowLiving/Voxie" rel="noopener">GitHub</a><a href="https://github.com/SomehowLiving/Voxie/tree/main/docs/voxie" rel="noopener">Docs</a></span>
   </footer>
+  <dialog class="v-dialog glass" id="voiceDialog" aria-labelledby="dTitle">
+    <form method="dialog"><button class="d-close" aria-label="Close">×</button></form>
+    <div id="dBody"></div>
+  </dialog>
+  <script src="/ratings.js" defer></script>
   <script src="/voices.js" defer></script>
   <script defer src="/_vercel/insights/script.js"></script>
 </body>

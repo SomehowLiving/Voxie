@@ -41,7 +41,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/en-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.85,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -49,7 +54,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/en-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.16,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -417,7 +427,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/es-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.63,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -425,7 +440,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/es-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.53,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -586,7 +606,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/fr-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.72,
+      "rtf": 2.56,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -594,7 +619,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/fr-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.31,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -723,7 +753,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/it-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 2.47,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -731,7 +766,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/it-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.62,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -892,7 +932,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/pt-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.47,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -900,7 +945,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/pt-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 2.48,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -1013,7 +1063,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/de-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.5,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -1021,7 +1076,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/de-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.9,
+      "rtf": 2.71,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -1165,7 +1225,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/nl-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.96,
+      "rtf": 2.62,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -1173,7 +1238,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/nl-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.87,
+      "rtf": 2.59,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -1325,7 +1395,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/ru-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.95,
+      "rtf": 2.33,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -1333,7 +1408,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/ru-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.95,
+      "rtf": 2.58,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -1437,7 +1517,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/pl-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.93,
+      "rtf": 2.2,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -1445,7 +1530,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/pl-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.63,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -1837,7 +1927,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/sv-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.94,
+      "rtf": 2.42,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -1845,7 +1940,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/sv-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.94,
+      "rtf": 2.71,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -2045,7 +2145,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/fi-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.82,
+      "rtf": 1.97,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -2053,7 +2158,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/fi-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.58,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -2157,7 +2267,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/da-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 2.53,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -2165,7 +2280,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/da-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 2.68,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -2365,7 +2485,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/ja-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.94,
+      "rtf": 2.66,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -2373,7 +2498,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/ja-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.95,
+      "rtf": 2.72,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -2535,7 +2665,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/zh-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.87,
+      "rtf": 2.43,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -2543,7 +2678,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/zh-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.92,
+      "rtf": 2.65,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -2718,7 +2858,12 @@
      "via": "lab",
      "voice": "female character (af_heart's voice)",
      "audio": "/media/voices/audio/hi-cb-f.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.96,
+      "rtf": 2.59,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "Chatterbox (in testing)",
@@ -2726,7 +2871,12 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/hi-cb-m.mp3",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.91,
+      "rtf": 2.41,
+      "checked_with": "Deepgram nova-3"
+     }
     },
     {
      "provider": "ElevenLabs",
@@ -2831,7 +2981,12 @@
      "voice": "Divya",
      "audio": "/media/voices/audio/hi-parler-divya.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.91,
+      "rtf": 3.67,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -2840,7 +2995,12 @@
      "voice": "Rohit",
      "audio": "/media/voices/audio/hi-parler-rohit.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.91,
+      "rtf": 3.93,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -2943,7 +3103,12 @@
      "voice": "Aditi",
      "audio": "/media/voices/audio/bn-parler-aditi.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.36,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -2952,7 +3117,12 @@
      "voice": "Arjun",
      "audio": "/media/voices/audio/bn-parler-arjun.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 3.51,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -3062,7 +3232,12 @@
      "voice": "Neha",
      "audio": "/media/voices/audio/gu-parler-neha.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.3,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -3071,7 +3246,12 @@
      "voice": "Yash",
      "audio": "/media/voices/audio/gu-parler-yash.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.26,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -3181,7 +3361,12 @@
      "voice": "Anu",
      "audio": "/media/voices/audio/kn-parler-anu.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.21,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -3190,7 +3375,12 @@
      "voice": "Suresh",
      "audio": "/media/voices/audio/kn-parler-suresh.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.97,
+      "rtf": 3.5,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -3279,7 +3469,12 @@
      "voice": "Anjali",
      "audio": "/media/voices/audio/ml-parler-anjali.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.84,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -3288,7 +3483,12 @@
      "voice": "Harish",
      "audio": "/media/voices/audio/ml-parler-harish.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.53,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -3405,7 +3605,12 @@
      "voice": "Sanjay",
      "audio": "/media/voices/audio/mr-parler-sanjay.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 3.72,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -3414,7 +3619,12 @@
      "voice": "Sunita",
      "audio": "/media/voices/audio/mr-parler-sunita.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 4.0,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -3495,7 +3705,12 @@
      "voice": "Debjani",
      "audio": "/media/voices/audio/od-parler-debjani.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.96,
+      "rtf": 3.58,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -3504,7 +3719,12 @@
      "voice": "Manas",
      "audio": "/media/voices/audio/od-parler-manas.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.96,
+      "rtf": 3.44,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -3614,7 +3834,12 @@
      "voice": "Divjot",
      "audio": "/media/voices/audio/pa-parler-divjot.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.37,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -3623,7 +3848,12 @@
      "voice": "Gurpreet",
      "audio": "/media/voices/audio/pa-parler-gurpreet.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.14,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -3749,7 +3979,12 @@
      "voice": "Jaya",
      "audio": "/media/voices/audio/ta-parler-jaya.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 0.91,
+      "rtf": 3.08,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   },
@@ -3859,7 +4094,12 @@
      "voice": "Lalitha",
      "audio": "/media/voices/audio/te-parler-lalitha.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.32,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     },
     {
      "provider": "Indic Parler-TTS",
@@ -3868,7 +4108,12 @@
      "voice": "Prakash",
      "audio": "/media/voices/audio/te-parler-prakash.mp3",
      "batch": "phase1",
-     "testing": true
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.41,
+      "checked_with": "Sarvam saarika v2.5"
+     }
     }
    ]
   }
