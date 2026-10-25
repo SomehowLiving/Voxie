@@ -33,6 +33,7 @@
 .v-tag.p-sarvam { background: #b45309; }
 .v-tag.p-elevenlabs { background: #111827; }
 .v-tag.p-cartesia { background: #3d6fe0; }
+.v-tag.p-testing { background: #6d4bb8; }
 .v-bar { grid-column: 1 / -1; height: 3px; border-radius: 3px; background: rgba(20, 30, 60, .07); overflow: hidden; }
 .v-bar span { display: block; height: 100%; width: 0; background: var(--blue); }
 .v-empty { color: var(--ink-3); padding: 12px 0; }

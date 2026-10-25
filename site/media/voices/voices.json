@@ -34,6 +34,22 @@
      "via": "Voxie router",
      "voice": "am_fenrir (persona male-2)",
      "audio": "/media/voices/audio/en-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/en-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/en-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -70,6 +86,22 @@
      "via": "Voxie router",
      "voice": "em_alex (persona male-2)",
      "audio": "/media/voices/audio/es-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/es-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/es-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -106,6 +138,22 @@
      "via": "Voxie router",
      "voice": "ff_siwis (persona male-2)",
      "audio": "/media/voices/audio/fr-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/fr-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/fr-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -142,6 +190,22 @@
      "via": "Voxie router",
      "voice": "im_nicola (persona male-2)",
      "audio": "/media/voices/audio/it-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/it-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/it-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -178,6 +242,22 @@
      "via": "Voxie router",
      "voice": "pm_alex (persona male-2)",
      "audio": "/media/voices/audio/pt-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/pt-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/pt-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -214,6 +294,22 @@
      "via": "Voxie router",
      "voice": "de_DE-thorsten-high (persona male-2)",
      "audio": "/media/voices/audio/de-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/de-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/de-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -250,6 +346,22 @@
      "via": "Voxie router",
      "voice": "nl_BE-rdh-medium (persona male-2)",
      "audio": "/media/voices/audio/nl-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/nl-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/nl-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -286,6 +398,22 @@
      "via": "Voxie router",
      "voice": "ru_RU-dmitri-medium (persona male-2)",
      "audio": "/media/voices/audio/ru-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/ru-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/ru-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -322,6 +450,22 @@
      "via": "Voxie router",
      "voice": "pl_PL-darkman-medium (persona male-2)",
      "audio": "/media/voices/audio/pl-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/pl-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/pl-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -466,6 +610,22 @@
      "via": "Voxie router",
      "voice": "sv_SE-nst-medium (persona male-2)",
      "audio": "/media/voices/audio/sv-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/sv-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/sv-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -538,6 +698,22 @@
      "via": "Voxie router",
      "voice": "fi_FI-harri-medium (persona male-2)",
      "audio": "/media/voices/audio/fi-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/fi-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/fi-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -574,6 +750,22 @@
      "via": "Voxie router",
      "voice": "da_DK-talesyntese-medium (persona male-2)",
      "audio": "/media/voices/audio/da-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/da-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/da-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -646,6 +838,22 @@
      "via": "Voxie router",
      "voice": "jm_kumo (persona male-2)",
      "audio": "/media/voices/audio/ja-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/ja-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/ja-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -682,6 +890,22 @@
      "via": "Voxie router",
      "voice": "zm_yunjian (persona male-2)",
      "audio": "/media/voices/audio/zh-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/zh-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/zh-cb-m.mp3",
+     "testing": true
     }
    ]
   },
@@ -753,6 +977,22 @@
      "via": "",
      "voice": "aditya (conversational)",
      "audio": "/media/voices/audio/hi-09.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/hi-cb-f.mp3",
+     "testing": true
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/hi-cb-m.mp3",
+     "testing": true
     }
    ]
   },

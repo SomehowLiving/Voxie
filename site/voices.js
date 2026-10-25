@@ -5,13 +5,15 @@ const INDIAN = ["hi", "bn", "gu", "kn", "ml", "mr", "od", "pa", "ta", "te"];
 const FONTS = { hi: "Noto Sans Devanagari", mr: "Noto Sans Devanagari", bn: "Noto Sans Bengali", gu: "Noto Sans Gujarati",
   kn: "Noto Sans Kannada", ml: "Noto Sans Malayalam", od: "Noto Sans Oriya", pa: "Noto Sans Gurmukhi", ta: "Noto Sans Tamil",
   te: "Noto Sans Telugu", ja: "Noto Sans JP", zh: "Noto Sans SC" };
-// How a voice's provider is shown and filtered. Kokoro and Piper are Voxie's own.
+// How a voice's provider is shown and filtered. Kokoro and Piper are Voxie's own;
+// "testing" voices are models we're evaluating, not yet something Voxie speaks with.
 const PROVIDERS = [
   { key: "all", label: "All" },
   { key: "voxie", label: "Voxie's own" },
   { key: "sarvam", label: "Sarvam" },
+  { key: "testing", label: "In testing" },
 ];
-const providerKey = (v) => (/kokoro|piper/i.test(v.provider) ? "voxie" : v.provider.toLowerCase());
+const providerKey = (v) => (v.testing ? "testing" : /kokoro|piper/i.test(v.provider) ? "voxie" : v.provider.toLowerCase());
 const PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>';
 const STOP = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>';
 
@@ -103,12 +105,12 @@ function render() {
     const card = document.createElement("div");
     card.className = "v-card";
     const key = providerKey(v);
-    const name = v.provider.replace(/\s*\(self-hosted\)/, "");
+    const name = v.provider.replace(/\s*\((self-hosted|in testing)\)/, "");
     card.innerHTML = `
       <button class="v-play" type="button" aria-label="Play ${l.name}: ${name}, ${v.voice}">${PLAY}</button>
       <div>
         <div class="v-name"></div>
-        <div class="v-meta"><span class="v-tag p p-${key}"></span>${v.model ? '<span class="v-tag m"></span>' : ""}${key === "voxie" ? '<span class="v-tag">self-hosted</span>' : ""}</div>
+        <div class="v-meta"><span class="v-tag p p-${key}"></span>${v.model ? '<span class="v-tag m"></span>' : ""}${key === "voxie" ? '<span class="v-tag">self-hosted</span>' : ""}${v.testing ? '<span class="v-tag">not in Voxie yet</span>' : ""}</div>
       </div>
       <div class="v-bar"><span></span></div>`;
     card.querySelector(".v-name").textContent = v.voice;
@@ -136,7 +138,8 @@ fetch("/media/voices/voices.json").then((r) => r.json()).then((d) => {
   data = d;
   const fromHash = location.hash.slice(1);
   if (data.languages.some((l) => l.code === fromHash)) lang = fromHash;
-  const total = data.languages.reduce((n, l) => n + l.voices.length, 0);
-  $("lede").textContent = `${data.languages.length} languages, ${total} voices. Every voice reads the same two lines in its language. Voxie's own voices run on your hardware; the others are providers you plug in with a key.`;
+  const count = (testing) => data.languages.reduce((n, l) => n + l.voices.filter((v) => !!v.testing === testing).length, 0);
+  const testing = count(true);
+  $("lede").textContent = `${data.languages.length} languages, ${count(false)} voices${testing ? `, plus ${testing} we're testing` : ""}. Every voice reads the same two lines in its language. Voxie's own voices run on your hardware; the others are providers you plug in with a key.`;
   render();
 }).catch(() => { $("grid").textContent = "Couldn't load the voices."; });
