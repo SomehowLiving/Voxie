@@ -440,7 +440,7 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 	}
 	kind := checkHold
 	if item.final != nil {
-		kind = a.checkKind(*item.final, item.voiced)
+		kind = a.checkKind(*item.final, item.voiced, item.spec)
 	}
 	switch kind {
 	case checkNone:
@@ -568,7 +568,7 @@ func (a *adaptiveClient) applyBackgroundVerdict(item adaptiveItem) {
 
 // checkKind decides how to handle a final. voiced is how many frames of the
 // caller's voice the turn had.
-func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int) checkKind {
+func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int, spec listenerSpec) checkKind {
 	if len(a.ids) == 0 || a.checks >= adaptiveMaxChecks {
 		return checkNone
 	}
@@ -586,6 +586,13 @@ func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int) checkKind {
 		return checkNone
 	}
 	if r.Confidence > 0 && r.Confidence < a.minConfidence {
+		return checkHold
+	}
+	// Multi hears ten languages; a turn it labels with any other was misheard.
+	// Live, a Kannada caller came back as Urdu ("نن کے کنڈا پر رہتے ہیں") and
+	// as Telugu and Kannada script mixed, both at high confidence, and the
+	// agent answered in Urdu.
+	if spec == (listenerSpec{}) && r.Language != "" && !multiLanguages[baseLanguage(r.Language)] {
 		return checkHold
 	}
 	// Live, after a Japanese sentence multi heard "And one more thing." as

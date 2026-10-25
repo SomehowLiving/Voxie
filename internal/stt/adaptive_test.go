@@ -702,3 +702,19 @@ func TestScriptHelpers(t *testing.T) {
 		t.Error("wrongScript")
 	}
 }
+
+// Live: Kannada heard by multi as Urdu, confidently. Multi doesn't hear
+// Urdu, so the label alone means the turn needs a check.
+func TestAdaptiveChecksALanguageMultiDoesNotHear(t *testing.T) {
+	sarvam := &fakeIdentifier{id: Identification{Language: "kn", Text: "ನಿನಗೆ ಕನ್ನಡ ಬರುತ್ತಾ"}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"sarvam", sarvam.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("نن کے کنڈا پر رہتے ہیں", "ur", 0.95))
+	if got := h.next(); got.Language != "kn" || got.Text != "ನಿನಗೆ ಕನ್ನಡ ಬರುತ್ತಾ" {
+		t.Fatalf("got %+v", got)
+	}
+	waitFor(t, func() bool { return h.log.count() == 2 })
+	if spec := h.log.last().spec; !spec.indian {
+		t.Fatalf("switched to %s, want the Indian listener", spec)
+	}
+}
