@@ -281,9 +281,32 @@ func TestDeepgramSameWordsLaterAreANewSentence(t *testing.T) {
 	_ = cb.Message(deepgramMessage("Hello?", false, false))
 	clock.step(800 * time.Millisecond)
 	_ = cb.Message(deepgramMessage("Hello?", false, false))
+	clock.step(time.Second)
+	_ = cb.UtteranceEnd(&msginterfaces.UtteranceEndResponse{}) // Deepgram ends that utterance
 	clock.step(8 * time.Second)
 	_ = cb.Message(deepgramMessage("Hello?", true, true))
 	if f := finals(got); len(f) != 2 {
 		t.Fatalf("finals = %q; a second Hello? 8 s later is a new turn", f)
+	}
+}
+
+// Live: two sentences ended early within one Deepgram utterance, then
+// Deepgram's own final for all of it repeated the first sentence whole.
+func TestDeepgramTwoEarlyFinalsThenDeepgramsOwnSendNothingTwice(t *testing.T) {
+	var got []TranscriptResult
+	clock := &fakeClock{t: time.Unix(1000, 0)}
+	cb := &deepgramCallback{onResult: func(r TranscriptResult) { got = append(got, r) }, now: clock.now}
+	stable := func(text string) {
+		_ = cb.Message(deepgramMessage(text, false, false))
+		clock.step(800 * time.Millisecond)
+		_ = cb.Message(deepgramMessage(text, false, false))
+	}
+	stable("Scusi, parlo meglio italiano.")
+	stable("Scusi, parlo meglio italiano. Quanto tempo ci vuole?")
+	_ = cb.Message(deepgramMessage("Scusi, parlo meglio italiano. Quanto tempo ci vuole?", true, false))
+	_ = cb.UtteranceEnd(&msginterfaces.UtteranceEndResponse{})
+	want := []string{"Scusi, parlo meglio italiano.", "Quanto tempo ci vuole?"}
+	if f := finals(got); len(f) != 2 || f[0] != want[0] || f[1] != want[1] {
+		t.Fatalf("finals = %q, want %q", f, want)
 	}
 }
