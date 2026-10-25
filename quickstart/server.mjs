@@ -94,11 +94,15 @@ async function think(history) {
   const reply = await ask(history, languages);
   // Models don't always obey the language list; a reply the voice can't
   // speak would be silence, so ask once more, for English.
-  const lang = /^\s*\[lang:([a-z]{2,3})\]/i.exec(reply.text)?.[1]?.toLowerCase();
-  if (languages && lang && !languages.includes(lang)) {
-    return ask([...history, { role: "system", content: "Your voice can't speak that language. Reply in English, starting with [lang:en]." }], languages);
-  }
-  return reply;
+  const langOf = (r) => /^\s*\[lang:([a-z]{2,3})\]/i.exec(r.text)?.[1]?.toLowerCase();
+  const speaks = (r) => !languages || !langOf(r) || languages.includes(langOf(r));
+  if (speaks(reply)) return reply;
+  const retry = await ask([...history, { role: "system", content: "Your voice can't speak that language. Reply in English, starting with [lang:en]." }], languages);
+  if (speaks(retry)) return retry;
+  // Live, the model answered in Urdu twice, and the voice read Urdu text it
+  // can't speak as fifteen seconds of noise. Never send that to the voice.
+  console.log(`${ts()} [agent] the model kept answering in [lang:${langOf(retry)}]; saying so in English instead`);
+  return { text: "[lang:en] Sorry, I can't speak that language yet. Could we continue in English, or another language I speak?", endCall: false };
 }
 
 const GOODBYE = /\b(bye|goodbye|that's all|adi[oó]s|chao|au revoir|tsch[uü]ss|auf wiedersehen|ciao|arrivederci|tchau|do widzenia|dzi[eę]kuj[eę]|tot ziens|hej d[aå]|näkemiin|farvel|la revedere|naschledanou)\b|さようなら|じゃあね|再见|拜拜|안녕히|до свидания|до побачення|अलविदा|बाय|ठीक है धन्यवाद|போய் வருகிறேன்|பை|నమస్తే బై|বিদায়/i;
