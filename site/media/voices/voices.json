@@ -50,6 +50,330 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/en-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/en-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/en-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/en-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_alloy",
+     "audio": "/media/voices/audio/en-x-af_alloy.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_aoede",
+     "audio": "/media/voices/audio/en-x-af_aoede.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_jessica",
+     "audio": "/media/voices/audio/en-x-af_jessica.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_kore",
+     "audio": "/media/voices/audio/en-x-af_kore.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_nicole",
+     "audio": "/media/voices/audio/en-x-af_nicole.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_nova",
+     "audio": "/media/voices/audio/en-x-af_nova.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_river",
+     "audio": "/media/voices/audio/en-x-af_river.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_sarah",
+     "audio": "/media/voices/audio/en-x-af_sarah.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_sky",
+     "audio": "/media/voices/audio/en-x-af_sky.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_adam",
+     "audio": "/media/voices/audio/en-x-am_adam.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_echo",
+     "audio": "/media/voices/audio/en-x-am_echo.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_eric",
+     "audio": "/media/voices/audio/en-x-am_eric.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_liam",
+     "audio": "/media/voices/audio/en-x-am_liam.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_onyx",
+     "audio": "/media/voices/audio/en-x-am_onyx.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_puck",
+     "audio": "/media/voices/audio/en-x-am_puck.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_santa",
+     "audio": "/media/voices/audio/en-x-am_santa.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bf_alice",
+     "audio": "/media/voices/audio/en-x-bf_alice.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bf_emma",
+     "audio": "/media/voices/audio/en-x-bf_emma.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bf_isabella",
+     "audio": "/media/voices/audio/en-x-bf_isabella.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bf_lily",
+     "audio": "/media/voices/audio/en-x-bf_lily.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bm_daniel",
+     "audio": "/media/voices/audio/en-x-bm_daniel.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bm_fable",
+     "audio": "/media/voices/audio/en-x-bm_fable.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bm_george",
+     "audio": "/media/voices/audio/en-x-bm_george.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bm_lewis",
+     "audio": "/media/voices/audio/en-x-bm_lewis.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/en-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/en-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/en-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/en-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "amalthea (female)",
+     "audio": "/media/voices/audio/en-deepgram-amalthea.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "andromeda (female)",
+     "audio": "/media/voices/audio/en-deepgram-andromeda.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "asteria (female)",
+     "audio": "/media/voices/audio/en-deepgram-asteria.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "apollo (male)",
+     "audio": "/media/voices/audio/en-deepgram-apollo.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "arcas (male)",
+     "audio": "/media/voices/audio/en-deepgram-arcas.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "aries (male)",
+     "audio": "/media/voices/audio/en-deepgram-aries.mp3",
+     "batch": "phase1"
     }
    ]
   },
@@ -102,6 +426,123 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/es-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/es-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/es-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/es-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "em_santa",
+     "audio": "/media/voices/audio/es-x-em_santa.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/es-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/es-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/es-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/es-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "agustina (female)",
+     "audio": "/media/voices/audio/es-deepgram-agustina.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "antonia (female)",
+     "audio": "/media/voices/audio/es-deepgram-antonia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "carina (female)",
+     "audio": "/media/voices/audio/es-deepgram-carina.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "alvaro (male)",
+     "audio": "/media/voices/audio/es-deepgram-alvaro.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "aquila (male)",
+     "audio": "/media/voices/audio/es-deepgram-aquila.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "javier (male)",
+     "audio": "/media/voices/audio/es-deepgram-javier.mp3",
+     "batch": "phase1"
     }
    ]
   },
@@ -154,6 +595,91 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/fr-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/fr-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/fr-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/fr-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "fr_FR-gilles-low",
+     "audio": "/media/voices/audio/fr-x-fr_FR-gilles-low.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/fr-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/fr-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/fr-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/fr-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "agathe (female)",
+     "audio": "/media/voices/audio/fr-deepgram-agathe.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "hector (male)",
+     "audio": "/media/voices/audio/fr-deepgram-hector.mp3",
+     "batch": "phase1"
     }
    ]
   },
@@ -206,6 +732,123 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/it-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/it-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/it-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/it-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "it_IT-serena-medium",
+     "audio": "/media/voices/audio/it-x-it_IT-serena-medium.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/it-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/it-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/it-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/it-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "cinzia (female)",
+     "audio": "/media/voices/audio/it-deepgram-cinzia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "demetra (female)",
+     "audio": "/media/voices/audio/it-deepgram-demetra.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "livia (female)",
+     "audio": "/media/voices/audio/it-deepgram-livia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "cesare (male)",
+     "audio": "/media/voices/audio/it-deepgram-cesare.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "dionisio (male)",
+     "audio": "/media/voices/audio/it-deepgram-dionisio.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "elio (male)",
+     "audio": "/media/voices/audio/it-deepgram-elio.mp3",
+     "batch": "phase1"
     }
    ]
   },
@@ -257,6 +900,75 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/pt-cb-m.mp3",
+     "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/pt-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/pt-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/pt-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "pm_santa",
+     "audio": "/media/voices/audio/pt-x-pm_santa.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/pt-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/pt-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/pt-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/pt-openai-cedar.mp3",
+     "batch": "phase1",
      "testing": true
     }
    ]
@@ -310,6 +1022,106 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/de-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/de-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/de-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/de-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/de-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/de-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/de-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/de-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "aurelia (female)",
+     "audio": "/media/voices/audio/de-deepgram-aurelia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "elara (female)",
+     "audio": "/media/voices/audio/de-deepgram-elara.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "kara (female)",
+     "audio": "/media/voices/audio/de-deepgram-kara.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "fabian (male)",
+     "audio": "/media/voices/audio/de-deepgram-fabian.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "julius (male)",
+     "audio": "/media/voices/audio/de-deepgram-julius.mp3",
+     "batch": "phase1"
     }
    ]
   },
@@ -362,6 +1174,114 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/nl-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/nl-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/nl-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/nl-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/nl-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/nl-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/nl-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/nl-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "beatrix (female)",
+     "audio": "/media/voices/audio/nl-deepgram-beatrix.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "cornelia (female)",
+     "audio": "/media/voices/audio/nl-deepgram-cornelia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "daphne (female)",
+     "audio": "/media/voices/audio/nl-deepgram-daphne.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "lars (male)",
+     "audio": "/media/voices/audio/nl-deepgram-lars.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "roman (male)",
+     "audio": "/media/voices/audio/nl-deepgram-roman.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "sander (male)",
+     "audio": "/media/voices/audio/nl-deepgram-sander.mp3",
+     "batch": "phase1"
     }
    ]
   },
@@ -413,6 +1333,66 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/ru-cb-m.mp3",
+     "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/ru-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/ru-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ru-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ru-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ru-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ru-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ru-openai-cedar.mp3",
+     "batch": "phase1",
      "testing": true
     }
    ]
@@ -466,6 +1446,66 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/pl-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/pl-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/pl-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/pl-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/pl-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/pl-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/pl-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/pl-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -502,6 +1542,66 @@
      "via": "Voxie router",
      "voice": "uk_UA-mykyta-high (persona male-2)",
      "audio": "/media/voices/audio/uk-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/uk-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/uk-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/uk-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/uk-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/uk-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/uk-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/uk-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -538,6 +1638,66 @@
      "via": "Voxie router",
      "voice": "cs_CZ-jirka-medium (persona male-2)",
      "audio": "/media/voices/audio/cs-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/cs-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/cs-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/cs-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/cs-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/cs-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/cs-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/cs-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -574,6 +1734,66 @@
      "via": "Voxie router",
      "voice": "hu_HU-imre-medium (persona male-2)",
      "audio": "/media/voices/audio/hu-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/hu-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/hu-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/hu-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/hu-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/hu-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/hu-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/hu-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -626,6 +1846,66 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/sv-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/sv-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/sv-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/sv-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/sv-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/sv-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/sv-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/sv-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -662,6 +1942,66 @@
      "via": "Voxie router",
      "voice": "ro_RO-mihai-medium (persona male-2)",
      "audio": "/media/voices/audio/ro-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/ro-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/ro-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ro-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ro-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ro-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ro-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ro-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -713,6 +2053,66 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/fi-cb-m.mp3",
+     "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/fi-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/fi-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/fi-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/fi-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/fi-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/fi-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/fi-openai-cedar.mp3",
+     "batch": "phase1",
      "testing": true
     }
    ]
@@ -766,6 +2166,66 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/da-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/da-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/da-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/da-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/da-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/da-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/da-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/da-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -802,6 +2262,66 @@
      "via": "Voxie router",
      "voice": "vi_VN-vais1000-medium (persona male-2)",
      "audio": "/media/voices/audio/vi-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/vi-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/vi-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/vi-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/vi-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/vi-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/vi-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/vi-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -854,6 +2374,124 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/ja-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/ja-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/ja-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ja-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "jf_gongitsune",
+     "audio": "/media/voices/audio/ja-x-jf_gongitsune.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "jf_tebukuro",
+     "audio": "/media/voices/audio/ja-x-jf_tebukuro.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ja-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ja-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ja-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ja-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "ama (female)",
+     "audio": "/media/voices/audio/ja-deepgram-ama.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "izanami (female)",
+     "audio": "/media/voices/audio/ja-deepgram-izanami.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "uzume (female)",
+     "audio": "/media/voices/audio/ja-deepgram-uzume.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "ebisu (male)",
+     "audio": "/media/voices/audio/ja-deepgram-ebisu.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "fujin (male)",
+     "audio": "/media/voices/audio/ja-deepgram-fujin.mp3",
+     "batch": "phase1"
     }
    ]
   },
@@ -905,6 +2543,102 @@
      "via": "lab",
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/zh-cb-m.mp3",
+     "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/zh-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/zh-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/zh-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "zf_xiaoxiao",
+     "audio": "/media/voices/audio/zh-x-zf_xiaoxiao.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "zf_xiaoyi",
+     "audio": "/media/voices/audio/zh-x-zf_xiaoyi.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "zm_yunxia",
+     "audio": "/media/voices/audio/zh-x-zm_yunxia.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "zm_yunyang",
+     "audio": "/media/voices/audio/zh-x-zm_yunyang.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/zh-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/zh-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/zh-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/zh-openai-cedar.mp3",
+     "batch": "phase1",
      "testing": true
     }
    ]
@@ -993,6 +2727,120 @@
      "voice": "male character (am_michael's voice)",
      "audio": "/media/voices/audio/hi-cb-m.mp3",
      "testing": true
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/hi-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/hi-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/hi-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "hf_alpha",
+     "audio": "/media/voices/audio/hi-x-hf_alpha.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "hf_beta",
+     "audio": "/media/voices/audio/hi-x-hf_beta.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "hm_omega",
+     "audio": "/media/voices/audio/hi-x-hm_omega.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "hm_psi",
+     "audio": "/media/voices/audio/hi-x-hm_psi.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/hi-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/hi-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/hi-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/hi-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Divya",
+     "audio": "/media/voices/audio/hi-parler-divya.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Rohit",
+     "audio": "/media/voices/audio/hi-parler-rohit.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1043,6 +2891,68 @@
      "via": "",
      "voice": "arnab (conversation)",
      "audio": "/media/voices/audio/bn-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/bn-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/bn-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/bn-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/bn-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/bn-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Aditi",
+     "audio": "/media/voices/audio/bn-parler-aditi.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Arjun",
+     "audio": "/media/voices/audio/bn-parler-arjun.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1100,6 +3010,68 @@
      "via": "",
      "voice": "bhavik (conversation)",
      "audio": "/media/voices/audio/gu-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/gu-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/gu-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/gu-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/gu-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/gu-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Neha",
+     "audio": "/media/voices/audio/gu-parler-neha.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Yash",
+     "audio": "/media/voices/audio/gu-parler-yash.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1157,6 +3129,68 @@
      "via": "",
      "voice": "chetan (conversation)",
      "audio": "/media/voices/audio/kn-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/kn-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/kn-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/kn-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/kn-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/kn-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Anu",
+     "audio": "/media/voices/audio/kn-parler-anu.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Suresh",
+     "audio": "/media/voices/audio/kn-parler-suresh.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1193,6 +3227,68 @@
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
      "audio": "/media/voices/audio/ml-04.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ml-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ml-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ml-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ml-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ml-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Anjali",
+     "audio": "/media/voices/audio/ml-parler-anjali.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Harish",
+     "audio": "/media/voices/audio/ml-parler-harish.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1257,6 +3353,68 @@
      "via": "",
      "voice": "nilesh (conversation)",
      "audio": "/media/voices/audio/mr-08.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/mr-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/mr-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/mr-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/mr-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/mr-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Sanjay",
+     "audio": "/media/voices/audio/mr-parler-sanjay.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Sunita",
+     "audio": "/media/voices/audio/mr-parler-sunita.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1293,6 +3451,60 @@
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
      "audio": "/media/voices/audio/od-04.mp3"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/od-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/od-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/od-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/od-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Debjani",
+     "audio": "/media/voices/audio/od-parler-debjani.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Manas",
+     "audio": "/media/voices/audio/od-parler-manas.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1350,6 +3562,68 @@
      "via": "",
      "voice": "jaspal (banking)",
      "audio": "/media/voices/audio/pa-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/pa-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/pa-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/pa-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/pa-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/pa-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Divjot",
+     "audio": "/media/voices/audio/pa-parler-divjot.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Gurpreet",
+     "audio": "/media/voices/audio/pa-parler-gurpreet.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1407,6 +3681,75 @@
      "via": "",
      "voice": "aravind (ads)",
      "audio": "/media/voices/audio/ta-07.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/ta-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/ta-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ta-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ta-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ta-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ta-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ta-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Jaya",
+     "audio": "/media/voices/audio/ta-parler-jaya.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   },
@@ -1464,6 +3807,68 @@
      "via": "",
      "voice": "tarun (narration)",
      "audio": "/media/voices/audio/te-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/te-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/te-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/te-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/te-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/te-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Lalitha",
+     "audio": "/media/voices/audio/te-parler-lalitha.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Prakash",
+     "audio": "/media/voices/audio/te-parler-prakash.mp3",
+     "batch": "phase1",
+     "testing": true
     }
    ]
   }

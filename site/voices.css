@@ -28,12 +28,15 @@
 .v-name { font-weight: 500; font-size: 15px; }
 .v-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
 .v-tag { font: 400 11.5px var(--mono); padding: 2px 8px; border-radius: 999px; background: rgba(20, 30, 60, .06); color: var(--ink-2); }
-.v-tag.p { color: #fff; }
+.v-tag.p { color: #fff; background: #475569; }
 .v-tag.p-voxie { background: #1f7a5a; }
 .v-tag.p-sarvam { background: #b45309; }
 .v-tag.p-elevenlabs { background: #111827; }
 .v-tag.p-cartesia { background: #3d6fe0; }
-.v-tag.p-testing { background: #6d4bb8; }
+.v-tag.p-chatterbox { background: #6d4bb8; }
+.v-tag.p-openai { background: #0f766e; }
+.v-tag.p-deepgram { background: #13715b; }
+.v-tag.p-indic-parler-tts { background: #9a3412; }
 .v-bar { grid-column: 1 / -1; height: 3px; border-radius: 3px; background: rgba(20, 30, 60, .07); overflow: hidden; }
 .v-bar span { display: block; height: 100%; width: 0; background: var(--blue); }
 .v-empty { color: var(--ink-3); padding: 12px 0; }

@@ -6,14 +6,23 @@ const FONTS = { hi: "Noto Sans Devanagari", mr: "Noto Sans Devanagari", bn: "Not
   kn: "Noto Sans Kannada", ml: "Noto Sans Malayalam", od: "Noto Sans Oriya", pa: "Noto Sans Gurmukhi", ta: "Noto Sans Tamil",
   te: "Noto Sans Telugu", ja: "Noto Sans JP", zh: "Noto Sans SC" };
 // How a voice's provider is shown and filtered. Kokoro and Piper are Voxie's own;
-// "testing" voices are models we're evaluating, not yet something Voxie speaks with.
-const PROVIDERS = [
-  { key: "all", label: "All" },
-  { key: "voxie", label: "Voxie's own" },
-  { key: "sarvam", label: "Sarvam" },
-  { key: "testing", label: "In testing" },
-];
-const providerKey = (v) => (v.testing ? "testing" : /kokoro|piper/i.test(v.provider) ? "voxie" : v.provider.toLowerCase());
+// voices marked "testing" are ones Voxie can't speak with yet. The provider
+// pills come from the data, so a new provider needs no change here.
+const providerName = (v) => v.provider.replace(/\s*\((self-hosted|in testing)\)/, "");
+const providerKey = (v) => (/kokoro|piper/i.test(v.provider) ? "voxie" : providerName(v).toLowerCase().replace(/[^a-z0-9]+/g, "-"));
+let PROVIDERS = [];
+function buildProviders() {
+  // Providers Voxie can use today first, then the ones it can't yet.
+  const seen = new Map([["voxie", { label: "Voxie's own", ready: true }]]);
+  for (const l of data.languages) for (const v of l.voices) {
+    const p = seen.get(providerKey(v)) || { label: providerName(v), ready: false };
+    p.ready ||= !v.testing;
+    seen.set(providerKey(v), p);
+  }
+  const ordered = [...seen].sort(([ka, a], [kb, b]) => (kb === "voxie") - (ka === "voxie") || b.ready - a.ready || a.label.localeCompare(b.label));
+  PROVIDERS = [{ key: "all", label: "All" }, ...ordered.map(([key, p]) => ({ key, label: p.label })), { key: "notyet", label: "Not in Voxie yet" }];
+}
+const matches = (v) => provider === "all" || (provider === "notyet" ? !!v.testing : providerKey(v) === provider);
 const PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>';
 const STOP = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>';
 
@@ -92,7 +101,7 @@ function render() {
   $("langText").textContent = l.text;
   $("langText").style.fontFamily = font;
   $("langText").lang = l.code;
-  const voices = l.voices.filter((v) => provider === "all" || providerKey(v) === provider);
+  const voices = l.voices.filter(matches);
   $("count").textContent = `${voices.length} of ${l.voices.length} voices`;
   if (!voices.length) {
     const p = document.createElement("p");
@@ -105,7 +114,7 @@ function render() {
     const card = document.createElement("div");
     card.className = "v-card";
     const key = providerKey(v);
-    const name = v.provider.replace(/\s*\((self-hosted|in testing)\)/, "");
+    const name = providerName(v);
     card.innerHTML = `
       <button class="v-play" type="button" aria-label="Play ${l.name}: ${name}, ${v.voice}">${PLAY}</button>
       <div>
@@ -138,10 +147,11 @@ audio.addEventListener("ended", stop);
 // cached copy would show new page code with old voices.
 fetch("/media/voices/voices.json", { cache: "no-cache" }).then((r) => r.json()).then((d) => {
   data = d;
+  buildProviders();
   const fromHash = location.hash.slice(1);
   if (data.languages.some((l) => l.code === fromHash)) lang = fromHash;
   const count = (testing) => data.languages.reduce((n, l) => n + l.voices.filter((v) => !!v.testing === testing).length, 0);
   const testing = count(true);
-  $("lede").textContent = `${data.languages.length} languages, ${count(false)} voices${testing ? `, plus ${testing} we're testing` : ""}. Every voice reads the same two lines in its language. Voxie's own voices run on your hardware; the others are providers you plug in with a key.`;
+  $("lede").textContent = `${data.languages.length} languages, ${count(false)} voices${testing ? `, plus ${testing} not in Voxie yet` : ""}. Every voice reads the same two lines in its language. Voxie's own voices run on your hardware; the others are providers you plug in with a key.`;
   render();
 }).catch(() => { $("grid").textContent = "Couldn't load the voices."; });
