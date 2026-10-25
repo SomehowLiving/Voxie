@@ -72,6 +72,7 @@ func (p *Pipeline) runAgent() {
 			}
 			gen := p.supersedeResponse()
 			p.lastTurn = answeredTurn{text: text, language: language, at: time.Now(), gen: gen}
+			p.clocks.Store(gen, newTurnClock(ev, language))
 			p.sendEvent(stateMsg{Type: "state", State: "thinking"})
 			go func() {
 				defer p.recoverPanic("respond")
@@ -220,8 +221,10 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 	defer func() {
 		cancel()
 		p.finishResponse(gen)
+		p.clocks.Delete(gen)
 	}()
 	p.ledger.reset(gen)
+	clock := p.clockFor(gen)
 
 	// NOTE: speaking flag is set in synthesizeSentences when first TTS audio
 	// is actually produced, not here. This prevents false barge-in triggers
@@ -336,6 +339,9 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 	llmFirstToken := true
 	_, err := p.llmClient.Chat(respCtx, turn,
 		func(chunk string) {
+			if clock != nil {
+				stampOnce(&clock.llmFirst)
+			}
 			if llmFirstToken && p.cfg.Pipeline.Debug && !turnStart.IsZero() {
 				llmFirstToken = false
 				p.sendEvent(timingMsg{
@@ -360,6 +366,9 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 			})
 		},
 		func(sentence string) {
+			if clock != nil {
+				stampOnce(&clock.firstSentence)
+			}
 			select {
 			case sentences <- sentence:
 			case <-respCtx.Done():
@@ -483,12 +492,22 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 	talkspurtSent := false
 	var seg *heardSegment // the sentence being synthesized, for the playback ledger
 
+	clock := p.clockFor(gen)
 	emitFrame := func(frame PCMFrame) bool {
-		if !emittedSpeaking && !p.waitForCallerPause(ctx) {
-			return false
+		if !emittedSpeaking {
+			held := time.Now()
+			if !p.waitForCallerPause(ctx) {
+				return false
+			}
+			if clock != nil {
+				clock.holdNs.Store(int64(time.Since(held)))
+			}
 		}
 		select {
 		case p.outPCMCh <- frame:
+			if !emittedSpeaking {
+				clock.firstAudio()
+			}
 			if frame.heard != nil {
 				frame.heard.frames.Add(1)
 			}

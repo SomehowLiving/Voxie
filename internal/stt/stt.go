@@ -21,6 +21,9 @@ type TranscriptResult struct {
 	// Provider names the provider that produced it, when it ran inside a
 	// failover chain.
 	Provider string
+	// CheckMs is how long the adaptive listener held this final while it
+	// identified the turn's language (0 if it wasn't held).
+	CheckMs int64
 }
 
 // Client is the interface that all STT providers must implement.

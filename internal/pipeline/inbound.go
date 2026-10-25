@@ -83,6 +83,12 @@ func (p *Pipeline) runInbound() {
 		}
 		if result.IsFinal {
 			ev.TurnStart = time.Now()
+			ev.CheckMs, ev.Provider = result.CheckMs, result.Provider
+			if n := p.lastCallerSoundAt.Load(); n != 0 {
+				if end := time.Unix(0, n); time.Since(end) < 30*time.Second {
+					ev.SpeechEndAt = end
+				}
+			}
 			// Sampled here, not in runAgent: the turn buffer may hold this
 			// final for up to turnMergeMax, by which point the agent has
 			// finished and the talking-over question can no longer be asked.

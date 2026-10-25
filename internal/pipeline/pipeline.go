@@ -203,6 +203,8 @@ type Pipeline struct {
 	ledger playbackLedger
 	// lastTurn is the caller's last turn as answered; owned by runAgent.
 	lastTurn answeredTurn
+	// clocks times each turn's reply: response gen → *turnClock.
+	clocks sync.Map
 	// lifecycleEmittedGen guarantees one completion event per response
 	// generation; latestLifecycleTurn rejects late plugin output from an older
 	// turn when a newer turn has already completed.

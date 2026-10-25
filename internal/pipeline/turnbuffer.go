@@ -155,6 +155,14 @@ func (p *Pipeline) runTurnBuffer() {
 				// began over the agent's voice was an interruption regardless of
 				// whether its later halves landed after the agent stopped.
 				pending.OverAgentSpeech = pending.OverAgentSpeech || ev.OverAgentSpeech
+				// The caller stopped at the end of the last piece.
+				if ev.SpeechEndAt.After(pending.SpeechEndAt) {
+					pending.SpeechEndAt = ev.SpeechEndAt
+				}
+				pending.CheckMs = max(pending.CheckMs, ev.CheckMs)
+				if ev.Provider != "" {
+					pending.Provider = ev.Provider
+				}
 			}
 
 			// A caller still mid-thought gets a longer grace period.

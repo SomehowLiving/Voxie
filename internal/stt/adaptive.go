@@ -491,7 +491,7 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 		if item.final != nil && id.Text != "" && wrongScript(item.final.Text, id.Language) {
 			// The listener hears the language, but wrote this turn in another
 			// script: English as katakana. The identifier's words are the turn.
-			a.onResult(TranscriptResult{Text: id.Text, IsFinal: true, Language: id.Language, Provider: id.Source})
+			a.replace(item, id)
 			return
 		}
 		a.release(item)
@@ -505,7 +505,7 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 		// identifier's own transcript is the caller's words.
 		log.Printf("[stt:adaptive] checked turn (%s): %s says %s in %s; no listener known for it, keeping %s", heard, id.Source, id.Language, elapsed, item.spec)
 		if id.Text != "" {
-			a.onResult(TranscriptResult{Text: id.Text, IsFinal: true, Language: id.Language, Provider: id.Source})
+			a.replace(item, id)
 		} else {
 			a.release(item)
 		}
@@ -516,7 +516,7 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 		a.mu.Lock()
 		a.replaced, a.replacedUntil = squash(id.Text), time.Now().Add(replayDedupeWindow)
 		a.mu.Unlock()
-		a.onResult(TranscriptResult{Text: id.Text, IsFinal: true, Language: id.Language, Provider: id.Source})
+		a.replace(item, id)
 	} else {
 		a.release(item)
 	}
@@ -526,8 +526,16 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 
 func (a *adaptiveClient) release(item adaptiveItem) {
 	if item.final != nil {
-		a.onResult(*item.final)
+		r := *item.final
+		r.CheckMs = time.Since(item.at).Milliseconds()
+		a.onResult(r)
 	}
+}
+
+// replace sends the identifier's transcript in place of the checked turn.
+func (a *adaptiveClient) replace(item adaptiveItem, id Identification) {
+	a.onResult(TranscriptResult{Text: id.Text, IsFinal: true, Language: id.Language, Provider: id.Source,
+		CheckMs: time.Since(item.at).Milliseconds()})
 }
 
 // agree counts checks that confirmed the listener; after a couple the
