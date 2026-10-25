@@ -43,6 +43,9 @@ const (
 type ttsProvider struct {
 	name   string
 	client Client
+	// speaks reports whether the voice speaks a language natively; nil
+	// means any (or unknown).
+	speaks func(lang string) bool
 
 	mu        sync.Mutex
 	downUntil time.Time
@@ -66,6 +69,8 @@ func (p *ttsProvider) markDown(now time.Time, d time.Duration, why string) {
 }
 
 type failoverClient struct {
+	warnMu     sync.Mutex
+	warned     map[string]bool // languages already logged as read by a voice that doesn't speak them
 	providers  map[string]*ttsProvider
 	order      []string
 	byLanguage map[string][]string
@@ -80,6 +85,9 @@ type FailoverOptions struct {
 	ByLanguage        map[string][]string
 	FirstAudioTimeout time.Duration
 	Cooldown          time.Duration
+	// Speaks, per provider, the languages its voice speaks natively; a
+	// provider not in it speaks any.
+	Speaks map[string]func(lang string) bool
 }
 
 func newFailoverClient(clients map[string]Client, opt FailoverOptions) (*failoverClient, error) {
@@ -94,8 +102,9 @@ func newFailoverClient(clients map[string]Client, opt FailoverOptions) (*failove
 	if f.cooldown <= 0 {
 		f.cooldown = defaultCooldown
 	}
+	f.warned = map[string]bool{}
 	for name, c := range clients {
-		f.providers[name] = &ttsProvider{name: name, client: c}
+		f.providers[name] = &ttsProvider{name: name, client: c, speaks: opt.Speaks[name]}
 	}
 	check := func(names []string) error {
 		for _, n := range names {
@@ -117,26 +126,42 @@ func newFailoverClient(clients map[string]Client, opt FailoverOptions) (*failove
 }
 
 // candidates is the provider order for this sentence: the language's own
-// order if it has one, the default otherwise; providers that are down go
-// last rather than not at all, so a sentence is never dropped just because
-// every provider failed once.
+// order if it has one, the default otherwise. Voices that speak the
+// sentence's language come first: live, with Cartesia out of credit, an
+// English-only Deepgram voice read Tamil, Hindi and Dutch replies, badly. A
+// voice that doesn't speak it is still tried before silence. Providers that
+// are down go last rather than not at all, so a sentence is never dropped
+// just because every provider failed once.
 func (f *failoverClient) candidates(text string) []*ttsProvider {
 	names := f.order
-	if lang := sentenceLanguage(text); lang != "" {
+	lang := sentenceLanguage(text)
+	if lang != "" {
 		if l, ok := f.byLanguage[lang]; ok && len(l) > 0 {
 			names = l
 		}
 	}
 	now := f.now()
-	var up, down []*ttsProvider
+	var up, foreign, down []*ttsProvider
 	for _, n := range names {
-		if p := f.providers[n]; p.available(now) {
-			up = append(up, p)
-		} else {
+		p := f.providers[n]
+		switch {
+		case !p.available(now):
 			down = append(down, p)
+		case lang != "" && p.speaks != nil && !p.speaks(lang):
+			foreign = append(foreign, p)
+		default:
+			up = append(up, p)
 		}
 	}
-	return append(up, down...)
+	if len(up) == 0 && len(foreign) > 0 {
+		f.warnMu.Lock()
+		if !f.warned[lang] {
+			f.warned[lang] = true
+			log.Printf("[tts:failover] no available voice speaks %s; %s will read it", lang, foreign[0].name)
+		}
+		f.warnMu.Unlock()
+	}
+	return append(append(up, foreign...), down...)
 }
 
 func (f *failoverClient) fail(p *ttsProvider, err error) {

@@ -132,7 +132,14 @@ func newFailoverFromConfig(cfg *config.Config) (Client, error) {
 			}
 		}
 	}
+	speaks := map[string]func(string) bool{}
+	for name := range clients {
+		if s := speaksFor(cfg, name); s != nil {
+			speaks[name] = s
+		}
+	}
 	return newFailoverClient(clients, FailoverOptions{
+		Speaks:            speaks,
 		Order:             cfg.TTS.Failover,
 		ByLanguage:        cfg.TTS.Languages,
 		FirstAudioTimeout: time.Duration(cfg.TTS.FirstAudioTimeoutMs) * time.Millisecond,
@@ -226,4 +233,44 @@ func (s *sanitizingClient) SynthesizeStreamWithControls(ctx context.Context, tex
 		return cs.SynthesizeStreamWithControls(ctx, SanitizeForTTS(text), vc)
 	}
 	return s.inner.SynthesizeStream(ctx, SanitizeForTTS(text))
+}
+
+// elevenLabsV25 is what ElevenLabs' turbo and flash v2.5 models speak.
+var elevenLabsV25 = setOfLanguages("en", "ja", "zh", "de", "hi", "fr", "ko", "pt", "it", "es", "id", "nl",
+	"tr", "tl", "pl", "sv", "bg", "ro", "ar", "cs", "el", "fi", "hr", "ms", "sk", "da", "ta", "uk", "ru",
+	"hu", "no", "vi")
+
+func setOfLanguages(langs ...string) map[string]bool {
+	m := make(map[string]bool, len(langs))
+	for _, l := range langs {
+		m[l] = true
+	}
+	return m
+}
+
+// speaksFor is the languages a configured voice speaks natively, for the
+// failover chain to prefer it for them; nil when any (or unknown). The voice
+// router picks a native voice per language itself.
+func speaksFor(cfg *config.Config, name string) func(string) bool {
+	switch name {
+	case "deepgram":
+		// Aura voices are one language each, named in the model:
+		// aura-2-thalia-en, aura-2-celeste-es.
+		model := cfg.Deepgram.TTSModel
+		if model == "" {
+			model = defaultDeepgramTTSModel
+		}
+		lang := model[strings.LastIndex(model, "-")+1:]
+		return func(l string) bool { return l == lang }
+	case "elevenlabs":
+		model := cfg.ElevenLabs.Model
+		if model == "" || strings.Contains(model, "v2_5") || strings.Contains(model, "multilingual") || strings.Contains(model, "v3") {
+			return func(l string) bool { return elevenLabsV25[l] }
+		}
+		return func(l string) bool { return l == "en" }
+	case "cartesia":
+		// sonic-3 speaks 28 of Voxie's 29: not Odia (probed 2026-10-25).
+		return func(l string) bool { return l != "od" }
+	}
+	return nil
 }

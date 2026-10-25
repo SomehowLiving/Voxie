@@ -380,3 +380,56 @@ func TestCartesiaRefusedHandshakeCarriesTheStatus(t *testing.T) {
 		t.Errorf("cooldown = %s, want %s (out of credit)", d, longCooldown)
 	}
 }
+
+// Live: Cartesia out of credit, and an English-only Deepgram voice read the
+// agent's Tamil, Hindi and Dutch. A voice that speaks the language goes first.
+func TestFailoverPrefersAVoiceThatSpeaksTheLanguage(t *testing.T) {
+	cart := &fakeVoice{err: errors.New("cartesia ws dial: 402 Payment Required")}
+	dg, el := &fakeVoice{chunks: audio("dg")}, &fakeVoice{chunks: audio("el")}
+	f := newTestFailover(t, map[string]*fakeVoice{"cartesia": cart, "deepgram": dg, "elevenlabs": el}, FailoverOptions{
+		Order: []string{"cartesia", "deepgram", "elevenlabs"},
+		Speaks: map[string]func(string) bool{
+			"deepgram":   func(l string) bool { return l == "en" },
+			"elevenlabs": func(l string) bool { return l == "en" || l == "ta" },
+		},
+	})
+	if got, _ := speak(t, f, "[lang:ta] வணக்கம்"); got != "el" {
+		t.Fatalf("Tamil spoken by %q, want elevenlabs", got)
+	}
+	if got, _ := speak(t, f, "[lang:en] Hello."); got != "dg" {
+		t.Fatalf("English spoken by %q, want deepgram (next in order)", got)
+	}
+}
+
+// No voice that speaks it is up: the one that doesn't still reads it, rather
+// than silence.
+func TestFailoverStillSpeaksWhenNoVoiceKnowsTheLanguage(t *testing.T) {
+	dg := &fakeVoice{chunks: audio("dg")}
+	f := newTestFailover(t, map[string]*fakeVoice{"deepgram": dg}, FailoverOptions{
+		Order:  []string{"deepgram"},
+		Speaks: map[string]func(string) bool{"deepgram": func(l string) bool { return l == "en" }},
+	})
+	if got, _ := speak(t, f, "[lang:hi] नमस्ते"); got != "dg" {
+		t.Fatalf("got %q", got)
+	}
+}
+
+func TestSpeaksFor(t *testing.T) {
+	cfg := &config.Config{}
+	if s := speaksFor(cfg, "deepgram"); !s("en") || s("ta") {
+		t.Error("default Aura voice is English only")
+	}
+	cfg.Deepgram.TTSModel = "aura-2-celeste-es"
+	if s := speaksFor(cfg, "deepgram"); !s("es") || s("en") {
+		t.Error("a Spanish Aura voice speaks Spanish")
+	}
+	if s := speaksFor(cfg, "elevenlabs"); !s("ta") || !s("hi") || s("bn") {
+		t.Error("ElevenLabs v2.5 speaks Tamil and Hindi, not Bengali")
+	}
+	if s := speaksFor(cfg, "cartesia"); !s("hi") || s("od") {
+		t.Error("Cartesia speaks Hindi, not Odia")
+	}
+	if speaksFor(cfg, "vibevoice") != nil {
+		t.Error("the voice router picks its own voice per language")
+	}
+}
