@@ -15,9 +15,9 @@ func TestMergeWait(t *testing.T) {
 	}{
 		// Terminal punctuation beats a pronoun tail: the provider already judged
 		// the thought complete, so the tail word is not evidence of a pause.
-		{"punctuated sentence ending on a pronoun", "I already fixed it.", base},
-		{"punctuated question", "can you check it?", base},
-		{"punctuated exclamation", "that worked!", base},
+		{"punctuated sentence ending on a pronoun", "I already fixed it.", 0},
+		{"punctuated question", "can you check it?", 0},
+		{"punctuated exclamation", "that worked!", 0},
 
 		// The case the tail list exists for — same words, no closer.
 		{"unpunctuated pronoun tail", "I already fixed it", turnMergeIncomplete},
@@ -29,9 +29,11 @@ func TestMergeWait(t *testing.T) {
 		{"mid-dictation separator", "my email is gary dot", turnMergeIncomplete},
 		{"spelled letters", "it's g a r", turnMergeIncomplete},
 		{"digit run", "the number is 0 4 1 2", turnMergeIncomplete},
-		{"completed address is not mid-dictation", "gary@example.com.", base},
+		{"completed address is not mid-dictation", "gary@example.com.", 0},
 
 		{"ordinary finished clause", "yes that's right", base},
+		{"Japanese full stop", "予約を変更したいです。", 0},
+		{"Hindi danda", "मुझे टिकट चाहिए।", 0},
 		{"empty", "", base},
 	}
 

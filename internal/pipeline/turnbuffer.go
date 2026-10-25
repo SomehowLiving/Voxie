@@ -45,9 +45,14 @@ const (
 // provider punctuated as finished ("I already fixed it.") was taking the long
 // incomplete window too. When the STT has already judged the thought complete,
 // believe it; only an unpunctuated dangling tail extends the wait.
+//
+// A sentence the provider punctuated as finished goes at once. Over 224 live
+// turns the base window merged a second piece into almost none of them while
+// delaying every reply by it; a piece that does follow is joined to the turn
+// anyway (continuesLastTurn), at the cost of a cancelled request.
 func mergeWait(text string, base time.Duration) time.Duration {
 	if endsTerminal(text) {
-		return base
+		return 0
 	}
 	if endsIncomplete(text) || endsDictation(text) {
 		return turnMergeIncomplete
