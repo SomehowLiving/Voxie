@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/streamcoreai/streamcore-server/internal/config"
@@ -64,6 +65,7 @@ func NewClientFor(cfg *config.Config, voice string) (Client, error) {
 	for lang, order := range cfg.TTS.Languages {
 		c.TTS.Languages[lang] = voiceFirst(order, voice)
 	}
+	log.Printf("[tts] this call asked for %s: %s", voice, strings.Join(c.TTS.Failover, " → "))
 	return NewClient(&c)
 }
 
