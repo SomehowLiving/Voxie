@@ -64,3 +64,99 @@ func TestStalledVoiceSkipsTheSentence(t *testing.T) {
 		t.Fatal("synthesizeSentences did not finish")
 	}
 }
+
+// oneFrameTTS returns one frame of audio for any sentence.
+type oneFrameTTS struct{}
+
+func (oneFrameTTS) Synthesize(context.Context, string) ([]byte, error) { return nil, nil }
+func (oneFrameTTS) SynthesizeStream(context.Context, string) (<-chan tts.StreamChunk, error) {
+	ch := make(chan tts.StreamChunk, 1)
+	ch <- tts.StreamChunk{PCM: make([]byte, 640)}
+	close(ch)
+	return ch, nil
+}
+
+func firstAudioAfter(t *testing.T, p *Pipeline) time.Duration {
+	t.Helper()
+	p.ttsClient = oneFrameTTS{}
+	sentences := make(chan string, 1)
+	sentences <- "Sure."
+	close(sentences)
+	start := time.Now()
+	go p.synthesizeSentences(p.ctx, 0, sentences, time.Time{})
+	select {
+	case <-p.outPCMCh:
+		return time.Since(start)
+	case <-time.After(5 * time.Second):
+		t.Fatal("no audio")
+		return 0
+	}
+}
+
+func TestReplyWaitsForATalkingCallerToPause(t *testing.T) {
+	p, cancel := newLifecyclePipeline(t, nil, nil)
+	defer cancel()
+	stop := time.Now().Add(600 * time.Millisecond)
+	go func() {
+		for time.Now().Before(stop) {
+			p.lastCallerSoundAt.Store(time.Now().UnixNano())
+			time.Sleep(50 * time.Millisecond)
+		}
+	}()
+	time.Sleep(20 * time.Millisecond)
+	if d := firstAudioAfter(t, p); d < 600*time.Millisecond+callerTalkingQuiet-100*time.Millisecond {
+		t.Fatalf("reply started after %s, over the caller", d)
+	}
+}
+
+func TestReplyHoldIsBounded(t *testing.T) {
+	old := replyHoldMax
+	replyHoldMax = 300 * time.Millisecond
+	defer func() { replyHoldMax = old }()
+	p, cancel := newLifecyclePipeline(t, nil, nil)
+	defer cancel()
+	done := make(chan struct{})
+	defer close(done)
+	go func() {
+		for {
+			select {
+			case <-done:
+				return
+			default:
+				p.lastCallerSoundAt.Store(time.Now().UnixNano())
+				time.Sleep(20 * time.Millisecond)
+			}
+		}
+	}()
+	time.Sleep(30 * time.Millisecond)
+	if d := firstAudioAfter(t, p); d > replyHoldMax+300*time.Millisecond {
+		t.Fatalf("held %s on a line that never goes quiet", d)
+	}
+}
+
+func TestReplyToASilentCallerIsNotHeld(t *testing.T) {
+	p, cancel := newLifecyclePipeline(t, nil, nil)
+	defer cancel()
+	p.lastCallerSoundAt.Store(time.Now().Add(-2 * time.Second).UnixNano())
+	if d := firstAudioAfter(t, p); d > 100*time.Millisecond {
+		t.Fatalf("held %s", d)
+	}
+}
+
+// The VAD reads a gap between words as a pause; partial words still mean
+// the caller is talking.
+func TestReplyWaitsWhilePartialWordsArrive(t *testing.T) {
+	p, cancel := newLifecyclePipeline(t, nil, nil)
+	defer cancel()
+	stop := time.Now().Add(700 * time.Millisecond)
+	go func() {
+		for time.Now().Before(stop) {
+			p.lastPartialAt.Store(time.Now().UnixNano())
+			time.Sleep(300 * time.Millisecond)
+		}
+	}()
+	time.Sleep(20 * time.Millisecond)
+	if d := firstAudioAfter(t, p); d < 700*time.Millisecond {
+		t.Fatalf("reply started after %s while words were still arriving", d)
+	}
+}

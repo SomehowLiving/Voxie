@@ -139,7 +139,10 @@ type Pipeline struct {
 	// flight through STT, and holds a check-in turn ("hello?") while the
 	// caller is saying it again.
 	lastCallerSoundAt atomic.Int64
-	greetingDecided   atomic.Bool
+	// lastPartialAt (unix nanos, 0 = none since the last final) is when the
+	// listener last sent partial words: the caller is mid-utterance.
+	lastPartialAt   atomic.Int64
+	greetingDecided atomic.Bool
 
 	// transcriptLog is the running record of the conversation. The rolling
 	// summary and the low-confidence heuristics read it; it is not the

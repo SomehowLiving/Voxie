@@ -389,6 +389,56 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 	}
 }
 
+// replyHoldMax bounds how long a reply's first audio waits for a caller who
+// is still talking. Live, the caller went on after a pause ("I want to book
+// a table." … "for four people") and the reply started over them; barge-in
+// only fires on speech that starts while the agent talks, so nothing stopped
+// it. Bounded, so a noisy line costs at most this.
+var replyHoldMax = 2500 * time.Millisecond
+
+// callerTalkingQuiet: no caller sound for this long and they've paused.
+// The onset VAD can read a gap between words as that, so partial words from
+// the listener also count: live, the hold released mid-sentence on the VAD
+// alone. Partials stream every few hundred ms while someone talks.
+const (
+	callerTalkingQuiet   = 400 * time.Millisecond
+	callerPartialsRecent = 800 * time.Millisecond
+)
+
+// callerTalking reports whether the caller is speaking right now.
+func (p *Pipeline) callerTalking() bool {
+	if n := p.lastCallerSoundAt.Load(); n != 0 && time.Since(time.Unix(0, n)) < callerTalkingQuiet {
+		return true
+	}
+	n := p.lastPartialAt.Load()
+	return n != 0 && time.Since(time.Unix(0, n)) < callerPartialsRecent
+}
+
+// waitForCallerPause holds a reply's first audio while the caller is talking.
+// If their words become a turn meanwhile, it supersedes this reply (and is
+// joined to it: nothing of it was heard). False if ctx ended.
+func (p *Pipeline) waitForCallerPause(ctx context.Context) bool {
+	start := time.Now()
+	logged := false
+	for {
+		if !p.callerTalking() || time.Since(start) >= replyHoldMax {
+			if logged {
+				log.Printf("[agent] the caller paused; reply starts after %s", time.Since(start).Round(10*time.Millisecond))
+			}
+			return ctx.Err() == nil
+		}
+		if !logged {
+			logged = true
+			log.Printf("[agent] holding the reply: the caller is still talking")
+		}
+		select {
+		case <-ctx.Done():
+			return false
+		case <-time.After(50 * time.Millisecond):
+		}
+	}
+}
+
 // ttsStallTimeout: a voice that sends nothing for this long, before or during
 // a sentence, has stalled; the sentence is skipped rather than leaving the
 // caller in silence. Generous, since the voice router returns a whole long
@@ -418,6 +468,9 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 	var seg *heardSegment // the sentence being synthesized, for the playback ledger
 
 	emitFrame := func(frame PCMFrame) bool {
+		if !emittedSpeaking && !p.waitForCallerPause(ctx) {
+			return false
+		}
 		select {
 		case p.outPCMCh <- frame:
 			if frame.heard != nil {
