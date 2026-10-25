@@ -93,14 +93,16 @@ func (p *Pipeline) runAgent() {
 
 // continuationWindow bounds how long after a turn was answered (or its reply
 // cut off) a new turn can still be its continuation: a pause mid-sentence,
-// then the rest of it.
-const continuationWindow = 5 * time.Second
+// then the rest of it. Room for the reply hold (replyHoldMax) and the final
+// that follows it: live, a Hindi second half landed 5.09s after the first.
+const continuationWindow = 8 * time.Second
 
 // continuationHeardMax is the most of a reply the caller can have heard and
 // still be finishing their own sentence rather than answering the reply.
 // Live, with a 1-1.5s pause mid-sentence the reply had started, and the
-// caller going on cut it off after "", "Sure, I…", "Je…", "मुझे खेद…".
-const continuationHeardMax = 60 // frames, ~1.2s
+// caller going on cut it off after "", "Sure, I…", "Je…", "मुझे खेद…",
+// "申し訳ありませんが、".
+const continuationHeardMax = 75 // frames, ~1.5s
 
 // answeredTurn is a caller turn that was sent for an answer.
 type answeredTurn struct {
@@ -394,7 +396,13 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 // a table." … "for four people") and the reply started over them; barge-in
 // only fires on speech that starts while the agent talks, so nothing stopped
 // it. Bounded, so a noisy line costs at most this.
-var replyHoldMax = 2500 * time.Millisecond
+var replyHoldMax = 4 * time.Second
+
+// staleReplyQuiet: once the caller has talked during the hold, the reply
+// answers a turn they hadn't finished, and their final is on its way --
+// live, 1.5-1.8s after they stopped. Wait for it (it supersedes this reply)
+// rather than start the outdated reply and be cut off by it.
+var staleReplyQuiet = 1800 * time.Millisecond
 
 // callerTalkingQuiet: no caller sound for this long and they've paused.
 // The onset VAD can read a gap between words as that, so partial words from
@@ -420,10 +428,18 @@ func (p *Pipeline) callerTalking() bool {
 func (p *Pipeline) waitForCallerPause(ctx context.Context) bool {
 	start := time.Now()
 	logged := false
+	var lastTalking time.Time
 	for {
-		if !p.callerTalking() || time.Since(start) >= replyHoldMax {
-			if logged {
+		talking := p.callerTalking()
+		if talking {
+			lastTalking = time.Now()
+		}
+		quietEnough := !talking && (lastTalking.IsZero() || time.Since(lastTalking) >= staleReplyQuiet)
+		if quietEnough || time.Since(start) >= replyHoldMax {
+			if logged && quietEnough {
 				log.Printf("[agent] the caller paused; reply starts after %s", time.Since(start).Round(10*time.Millisecond))
+			} else if logged {
+				log.Printf("[agent] the caller is still talking after %s; reply starts anyway", replyHoldMax)
 			}
 			return ctx.Err() == nil
 		}

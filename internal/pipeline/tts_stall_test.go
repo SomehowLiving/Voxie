@@ -104,8 +104,8 @@ func TestReplyWaitsForATalkingCallerToPause(t *testing.T) {
 		}
 	}()
 	time.Sleep(20 * time.Millisecond)
-	if d := firstAudioAfter(t, p); d < 600*time.Millisecond+callerTalkingQuiet-100*time.Millisecond {
-		t.Fatalf("reply started after %s, over the caller", d)
+	if d := firstAudioAfter(t, p); d < 600*time.Millisecond+staleReplyQuiet-100*time.Millisecond {
+		t.Fatalf("reply started after %s; the caller's final hadn't had time to arrive", d)
 	}
 }
 
@@ -156,7 +156,20 @@ func TestReplyWaitsWhilePartialWordsArrive(t *testing.T) {
 		}
 	}()
 	time.Sleep(20 * time.Millisecond)
-	if d := firstAudioAfter(t, p); d < 700*time.Millisecond {
+	if d := firstAudioAfter(t, p); d < 700*time.Millisecond+staleReplyQuiet-100*time.Millisecond {
 		t.Fatalf("reply started after %s while words were still arriving", d)
+	}
+}
+
+// The caller's words become a turn during the hold: the held reply is
+// dropped, never played.
+func TestHeldReplyIsDroppedWhenTheCallersTurnArrives(t *testing.T) {
+	p, cancel := newLifecyclePipeline(t, nil, nil)
+	defer cancel()
+	p.lastCallerSoundAt.Store(time.Now().UnixNano())
+	ctx, stop := context.WithCancel(p.ctx)
+	go func() { time.Sleep(300 * time.Millisecond); stop() }() // superseded
+	if p.waitForCallerPause(ctx) {
+		t.Fatal("a superseded reply was let through")
 	}
 }
