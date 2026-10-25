@@ -470,6 +470,11 @@ func (p *Pipeline) waitForCallerPause(ctx context.Context) bool {
 // sentence at once.
 var ttsStallTimeout = 8 * time.Second
 
+// ttsGapTimeout: once a sentence's audio is streaming, a gap this long is a
+// stall. Live, Cartesia sent a quarter second of a sentence and then nothing,
+// with no error; the caller sat through the full 8 s.
+var ttsGapTimeout = 2 * time.Second
+
 func truncateRunes(s string, n int) string {
 	r := []rune(s)
 	if len(r) <= n {
@@ -577,8 +582,12 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 			select {
 			case chunk, ok = <-stream:
 			case <-stall.C:
+				wait := ttsStallTimeout
+				if received > 0 {
+					wait = ttsGapTimeout
+				}
 				log.Printf("[agent] TTS stalled: no audio for %s after %d bytes; skipping the sentence %q",
-					ttsStallTimeout, received, truncateRunes(clean, 60))
+					wait, received, truncateRunes(clean, 60))
 				scancel()
 				ok = false
 			case <-ctx.Done():
@@ -628,7 +637,7 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 				default:
 				}
 			}
-			stall.Reset(ttsStallTimeout)
+			stall.Reset(ttsGapTimeout)
 		}
 		stall.Stop()
 		scancel()

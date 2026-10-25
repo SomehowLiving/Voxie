@@ -173,3 +173,37 @@ func TestHeldReplyIsDroppedWhenTheCallersTurnArrives(t *testing.T) {
 		t.Fatal("a superseded reply was let through")
 	}
 }
+
+// midStreamTTS sends one frame, then nothing until cancelled.
+type midStreamTTS struct{ cancelled chan struct{} }
+
+func (m *midStreamTTS) Synthesize(context.Context, string) ([]byte, error) { return nil, nil }
+func (m *midStreamTTS) SynthesizeStream(ctx context.Context, text string) (<-chan tts.StreamChunk, error) {
+	ch := make(chan tts.StreamChunk, 1)
+	ch <- tts.StreamChunk{PCM: make([]byte, 640)}
+	go func() { <-ctx.Done(); close(m.cancelled); close(ch) }()
+	return ch, nil
+}
+
+func TestVoiceThatStopsMidSentenceIsCutAfterTheGapTimeout(t *testing.T) {
+	oldGap := ttsGapTimeout
+	ttsGapTimeout = 150 * time.Millisecond
+	defer func() { ttsGapTimeout = oldGap }()
+	p, cancel := newLifecyclePipeline(t, nil, nil)
+	defer cancel()
+	voice := &midStreamTTS{cancelled: make(chan struct{})}
+	p.ttsClient = voice
+	sentences := make(chan string, 1)
+	sentences <- "Puedo ayudarle con otra cosa?"
+	close(sentences)
+	go p.synthesizeSentences(p.ctx, 0, sentences, time.Time{})
+	go func() {
+		for range p.outPCMCh {
+		}
+	}()
+	select {
+	case <-voice.cancelled:
+	case <-time.After(time.Second):
+		t.Fatal("a voice stuck mid-sentence wasn't cut after the gap timeout")
+	}
+}
