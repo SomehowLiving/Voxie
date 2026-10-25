@@ -106,6 +106,10 @@ PERSONAS = {
 }
 _persona = "female"
 _english_override: str | None = None  # --default-voice: English voice for the server's persona
+# --sarvam-speakers: a Sarvam voice per Indian language for the server's
+# persona ("hi=ritu,ta=kavitha"). One speaker rarely sounds native in every
+# language; a listener preferred "ritu" for Hindi over the persona's "priya".
+_sarvam_overrides: dict[str, str] = {}
 
 # Names the agent says in every language, spelled so each language's text-
 # to-phoneme step reads them as words. Heard in live checks: Spanish, Italian
@@ -486,6 +490,24 @@ def _sarvam_once(text: str, language: str, speaker: str | None = None) -> bytes:
         return w.readframes(w.getnframes())
 
 
+def sarvam_speaker(persona: dict, language: str) -> str:
+    """The persona's Sarvam voice, or the per-language override for the
+    server's own persona."""
+    if persona is PERSONAS[_persona] and language in _sarvam_overrides:
+        return _sarvam_overrides[language]
+    return persona["sarvam"]
+
+
+def parse_sarvam_speakers(spec: str | None) -> dict[str, str]:
+    """"hi=ritu,ta=kavitha" -> {"hi": "ritu", "ta": "kavitha"}; bad pairs skipped."""
+    out: dict[str, str] = {}
+    for pair in (spec or "").split(","):
+        lang, _, speaker = pair.strip().partition("=")
+        if re.fullmatch(r"[a-z]{2,3}", lang.strip().lower()) and re.fullmatch(r"[a-z]{2,20}", speaker.strip().lower()):
+            out[lang.strip().lower()] = speaker.strip().lower()
+    return out
+
+
 def synthesize_sarvam(text: str, language: str, speaker: str | None = None) -> bytes:
     """One retry for a transient error; a request Sarvam rejects (4xx) isn't
     retried."""
@@ -539,7 +561,7 @@ def synthesize(text: str, voice: str = "") -> bytes:
     remember_language(language)
     if language in SARVAM_LANGUAGES and sarvam_available():
         try:
-            pcm = synthesize_sarvam(text, language, persona["sarvam"])
+            pcm = synthesize_sarvam(text, language, sarvam_speaker(persona, language))
             logger.info("language %s -> Sarvam %s", language, persona["sarvam"])
             return pcm
         except Exception as exc:
@@ -614,7 +636,7 @@ def health():
 
 
 def main():
-    global _model, _device, _persona, _english_override
+    global _model, _device, _persona, _english_override, _sarvam_overrides
     parser = argparse.ArgumentParser(description="Kokoro TTS sidecar for StreamCore")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8300)
@@ -622,6 +644,7 @@ def main():
     parser.add_argument("--voice", choices=sorted(PERSONAS), help="voice persona for every language (default: --voice-gender)")
     parser.add_argument("--voice-gender", choices=["female", "male"], default="female", help="shorthand for --voice female / male")
     parser.add_argument("--default-voice", default=None, help="Kokoro voice for English, overriding the persona's (hm_omega: Indian-accented English)")
+    parser.add_argument("--sarvam-speakers", default=os.environ.get("VOXIE_SARVAM_SPEAKERS"), help="Sarvam voice per language for the persona, e.g. hi=ritu,ta=kavitha")
     parser.add_argument("--spoken-names", default=os.environ.get("VOXIE_SPOKEN_NAMES"), help="JSON file: how to spell names per language")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s")
@@ -633,6 +656,9 @@ def main():
     _device = args.device
     _persona = args.voice or args.voice_gender
     _english_override = args.default_voice if args.default_voice and _VOICE_RE.match(args.default_voice) else None
+    _sarvam_overrides = parse_sarvam_speakers(args.sarvam_speakers)
+    if _sarvam_overrides:
+        logger.info("Sarvam voice per language: %s", _sarvam_overrides)
     logger.info("loading %s on %s", REPO_ID, _device)
     _model = KModel(repo_id=REPO_ID).to(_device).eval()
     # Warm up so the first real request doesn't pay for the voice download,
