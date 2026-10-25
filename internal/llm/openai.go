@@ -148,6 +148,13 @@ func (c *openaiClient) Chat(ctx context.Context, turn Turn, onChunk func(string)
 	// dangling tool_call_ids with error placeholders so the conversation
 	// stays valid.
 	c.reconcileHistory()
+	if turn.ReplacesLastTurn {
+		c.history = dropLastTurn(c.history,
+			func(m openai.ChatCompletionMessage) bool { return m.Role == openai.ChatMessageRoleUser },
+			func(m openai.ChatCompletionMessage) bool {
+				return len(m.ToolCalls) > 0 || m.Role == openai.ChatMessageRoleTool
+			})
+	}
 	c.history = append(c.history, openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleUser,
 		Content: userText,
@@ -558,9 +565,14 @@ func sanitizeToolName(name string) string {
 	}, name)
 }
 
+// truncate shortens s to at most max bytes for a log line, cutting at a
+// character boundary so a Hindi or Tamil reply isn't split mid-character.
 func truncate(s string, max int) string {
 	if len(s) <= max {
 		return s
+	}
+	for max > 0 && !utf8.RuneStart(s[max]) {
+		max--
 	}
 	return s[:max] + "..."
 }

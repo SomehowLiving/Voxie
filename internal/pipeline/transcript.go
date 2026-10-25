@@ -30,6 +30,20 @@ func (l *TranscriptLog) Add(role, text string) {
 	})
 }
 
+// ReplaceLastTurn replaces the last user entry, and anything after it, with
+// text: the caller's turn went on after a pause, before any reply was heard.
+func (l *TranscriptLog) ReplaceLastTurn(text string) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	for i := len(l.entries) - 1; i >= 0; i-- {
+		if l.entries[i].Role == "user" {
+			l.entries = l.entries[:i]
+			break
+		}
+	}
+	l.entries = append(l.entries, TranscriptEntry{Role: "user", Text: text, At: time.Now()})
+}
+
 // Entries returns a copy of the current transcript entries.
 func (l *TranscriptLog) Entries() []TranscriptEntry {
 	l.mu.Lock()

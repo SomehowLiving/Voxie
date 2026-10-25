@@ -114,9 +114,10 @@ type agentRequest struct {
 
 	// Context the pipeline gathered for this turn, kept out of Text so an agent
 	// that persists what it receives stores the caller's words and nothing else.
-	InterruptedText string   `json:"interrupted_text,omitempty"`
-	Context         []string `json:"context,omitempty"`
-	Summary         string   `json:"summary,omitempty"`
+	InterruptedText  string   `json:"interrupted_text,omitempty"`
+	ReplacesLastTurn bool     `json:"replaces_last_turn,omitempty"`
+	Context          []string `json:"context,omitempty"`
+	Summary          string   `json:"summary,omitempty"`
 }
 
 func (c *agentClient) Chat(ctx context.Context, turn Turn, onChunk func(string), onSentence func(string)) (string, error) {
@@ -129,10 +130,11 @@ func (c *agentClient) Chat(ctx context.Context, turn Turn, onChunk func(string),
 		Language:   turn.Language,
 		// Note is an instruction for this turn only, so it rides with the skill
 		// text rather than accumulating into it.
-		System:          c.extraSystem + turn.Note,
-		InterruptedText: turn.InterruptedText,
-		Context:         turn.Context,
-		Summary:         turn.Summary,
+		System:           c.extraSystem + turn.Note,
+		InterruptedText:  turn.InterruptedText,
+		ReplacesLastTurn: turn.ReplacesLastTurn,
+		Context:          turn.Context,
+		Summary:          turn.Summary,
 	}
 	c.mu.Unlock()
 

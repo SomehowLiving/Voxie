@@ -23,6 +23,7 @@ This extends upstream StreamCore's "bring your own agent" contract
   "text": "मुझे दोबारा फ़ोन मत करना",
   "language": "hi",
   "interrupted_text": "Your appointment is on Mon…",
+  "replaces_last_turn": true,
   "summary": "…rolling digest of earlier turns"
 }
 ```
@@ -46,6 +47,14 @@ This extends upstream StreamCore's "bring your own agent" contract
   an estimate. Replace your stored copy of the last reply with it: the rest
   was never heard. It's absent if the reply had finished playing, or if
   the caller cut in before any of it was heard.
+- **`replaces_last_turn`** (`true`, or absent) means the caller paused
+  mid-sentence, Voxie sent you the first part, and they went on before any
+  of your reply was heard. `text` holds the whole sentence, both parts.
+  Drop your last `chat` turn and any reply you gave to it from your
+  history: the caller never heard that reply. Voxie has already cancelled
+  that request, but your side may still finish it after this one arrives,
+  so don't store a reply to a turn that has been replaced. If a tool ran
+  for the dropped turn, its effect happened: keep that.
 
 ## The four types
 

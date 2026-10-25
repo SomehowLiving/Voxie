@@ -231,8 +231,8 @@ func TestAdaptiveSwitchesToTheIndianListenerWithSarvamsTranscript(t *testing.T) 
 
 	// The old listener is no longer heard; the new one is, unchecked.
 	world.emit(deepgramFinal("stale", "hi", 0.5))
-	indian.emit(TranscriptResult{Text: tamil, IsFinal: true, Language: "ta", Provider: "sarvam", Confidence: 0.75})
-	if got := h.next(); got.Text != tamil {
+	indian.emit(TranscriptResult{Text: "நாளைக்கு அழைக்கவும்", IsFinal: true, Language: "ta", Provider: "sarvam", Confidence: 0.75})
+	if got := h.next(); got.Text != "நாளைக்கு அழைக்கவும்" {
 		t.Fatalf("got %q", got.Text)
 	}
 	h.nothing(50 * time.Millisecond)
@@ -591,5 +591,114 @@ func TestAdaptiveVietnameseCaller(t *testing.T) {
 		if indian && sarvam.callCount() == 0 {
 			t.Error("an Indian call should hear Sarvam out before believing Whisper's vi")
 		}
+	}
+}
+
+// Live: Deepgram fixed to Korean heard a Hindi caller as a few garbage
+// partial words and never sent a final; the caller got 27s of silence.
+func TestAdaptiveChecksWordsThatNeverBecomeATurn(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "hi", Text: "क्या बदलाव हो गया?"}}
+	h := newHarness(t, listenerSpec{language: "ko"}, false, namedIdentifier{"groq", groq.fn()})
+	h.a.wordsGrace = 100 * time.Millisecond
+	h.speak(noFinalSpeechFrames + 5)
+	h.log.last().emit(TranscriptResult{Text: "자, 펜", Provider: "deepgram"})
+	h.next() // the partial
+	deadline := time.Now().Add(2 * time.Second)
+	for groq.callCount() == 0 && time.Now().Before(deadline) {
+		_ = h.a.SendAudio(quietFrame())
+		time.Sleep(20 * time.Millisecond)
+	}
+	if got := h.next(); got.Text != "क्या बदलाव हो गया?" || got.Language != "hi" {
+		t.Fatalf("got %+v", got)
+	}
+	waitFor(t, func() bool { return h.log.count() == 2 })
+	if spec := h.log.last().spec; spec.covers("hi") == false {
+		t.Fatalf("switched to %s, which doesn't hear Hindi", spec)
+	}
+}
+
+// The replayed end of a replaced turn must not come back as a turn of its
+// own: live, "주세요." cut off the reply to "…바꿔주세요".
+func TestAdaptiveDropsTheReplayedEndOfAReplacedTurn(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "ko", Text: "시간을 오후 3시로 바꿔주세요."}}
+	h := newHarness(t, listenerSpec{language: "zh"}, false, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("韩国锅粥把累赘嘴改哦", "zh", 0.55))
+	if got := h.next(); got.Language != "ko" {
+		t.Fatalf("got %+v", got)
+	}
+	waitFor(t, func() bool { return h.log.count() == 2 })
+	korean := h.log.last()
+	korean.emit(TranscriptResult{Text: "바꿔 주세요.", IsFinal: true, Confidence: 0.98, Provider: "deepgram"})
+	h.nothing(150 * time.Millisecond)
+	// A new turn after it goes through.
+	korean.emit(TranscriptResult{Text: "감사합니다", IsFinal: true, Confidence: 0.99, Provider: "deepgram"})
+	if got := h.next(); got.Text != "감사합니다" {
+		t.Fatalf("got %+v", got)
+	}
+}
+
+func TestWhisperLanguageNames(t *testing.T) {
+	for in, want := range map[string]string{
+		"modern greek (1453-)": "el", "Greek": "el", "Tamil": "ta", "swahili": "sw",
+		"ta": "ta", "hi-IN": "hi", "or": "od", "Filipino": "tl",
+	} {
+		if got := whisperLanguage(in); got != want {
+			t.Errorf("whisperLanguage(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
+
+// A language no listener hears: the identifier's transcript is the turn,
+// not the listener's noise (live: Thai as made-up Korean, Greek as nothing).
+func TestAdaptiveUsesTheIdentifiersWordsForALanguageNoListenerHears(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "th", Text: "สวัสดีครับ"}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("세아니 했 통아에탄리", "ko", 0.4))
+	if got := h.next(); got.Text != "สวัสดีครับ" || got.Language != "th" {
+		t.Fatalf("got %+v", got)
+	}
+	if h.log.count() != 1 {
+		t.Fatal("switched listener for a language no listener hears")
+	}
+}
+
+// Live: after Japanese, multi heard "And one more thing." as katakana,
+// labelled Japanese at 0.96. The check names English, which multi hears --
+// but the turn it wrote is in the wrong script, so Whisper's words stand.
+func TestAdaptiveReplacesEnglishWrittenInKatakana(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "en", Text: "And one more thing."}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("アンドワンモーティング。", "ja", 0.96))
+	if got := h.next(); got.Text != "And one more thing." || got.Language != "en" {
+		t.Fatalf("got %+v", got)
+	}
+	if h.log.count() != 1 {
+		t.Error("multi hears English: no switch needed")
+	}
+}
+
+// A Japanese sentence is not checked for being katakana.
+func TestAdaptivePassesJapaneseWithKanjiStraightThrough(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "ja"}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("ホテルの予約を変更したいです。", "ja", 0.98))
+	h.next()
+	if groq.callCount() != 0 {
+		t.Error("a normal Japanese sentence was held for a check")
+	}
+}
+
+func TestScriptHelpers(t *testing.T) {
+	for s, want := range map[string]bool{"アンドワンモーティング": true, "コーヒー": true, "ホテルの予約": false, "OK": false} {
+		if mostlyKatakana(s) != want {
+			t.Errorf("mostlyKatakana(%q) != %v", s, want)
+		}
+	}
+	if !wrongScript("アンドワンモーティング", "en") || wrongScript("Hello, मेरा order", "en") || wrongScript("नमस्ते", "hi") {
+		t.Error("wrongScript")
 	}
 }
