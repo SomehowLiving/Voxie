@@ -76,7 +76,7 @@ func (c *vibevoiceTTSClient) Synthesize(ctx context.Context, text string) ([]byt
 	}
 
 	log.Printf("[tts:vibevoice] synthesized %d bytes for %d chars of text", len(data), len(text))
-	return data, nil
+	return levelPCM(data), nil
 }
 
 // SynthesizeStream emits the whole utterance as one chunk: the VibeVoice
