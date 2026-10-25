@@ -562,7 +562,7 @@ def synthesize(text: str, voice: str = "") -> bytes:
     if language in SARVAM_LANGUAGES and sarvam_available():
         try:
             pcm = synthesize_sarvam(text, language, sarvam_speaker(persona, language))
-            logger.info("language %s -> Sarvam %s", language, persona["sarvam"])
+            logger.info("language %s -> Sarvam %s", language, sarvam_speaker(persona, language))
             return pcm
         except Exception as exc:
             if language not in KOKORO_FALLBACK:
