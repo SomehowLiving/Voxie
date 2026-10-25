@@ -1,6 +1,8 @@
 package stt
 
 import (
+	"time"
+
 	"testing"
 
 	msginterfaces "github.com/deepgram/deepgram-go-sdk/v3/pkg/api/listen/v1/websocket/interfaces"
@@ -204,5 +206,84 @@ func TestDeepgramCallbackMissingConfidenceFallsBackToZero(t *testing.T) {
 	}
 	if got[0].Text != "hello world" {
 		t.Fatalf("text = %q, want preserved transcript", got[0].Text)
+	}
+}
+
+// fakeClock steps time for the callback.
+type fakeClock struct{ t time.Time }
+
+func (c *fakeClock) now() time.Time       { return c.t }
+func (c *fakeClock) step(d time.Duration) { c.t = c.t.Add(d) }
+func finals(got []TranscriptResult) []string {
+	var out []string
+	for _, r := range got {
+		if r.IsFinal {
+			out = append(out, r.Text)
+		}
+	}
+	return out
+}
+
+// Live, on a line with a faint hiss: Deepgram re-sent the same interim words
+// for 2-3 s and ended the sentence only on UtteranceEnd.
+func TestDeepgramEndsASentenceWhoseWordsStopChanging(t *testing.T) {
+	var got []TranscriptResult
+	clock := &fakeClock{t: time.Unix(1000, 0)}
+	cb := &deepgramCallback{onResult: func(r TranscriptResult) { got = append(got, r) }, now: clock.now}
+	_ = cb.Message(deepgramMessage("Ich brauch eine", false, false))
+	clock.step(900 * time.Millisecond)
+	_ = cb.Message(deepgramMessage("Ich brauch eine Rückerstattung.", false, false))
+	clock.step(900 * time.Millisecond)
+	_ = cb.Message(deepgramMessage("Ich brauch eine Rückerstattung.", false, false))
+	if f := finals(got); len(f) != 1 || f[0] != "Ich brauch eine Rückerstattung." {
+		t.Fatalf("finals = %q, want the sentence once its words stopped changing", f)
+	}
+	// Deepgram's own late final adds nothing: dropped.
+	clock.step(900 * time.Millisecond)
+	_ = cb.Message(deepgramMessage("Ich brauch eine Rückerstattung.", true, false))
+	_ = cb.UtteranceEnd(&msginterfaces.UtteranceEndResponse{})
+	if f := finals(got); len(f) != 1 {
+		t.Fatalf("finals = %q; Deepgram's late final repeated the sentence", f)
+	}
+}
+
+func TestDeepgramLateFinalSendsOnlyTheNewWords(t *testing.T) {
+	var got []TranscriptResult
+	clock := &fakeClock{t: time.Unix(1000, 0)}
+	cb := &deepgramCallback{onResult: func(r TranscriptResult) { got = append(got, r) }, now: clock.now}
+	_ = cb.Message(deepgramMessage("Mi número de pedido es", false, false))
+	clock.step(800 * time.Millisecond)
+	_ = cb.Message(deepgramMessage("Mi número de pedido es", false, false))
+	clock.step(1500 * time.Millisecond)
+	_ = cb.Message(deepgramMessage("Mi número de pedido es cuatro cinco.", true, true))
+	if f := finals(got); len(f) != 2 || f[1] != "cuatro cinco." {
+		t.Fatalf("finals = %q, want the early part then only the new words", f)
+	}
+}
+
+func TestDeepgramWordsStillChangingAreNotFinal(t *testing.T) {
+	var got []TranscriptResult
+	clock := &fakeClock{t: time.Unix(1000, 0)}
+	cb := &deepgramCallback{onResult: func(r TranscriptResult) { got = append(got, r) }, now: clock.now}
+	for _, w := range []string{"I want", "I want to book", "I want to book a table"} {
+		_ = cb.Message(deepgramMessage(w, false, false))
+		clock.step(900 * time.Millisecond)
+	}
+	if f := finals(got); len(f) != 0 {
+		t.Fatalf("finals = %q while the caller was still talking", f)
+	}
+}
+
+func TestDeepgramSameWordsLaterAreANewSentence(t *testing.T) {
+	var got []TranscriptResult
+	clock := &fakeClock{t: time.Unix(1000, 0)}
+	cb := &deepgramCallback{onResult: func(r TranscriptResult) { got = append(got, r) }, now: clock.now}
+	_ = cb.Message(deepgramMessage("Hello?", false, false))
+	clock.step(800 * time.Millisecond)
+	_ = cb.Message(deepgramMessage("Hello?", false, false))
+	clock.step(8 * time.Second)
+	_ = cb.Message(deepgramMessage("Hello?", true, true))
+	if f := finals(got); len(f) != 2 {
+		t.Fatalf("finals = %q; a second Hello? 8 s later is a new turn", f)
 	}
 }
