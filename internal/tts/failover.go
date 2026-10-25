@@ -314,6 +314,7 @@ func (f *failoverClient) try(ctx context.Context, p *ttsProvider, text string, v
 				return false
 			}
 		}
+		first.Provider = p.name
 		if !send(first) {
 			return
 		}
@@ -335,6 +336,10 @@ func (f *failoverClient) try(ctx context.Context, p *ttsProvider, text string, v
 // sentence: "[lang:hi] ", "[voice:male-2] ", in either order.
 var leadingTags = regexp.MustCompile(`^\s*(?:\[(?:lang|voice):[a-zA-Z0-9_-]{1,16}\]\s*)+`)
 var langInTags = regexp.MustCompile(`\[lang:([a-zA-Z-]{2,8})\]`)
+
+// SentenceLanguage is the "[lang:xx]" a sentence starts with ("" if none),
+// as its base code.
+func SentenceLanguage(text string) string { return sentenceLanguage(text) }
 
 // sentenceLanguage is the "[lang:xx]" a sentence starts with ("" if none),
 // as its base code ("hi-IN" → "hi").
