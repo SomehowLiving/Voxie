@@ -1,0 +1,1721 @@
+{
+ "generated": "2026-10-25",
+ "languages": [
+  {
+   "code": "en",
+   "name": "English",
+   "native": "English",
+   "text": "Hi! Your order's on its way, it should get to you tomorrow. Anything else I can help with? Thanks for calling, and have a lovely day!",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "af_heart (persona female)",
+     "audio": "/voices/audio/en-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "am_michael (persona male)",
+     "audio": "/voices/audio/en-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "af_bella (persona female-2)",
+     "audio": "/voices/audio/en-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "am_fenrir (persona male-2)",
+     "audio": "/voices/audio/en-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/en-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/en-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/en-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "es",
+   "name": "Spanish",
+   "native": "Español",
+   "text": "¡Hola! Tu pedido ya va en camino y te llega mañana. ¿Te ayudo con algo más? ¡Gracias por llamar y que tengas un buen día!",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ef_dora (persona female)",
+     "audio": "/voices/audio/es-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "em_alex (persona male)",
+     "audio": "/voices/audio/es-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ef_dora (persona female-2)",
+     "audio": "/voices/audio/es-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "em_alex (persona male-2)",
+     "audio": "/voices/audio/es-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/es-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/es-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/es-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "fr",
+   "name": "French",
+   "native": "Français",
+   "text": "Bonjour ! Votre commande est en route, elle arrive demain. Je peux vous aider pour autre chose ? Merci de votre appel, et bonne journée !",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ff_siwis (persona female)",
+     "audio": "/voices/audio/fr-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ff_siwis (persona male)",
+     "audio": "/voices/audio/fr-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ff_siwis (persona female-2)",
+     "audio": "/voices/audio/fr-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ff_siwis (persona male-2)",
+     "audio": "/voices/audio/fr-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/fr-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/fr-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/fr-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "it",
+   "name": "Italian",
+   "native": "Italiano",
+   "text": "Ciao! Il tuo ordine è in viaggio, ti arriva domani. Posso aiutarti con altro? Grazie della chiamata, e buona giornata!",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "if_sara (persona female)",
+     "audio": "/voices/audio/it-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "im_nicola (persona male)",
+     "audio": "/voices/audio/it-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "if_sara (persona female-2)",
+     "audio": "/voices/audio/it-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "im_nicola (persona male-2)",
+     "audio": "/voices/audio/it-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/it-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/it-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/it-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "pt",
+   "name": "Portuguese",
+   "native": "Português",
+   "text": "Oi! Seu pedido já está a caminho e chega amanhã. Posso ajudar com mais alguma coisa? Obrigado por ligar, e tenha um ótimo dia!",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pf_dora (persona female)",
+     "audio": "/voices/audio/pt-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pm_alex (persona male)",
+     "audio": "/voices/audio/pt-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pf_dora (persona female-2)",
+     "audio": "/voices/audio/pt-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pm_alex (persona male-2)",
+     "audio": "/voices/audio/pt-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/pt-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/pt-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/pt-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "de",
+   "name": "German",
+   "native": "Deutsch",
+   "text": "Hallo! Deine Bestellung ist unterwegs und kommt morgen an. Kann ich sonst noch was für dich tun? Danke für deinen Anruf und einen schönen Tag noch!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "de_DE-kerstin-low (persona female)",
+     "audio": "/voices/audio/de-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "de_DE-thorsten-high (persona male)",
+     "audio": "/voices/audio/de-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "de_DE-kerstin-low (persona female-2)",
+     "audio": "/voices/audio/de-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "de_DE-thorsten-high (persona male-2)",
+     "audio": "/voices/audio/de-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/de-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/de-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/de-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "nl",
+   "name": "Dutch",
+   "native": "Nederlands",
+   "text": "Hoi! Je bestelling is onderweg en komt morgen aan. Kan ik je nog ergens mee helpen? Bedankt voor je telefoontje, en nog een fijne dag!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "nl_BE-nathalie-medium (persona female)",
+     "audio": "/voices/audio/nl-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "nl_BE-rdh-medium (persona male)",
+     "audio": "/voices/audio/nl-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "nl_BE-nathalie-medium (persona female-2)",
+     "audio": "/voices/audio/nl-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "nl_BE-rdh-medium (persona male-2)",
+     "audio": "/voices/audio/nl-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/nl-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/nl-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/nl-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "ru",
+   "name": "Russian",
+   "native": "Русский",
+   "text": "Здравствуйте! Ваш заказ уже в пути, приедет завтра. Могу ещё чем-нибудь помочь? Спасибо за звонок, хорошего вам дня!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ru_RU-dmitri-medium (persona female)",
+     "audio": "/voices/audio/ru-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ru_RU-dmitri-medium (persona male)",
+     "audio": "/voices/audio/ru-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ru_RU-dmitri-medium (persona female-2)",
+     "audio": "/voices/audio/ru-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ru_RU-dmitri-medium (persona male-2)",
+     "audio": "/voices/audio/ru-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/ru-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/ru-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/ru-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "pl",
+   "name": "Polish",
+   "native": "Polski",
+   "text": "Cześć! Twoje zamówienie jest już w drodze, dotrze jutro. Mogę jeszcze w czymś pomóc? Dzięki za telefon i miłego dnia!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pl_PL-gosia-medium (persona female)",
+     "audio": "/voices/audio/pl-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pl_PL-darkman-medium (persona male)",
+     "audio": "/voices/audio/pl-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pl_PL-gosia-medium (persona female-2)",
+     "audio": "/voices/audio/pl-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pl_PL-darkman-medium (persona male-2)",
+     "audio": "/voices/audio/pl-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/pl-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/pl-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/pl-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "uk",
+   "name": "Ukrainian",
+   "native": "Українська",
+   "text": "Привіт! Ваше замовлення вже в дорозі, приїде завтра. Можу ще чимось допомогти? Дякую за дзвінок, гарного вам дня!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "uk_UA-tetiana-high (persona female)",
+     "audio": "/voices/audio/uk-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "uk_UA-mykyta-high (persona male)",
+     "audio": "/voices/audio/uk-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "uk_UA-tetiana-high (persona female-2)",
+     "audio": "/voices/audio/uk-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "uk_UA-mykyta-high (persona male-2)",
+     "audio": "/voices/audio/uk-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/uk-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/uk-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/uk-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "cs",
+   "name": "Czech",
+   "native": "Čeština",
+   "text": "Dobrý den! Vaše objednávka je na cestě a dorazí zítra. Můžu vám ještě s něčím pomoct? Děkuju za zavolání a hezký den!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "cs_CZ-kasandra-medium (persona female)",
+     "audio": "/voices/audio/cs-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "cs_CZ-jirka-medium (persona male)",
+     "audio": "/voices/audio/cs-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "cs_CZ-kasandra-medium (persona female-2)",
+     "audio": "/voices/audio/cs-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "cs_CZ-jirka-medium (persona male-2)",
+     "audio": "/voices/audio/cs-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/cs-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/cs-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/cs-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "hu",
+   "name": "Hungarian",
+   "native": "Magyar",
+   "text": "Szia! A rendelésed már úton van, holnap megérkezik. Segíthetek még valamiben? Köszönöm a hívást, és szép napot!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "hu_HU-berta-medium (persona female)",
+     "audio": "/voices/audio/hu-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "hu_HU-imre-medium (persona male)",
+     "audio": "/voices/audio/hu-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "hu_HU-berta-medium (persona female-2)",
+     "audio": "/voices/audio/hu-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "hu_HU-imre-medium (persona male-2)",
+     "audio": "/voices/audio/hu-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/hu-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/hu-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/hu-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "sv",
+   "name": "Swedish",
+   "native": "Svenska",
+   "text": "Hej! Din beställning är på väg och kommer i morgon. Kan jag hjälpa dig med något mer? Tack för att du ringde, och ha en fin dag!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "sv_SE-alma-medium (persona female)",
+     "audio": "/voices/audio/sv-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "sv_SE-nst-medium (persona male)",
+     "audio": "/voices/audio/sv-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "sv_SE-alma-medium (persona female-2)",
+     "audio": "/voices/audio/sv-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "sv_SE-nst-medium (persona male-2)",
+     "audio": "/voices/audio/sv-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/sv-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/sv-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/sv-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "ro",
+   "name": "Romanian",
+   "native": "Română",
+   "text": "Bună! Comanda ta e pe drum și ajunge mâine. Te mai pot ajuta cu ceva? Mulțumesc că ai sunat și o zi frumoasă!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ro_RO-mihai-medium (persona female)",
+     "audio": "/voices/audio/ro-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ro_RO-mihai-medium (persona male)",
+     "audio": "/voices/audio/ro-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ro_RO-mihai-medium (persona female-2)",
+     "audio": "/voices/audio/ro-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ro_RO-mihai-medium (persona male-2)",
+     "audio": "/voices/audio/ro-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/ro-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/ro-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/ro-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "fi",
+   "name": "Finnish",
+   "native": "Suomi",
+   "text": "Hei! Tilauksesi on matkalla ja tulee huomenna. Voinko auttaa jossain muussa? Kiitos soitosta ja oikein mukavaa päivää!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "fi_FI-harri-medium (persona female)",
+     "audio": "/voices/audio/fi-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "fi_FI-harri-medium (persona male)",
+     "audio": "/voices/audio/fi-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "fi_FI-harri-medium (persona female-2)",
+     "audio": "/voices/audio/fi-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "fi_FI-harri-medium (persona male-2)",
+     "audio": "/voices/audio/fi-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/fi-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/fi-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/fi-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "da",
+   "name": "Danish",
+   "native": "Dansk",
+   "text": "Hej! Din bestilling er på vej og kommer i morgen. Kan jeg hjælpe med andet? Tak fordi du ringede, og hav en god dag!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "da_DK-talesyntese-medium (persona female)",
+     "audio": "/voices/audio/da-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "da_DK-talesyntese-medium (persona male)",
+     "audio": "/voices/audio/da-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "da_DK-talesyntese-medium (persona female-2)",
+     "audio": "/voices/audio/da-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "da_DK-talesyntese-medium (persona male-2)",
+     "audio": "/voices/audio/da-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/da-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/da-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/da-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "vi",
+   "name": "Vietnamese",
+   "native": "Tiếng Việt",
+   "text": "Chào bạn! Đơn hàng của bạn đang được giao, mai sẽ tới nhé. Mình giúp gì thêm được không? Cảm ơn bạn đã gọi, chúc bạn một ngày vui nhé!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "vi_VN-vais1000-medium (persona female)",
+     "audio": "/voices/audio/vi-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "vi_VN-vais1000-medium (persona male)",
+     "audio": "/voices/audio/vi-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "vi_VN-vais1000-medium (persona female-2)",
+     "audio": "/voices/audio/vi-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "vi_VN-vais1000-medium (persona male-2)",
+     "audio": "/voices/audio/vi-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/vi-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/vi-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/vi-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "ja",
+   "name": "Japanese",
+   "native": "日本語",
+   "text": "こんにちは！ご注文の品は発送済みで、明日お届けします。他に何かお手伝いできることはありますか？ お電話ありがとうございました。良い一日をお過ごしください！",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "jf_alpha (persona female)",
+     "audio": "/voices/audio/ja-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "jm_kumo (persona male)",
+     "audio": "/voices/audio/ja-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "jf_nezumi (persona female-2)",
+     "audio": "/voices/audio/ja-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "jm_kumo (persona male-2)",
+     "audio": "/voices/audio/ja-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/ja-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/ja-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/ja-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "zh",
+   "name": "Chinese",
+   "native": "中文",
+   "text": "你好！你的订单已经在路上了，明天就能到。还有什么需要帮忙的吗？ 谢谢你的来电，祝你今天愉快！",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "zf_xiaobei (persona female)",
+     "audio": "/voices/audio/zh-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "zm_yunxi (persona male)",
+     "audio": "/voices/audio/zh-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "zf_xiaoni (persona female-2)",
+     "audio": "/voices/audio/zh-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "zm_yunjian (persona male-2)",
+     "audio": "/voices/audio/zh-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/zh-05.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/zh-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/zh-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "hi",
+   "name": "Hindi",
+   "native": "हिन्दी",
+   "text": "नमस्ते! आपका order रास्ते में है, कल तक पहुँच जाएगा। और कुछ help चाहिए? कॉल करने के लिए शुक्रिया, आपका दिन अच्छा रहे!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "ritu (persona female)",
+     "audio": "/voices/audio/hi-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/hi-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/hi-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/hi-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "kavya (conversational)",
+     "audio": "/voices/audio/hi-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "ishita (social)",
+     "audio": "/voices/audio/hi-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "sanchita (assistant)",
+     "audio": "/voices/audio/hi-07.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "rahul (conversational)",
+     "audio": "/voices/audio/hi-08.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "aditya (conversational)",
+     "audio": "/voices/audio/hi-09.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/hi-10.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/hi-11.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/hi-12.mp3"
+    }
+   ]
+  },
+  {
+   "code": "bn",
+   "name": "Bengali",
+   "native": "বাংলা",
+   "text": "নমস্কার! আপনার অর্ডার রাস্তায় আছে, কাল পৌঁছে যাবে। আর কিছু লাগবে? ফোন করার জন্য ধন্যবাদ, আপনার দিনটা ভালো কাটুক!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/bn-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/bn-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/bn-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/bn-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "roopa (conversational)",
+     "audio": "/voices/audio/bn-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "arnab (conversation)",
+     "audio": "/voices/audio/bn-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/bn-07.mp3"
+    }
+   ]
+  },
+  {
+   "code": "gu",
+   "name": "Gujarati",
+   "native": "ગુજરાતી",
+   "text": "નમસ્તે! તમારો ઓર્ડર રસ્તામાં છે, કાલે પહોંચી જશે. બીજું કંઈ જોઈએ છે? ફોન કરવા બદલ આભાર, તમારો દિવસ સારો જાય!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/gu-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/gu-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/gu-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/gu-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "pooja (conversational)",
+     "audio": "/voices/audio/gu-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "pooja (customer)",
+     "audio": "/voices/audio/gu-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "bhavik (conversation)",
+     "audio": "/voices/audio/gu-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/gu-08.mp3"
+    }
+   ]
+  },
+  {
+   "code": "kn",
+   "name": "Kannada",
+   "native": "ಕನ್ನಡ",
+   "text": "ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಆರ್ಡರ್ ದಾರಿಯಲ್ಲಿದೆ, ನಾಳೆ ಬರುತ್ತೆ. ಇನ್ನೇನಾದ್ರೂ ಬೇಕಾ? ಕಾಲ್ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ, ನಿಮ್ಮ ದಿನ ಚೆನ್ನಾಗಿರಲಿ!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/kn-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/kn-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/kn-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/kn-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "chaitra (conversation)",
+     "audio": "/voices/audio/kn-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "suchitra (narration)",
+     "audio": "/voices/audio/kn-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "chetan (conversation)",
+     "audio": "/voices/audio/kn-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/kn-08.mp3"
+    }
+   ]
+  },
+  {
+   "code": "ml",
+   "name": "Malayalam",
+   "native": "മലയാളം",
+   "text": "നമസ്കാരം! നിങ്ങളുടെ ഓർഡർ വഴിയിലാണ്, നാളെ എത്തും. വേറെ എന്തെങ്കിലും വേണോ? വിളിച്ചതിന് നന്ദി, നല്ലൊരു ദിവസം ആശംസിക്കുന്നു!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/ml-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/ml-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/ml-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/ml-04.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/ml-05.mp3"
+    }
+   ]
+  },
+  {
+   "code": "mr",
+   "name": "Marathi",
+   "native": "मराठी",
+   "text": "नमस्कार! तुमची ऑर्डर वाटेत आहे, उद्या पोहोचेल. अजून काही हवंय का? फोन केल्याबद्दल धन्यवाद, तुमचा दिवस छान जावो!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/mr-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/mr-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/mr-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/mr-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "ishita (conversational)",
+     "audio": "/voices/audio/mr-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "ritu (narration)",
+     "audio": "/voices/audio/mr-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "rupali (stories)",
+     "audio": "/voices/audio/mr-07.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "nilesh (conversation)",
+     "audio": "/voices/audio/mr-08.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/mr-09.mp3"
+    }
+   ]
+  },
+  {
+   "code": "od",
+   "name": "Odia",
+   "native": "ଓଡ଼ିଆ",
+   "text": "ନମସ୍କାର! ଆପଣଙ୍କ ଅର୍ଡର ବାଟରେ ଅଛି, କାଲି ପହଞ୍ଚିଯିବ। ଆଉ କିଛି ଦରକାର କି? ଫୋନ୍ କରିଥିବାରୁ ଧନ୍ୟବାଦ, ଆପଣଙ୍କ ଦିନ ଭଲ କଟୁ!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/od-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/od-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/od-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/od-04.mp3"
+    }
+   ]
+  },
+  {
+   "code": "pa",
+   "name": "Punjabi",
+   "native": "ਪੰਜਾਬੀ",
+   "text": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਤੁਹਾਡਾ ਆਰਡਰ ਰਸਤੇ ਵਿੱਚ ਹੈ, ਕੱਲ੍ਹ ਪਹੁੰਚ ਜਾਵੇਗਾ। ਹੋਰ ਕੁਝ ਚਾਹੀਦਾ? ਫ਼ੋਨ ਕਰਨ ਲਈ ਧੰਨਵਾਦ, ਤੁਹਾਡਾ ਦਿਨ ਵਧੀਆ ਲੰਘੇ!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/pa-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/pa-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/pa-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/pa-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "harpreet (narration)",
+     "audio": "/voices/audio/pa-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "anand (conversation)",
+     "audio": "/voices/audio/pa-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "jaspal (banking)",
+     "audio": "/voices/audio/pa-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/pa-08.mp3"
+    }
+   ]
+  },
+  {
+   "code": "ta",
+   "name": "Tamil",
+   "native": "தமிழ்",
+   "text": "வணக்கம்! உங்க ஆர்டர் வழியில இருக்கு, நாளைக்கு வந்துடும். வேற ஏதாவது வேணுமா? கால் பண்ணதுக்கு நன்றி, உங்க நாள் நல்லா இருக்கட்டும்!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/ta-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/ta-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/ta-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/ta-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "gokul (narration)",
+     "audio": "/voices/audio/ta-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "vijay (narration)",
+     "audio": "/voices/audio/ta-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "aravind (ads)",
+     "audio": "/voices/audio/ta-07.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/voices/audio/ta-08.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/voices/audio/ta-09.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/ta-10.mp3"
+    }
+   ]
+  },
+  {
+   "code": "te",
+   "name": "Telugu",
+   "native": "తెలుగు",
+   "text": "నమస్కారం! మీ ఆర్డర్ దారిలో ఉంది, రేపు వచ్చేస్తుంది. ఇంకేమైనా కావాలా? కాల్ చేసినందుకు థాంక్స్, మీ రోజు బాగుండాలి!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/voices/audio/te-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/voices/audio/te-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/voices/audio/te-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/voices/audio/te-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "kavitha (conversation)",
+     "audio": "/voices/audio/te-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "pooja (conversation)",
+     "audio": "/voices/audio/te-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "tarun (narration)",
+     "audio": "/voices/audio/te-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/voices/audio/te-08.mp3"
+    }
+   ]
+  }
+ ]
+}
