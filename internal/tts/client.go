@@ -3,6 +3,8 @@ package tts
 import (
 	"context"
 	"fmt"
+	"log"
+	"slices"
 	"time"
 
 	"github.com/streamcoreai/streamcore-server/internal/config"
@@ -35,6 +37,50 @@ type Client interface {
 // formatting from every input — TTS engines read characters like '*' and
 // '#' aloud literally, so RAG snippets or LLM-emitted markdown must be
 // scrubbed before synthesis.
+// Voices names the voices a deployment is configured with, in order: the
+// failover chain, or the one provider.
+func Voices(cfg *config.Config) []string {
+	if cfg.TTS.Provider == "failover" {
+		return append([]string(nil), cfg.TTS.Failover...)
+	}
+	return []string{cfg.TTS.Provider}
+}
+
+// NewClientFor is NewClient for a call that asked for a voice: with
+// [tts] client_choice on and the voice in the chain, it goes first for this
+// call, the rest of the chain behind it. Anything else gets the deployment's
+// order.
+func NewClientFor(cfg *config.Config, voice string) (Client, error) {
+	if voice == "" || !cfg.TTS.ClientChoice || cfg.TTS.Provider != "failover" {
+		return NewClient(cfg)
+	}
+	if !slices.Contains(cfg.TTS.Failover, voice) {
+		log.Printf("[tts] call asked for voice %q, which isn't configured; using %v", voice, cfg.TTS.Failover)
+		return NewClient(cfg)
+	}
+	c := *cfg
+	c.TTS.Failover = voiceFirst(cfg.TTS.Failover, voice)
+	c.TTS.Languages = make(map[string][]string, len(cfg.TTS.Languages))
+	for lang, order := range cfg.TTS.Languages {
+		c.TTS.Languages[lang] = voiceFirst(order, voice)
+	}
+	return NewClient(&c)
+}
+
+// voiceFirst moves voice to the front of order, if it's in it.
+func voiceFirst(order []string, voice string) []string {
+	if !slices.Contains(order, voice) {
+		return append([]string(nil), order...)
+	}
+	out := []string{voice}
+	for _, n := range order {
+		if n != voice {
+			out = append(out, n)
+		}
+	}
+	return out
+}
+
 func NewClient(cfg *config.Config) (Client, error) {
 	inner, err := newProviderClient(cfg)
 	if err != nil {

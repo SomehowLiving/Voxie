@@ -3,9 +3,12 @@ package tts
 import (
 	"context"
 	"errors"
+	"slices"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/streamcoreai/streamcore-server/internal/config"
 )
 
 // fakeVoice is a scripted provider: it fails with err, or waits delay and
@@ -286,5 +289,73 @@ func TestAdaptTags(t *testing.T) {
 	r := &fakeVoice{}
 	if adaptTags("vibevoice", r) != Client(r) {
 		t.Fatal("the voice router reads tags itself and should get them unchanged")
+	}
+}
+
+func chainOrder(t *testing.T, c Client) []string {
+	t.Helper()
+	s, ok := c.(*sanitizingClient)
+	if !ok {
+		t.Fatalf("got %T", c)
+	}
+	f, ok := s.inner.(*failoverClient)
+	if !ok {
+		t.Fatalf("got %T inside", s.inner)
+	}
+	return f.order
+}
+
+func voiceConfig(choice bool) *config.Config {
+	cfg := &config.Config{}
+	cfg.TTS.Provider = "failover"
+	cfg.TTS.Failover = []string{"vibevoice", "deepgram"}
+	cfg.TTS.Languages = map[string][]string{"hi": {"vibevoice", "deepgram"}}
+	cfg.TTS.ClientChoice = choice
+	cfg.VibeVoice.TTSURL = "http://127.0.0.1:1"
+	cfg.Deepgram.APIKey = "test"
+	return cfg
+}
+
+func TestNewClientForPutsTheChosenVoiceFirst(t *testing.T) {
+	cfg := voiceConfig(true)
+	c, err := NewClientFor(cfg, "deepgram")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := chainOrder(t, c); !slices.Equal(got, []string{"deepgram", "vibevoice"}) {
+		t.Fatalf("order = %v", got)
+	}
+	if !slices.Equal(cfg.TTS.Failover, []string{"vibevoice", "deepgram"}) {
+		t.Fatal("the deployment's own order was changed")
+	}
+}
+
+func TestNewClientForKeepsTheDeploymentOrder(t *testing.T) {
+	for name, tc := range map[string]struct {
+		cfg   *config.Config
+		voice string
+	}{
+		"choice off":    {voiceConfig(false), "deepgram"},
+		"unknown voice": {voiceConfig(true), "elevenlabs"},
+		"no voice":      {voiceConfig(true), ""},
+	} {
+		c, err := NewClientFor(tc.cfg, tc.voice)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := chainOrder(t, c); !slices.Equal(got, []string{"vibevoice", "deepgram"}) {
+			t.Errorf("%s: order = %v", name, got)
+		}
+	}
+}
+
+func TestVoices(t *testing.T) {
+	if got := Voices(voiceConfig(true)); !slices.Equal(got, []string{"vibevoice", "deepgram"}) {
+		t.Errorf("failover: %v", got)
+	}
+	single := &config.Config{}
+	single.TTS.Provider = "cartesia"
+	if got := Voices(single); !slices.Equal(got, []string{"cartesia"}) {
+		t.Errorf("single: %v", got)
 	}
 }

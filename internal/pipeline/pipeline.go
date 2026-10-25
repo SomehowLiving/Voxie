@@ -268,7 +268,7 @@ func NewWithMedia(
 	llmClient := conv.LLM
 	var ttsClient tts.Client
 	if !cfg.RealtimeEnabled() {
-		ttsClient, err = tts.NewClient(cfg)
+		ttsClient, err = tts.NewClientFor(cfg, opts.Voice)
 		if err != nil {
 			return nil, err
 		}

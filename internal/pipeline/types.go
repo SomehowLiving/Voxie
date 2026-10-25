@@ -69,4 +69,8 @@ type PeerOptions struct {
 	// WHIP URL). A browser cancels echo in getUserMedia, so absent means
 	// present, which is what every client predating the hint is.
 	AECAbsent bool
+
+	// Voice is the voice the call asked for (?voice= on the WHIP URL); see
+	// [tts] client_choice. Empty: the deployment's order.
+	Voice string
 }

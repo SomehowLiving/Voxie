@@ -19,6 +19,8 @@
 .field .lbl { font-size: 13px; color: var(--ink-2); }
 .field input { font: 400 15px var(--mono); padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(20, 30, 60, .14); background: #fff; color: var(--ink); }
 .field input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.field select { font: 400 15px var(--font); padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(20, 30, 60, .14); background: #fff; color: var(--ink); }
+.field select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .hint { margin: 0 0 16px; font-size: 12.5px; color: var(--ink-3); }
 
 .call-row { display: flex; gap: 10px; flex-wrap: wrap; }
