@@ -16,6 +16,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -486,7 +487,30 @@ func splitSentences(text string) []string {
 	if start < len(text) {
 		parts = append(parts, text[start:])
 	}
-	return parts
+	// A piece with nothing to say -- the ")" or a closing quote after
+	// "…ठीक है? (Hum ek saath seekhenge, theek hai?)" -- stays with the
+	// sentence before it. Live, a lone ")" went to the voice as a sentence
+	// and came out as half a second of hiss.
+	var out []string
+	for _, p := range parts {
+		if len(out) > 0 && !hasWords(p) {
+			out[len(out)-1] += p
+			continue
+		}
+		out = append(out, p)
+	}
+	return out
+}
+
+// hasWords reports whether s has a letter or a digit: something a voice can
+// say.
+func hasWords(s string) bool {
+	for _, r := range s {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			return true
+		}
+	}
+	return false
 }
 
 // SetTools is a no-op: the external agent owns its own tools. Server-side
