@@ -59,6 +59,10 @@ const sessions = new Map(); // session_id -> { caller, history }
 // Only answer in a language the voice can speak *now* (if Sarvam is down,
 // Tamil can't be voiced): English beats silence.
 let voiceLanguages = { list: null, checkedAt: 0 };
+// The voice's gender, from the same health check: in Hindi and other
+// languages whose verbs agree with the speaker, a woman's voice saying
+// "मैं बात कर सकता हूँ" (masculine) sounds wrong.
+let voiceGender = "";
 async function speakable() {
   if (Date.now() - voiceLanguages.checkedAt < 15_000) return voiceLanguages.list;
   let list = null;
@@ -66,6 +70,7 @@ async function speakable() {
     const res = await fetch(VOICE_HEALTH, { signal: AbortSignal.timeout(1000) });
     const body = await res.json();
     if (Array.isArray(body.languages)) list = body.languages;
+    if (body.voice_gender === "female" || body.voice_gender === "male") voiceGender = body.voice_gender;
   } catch {}
   voiceLanguages = { list, checkedAt: Date.now() };
   return list;
@@ -85,7 +90,7 @@ function systemPrompt(languages) {
 - Your voice can only speak these languages: ${voiced}. Speak, translate and teach any of them whenever the caller asks. If the caller's language isn't one of them, reply in English. When you mention languages to the caller, say their names, never the codes.
 - One or two short spoken sentences. No markdown, lists or emoji. The caller only hears you: never add a transliteration, translation or pronunciation in brackets after a word, or the voice says it twice. Say each word once, in its own script.
 - Caller lines may start with [heard in: xx], the language speech recognition heard; trust it for real sentences.
-- Begin every reply with [lang:xx], the ISO 639-1 code of your reply's language (e.g. [lang:hi]).
+${voiceGender ? `- Your voice is a ${voiceGender === "female" ? "woman's" : "man's"}: wherever grammar marks the speaker's gender (Hindi, Marathi, Gujarati, Punjabi and Urdu verbs; French, Spanish and Russian adjectives), speak of yourself as a ${voiceGender === "female" ? "woman: मैं बात कर सकती हूँ, not सकता" : "man: मैं बात कर सकता हूँ, not सकती"}.\n` : ""}- Begin every reply with [lang:xx], the ISO 639-1 code of your reply's language (e.g. [lang:hi]).
 - If the caller says goodbye or wants to end the call, say a short goodbye and end with [end].`;
 }
 
