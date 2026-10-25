@@ -3,7 +3,10 @@ package tts
 import (
 	"context"
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"slices"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -357,5 +360,23 @@ func TestVoices(t *testing.T) {
 	single.TTS.Provider = "cartesia"
 	if got := Voices(single); !slices.Equal(got, []string{"cartesia"}) {
 		t.Errorf("single: %v", got)
+	}
+}
+
+// Cartesia refuses the WebSocket handshake with 402 when out of credit; the
+// chain must see the status to skip it for longer than a blip.
+func TestCartesiaRefusedHandshakeCarriesTheStatus(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusPaymentRequired)
+		w.Write([]byte("Model credits limit reached"))
+	}))
+	defer srv.Close()
+	c := NewCartesiaWSClient("key", "", "ws"+strings.TrimPrefix(srv.URL, "http"))
+	_, err := c.SynthesizeStream(context.Background(), "hello")
+	if err == nil || !strings.Contains(err.Error(), "402") {
+		t.Fatalf("err = %v, want the 402", err)
+	}
+	if d, _ := classify(err, defaultCooldown); d != longCooldown {
+		t.Errorf("cooldown = %s, want %s (out of credit)", d, longCooldown)
 	}
 }
