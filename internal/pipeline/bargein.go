@@ -7,6 +7,7 @@ package pipeline
 import (
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 // ---------------------------------------------------------------------------
@@ -146,12 +147,13 @@ func isStrongBargeInCommand(s string) bool {
 // complete thought. Used to shrink the merge window for the common case.
 // Trailing quotes/brackets after the terminal mark are tolerated.
 func endsTerminal(s string) bool {
-	trimmed := strings.TrimRight(strings.TrimSpace(s), "'\")]}")
+	trimmed := strings.TrimRight(strings.TrimSpace(s), "'\")]}」』")
 	if trimmed == "" {
 		return false
 	}
-	switch trimmed[len(trimmed)-1] {
-	case '.', '!', '?':
+	r, _ := utf8.DecodeLastRuneInString(trimmed)
+	switch r {
+	case '.', '!', '?', '。', '！', '？', '।', '॥':
 		return true
 	}
 	return false

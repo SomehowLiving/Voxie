@@ -22,6 +22,14 @@ import (
 // answer the same sentence twice.
 const recentFinalSuppressWindow = 5 * time.Second
 
+// stableFinalAfter: words Deepgram keeps re-sending unchanged for this long
+// are a finished sentence. On a line with any background noise (live: a
+// -60 dB hiss) Deepgram's endpointing often never fires; it repeats the same
+// interim words about once a second and the sentence ends only on
+// UtteranceEnd, 2-5 s after the caller stopped. A pause mid-sentence that
+// this ends early is joined back by the turn buffer.
+const stableFinalAfter = 700 * time.Millisecond
+
 // deepgramCallback implements the Deepgram SDK's LiveMessageCallback interface.
 //
 // Deepgram delivers an utterance as a series of chunks: interim results, then
@@ -45,6 +53,45 @@ type deepgramCallback struct {
 	lastChunkConfidence float64
 	// lastLanguage is the language multi mode reported for this utterance.
 	lastLanguage string
+
+	// The utterance's words so far and when they last changed; see
+	// stableFinalAfter.
+	current   string
+	changedAt time.Time
+	// sent is how many of the utterance's words have already gone out as
+	// finals, ended early (stableFinalAfter).
+	// Deepgram's own transcript of the utterance is left as it is; every
+	// final sends only the words past this count, so none goes out twice.
+	// An earlier version reset the transcript on an early final instead, and
+	// Deepgram's later chunks then repeated whole sentences.
+	sent int
+	now  func() time.Time // for tests
+}
+
+func (cb *deepgramCallback) clock() time.Time {
+	if cb.now != nil {
+		return cb.now()
+	}
+	return time.Now()
+}
+
+// stableLocked reports whether text is unchanged for stableFinalAfter.
+func (cb *deepgramCallback) stableLocked(text string) bool {
+	now := cb.clock()
+	if !sameTranscript(text, cb.current) {
+		cb.current, cb.changedAt = text, now
+		return false
+	}
+	return now.Sub(cb.changedAt) >= stableFinalAfter
+}
+
+// unsentLocked is text without the words already sent as finals.
+func (cb *deepgramCallback) unsentLocked(text string) string {
+	words := strings.Fields(text)
+	if cb.sent >= len(words) {
+		return ""
+	}
+	return strings.Join(words[cb.sent:], " ")
 }
 
 func (cb *deepgramCallback) Open(or *msginterfaces.OpenResponse) error {
@@ -59,7 +106,13 @@ func (cb *deepgramCallback) Message(mr *msginterfaces.MessageResponse) error {
 
 	alt := mr.Channel.Alternatives[0]
 	text := strings.TrimSpace(alt.Transcript)
+	// The end of the utterance can come on a message with no new words:
+	// speech_final after the words were already final.
+	endsUtterance := mr.IsFinal && mr.SpeechFinal
 	if text == "" {
+		if endsUtterance {
+			cb.flushUtterance()
+		}
 		return nil
 	}
 	confidence := alt.Confidence
@@ -77,25 +130,32 @@ func (cb *deepgramCallback) Message(mr *msginterfaces.MessageResponse) error {
 	}
 	if mr.IsFinal {
 		cb.finalized = mergeTranscriptChunks(cb.finalized, text)
-		if mr.SpeechFinal {
+		if endsUtterance {
 			combined := strings.TrimSpace(cb.finalized)
 			if combined == "" {
 				combined = text
 			}
-			if !cb.shouldSuppressRecentFinalLocked(combined) {
-				emit = &TranscriptResult{Text: combined, IsFinal: true, Confidence: confidence, Language: cb.lastLanguage}
+			rest := cb.unsentLocked(combined)
+			if rest != "" && !cb.shouldSuppressRecentFinalLocked(rest) {
+				emit = &TranscriptResult{Text: rest, IsFinal: true, Confidence: confidence, Language: cb.lastLanguage}
 			}
-			cb.resetUtteranceLocked(combined)
+			cb.resetUtteranceLocked(rest)
+		} else if cb.stableLocked(cb.finalized) {
+			emit = cb.earlyFinalLocked(cb.finalized, confidence)
 		} else {
 			// Emit progress so barge-in and the text UI still see current words.
-			emit = cb.partialResultLocked(cb.finalized, confidence)
+			emit = cb.partialResultLocked(cb.unsentLocked(cb.finalized), confidence)
 		}
 	} else {
 		combined := text
 		if cb.finalized != "" {
 			combined = strings.TrimSpace(cb.finalized + " " + text)
 		}
-		emit = cb.partialResultLocked(combined, confidence)
+		if cb.stableLocked(combined) {
+			emit = cb.earlyFinalLocked(combined, confidence)
+		} else {
+			emit = cb.partialResultLocked(cb.unsentLocked(combined), confidence)
+		}
 	}
 	cb.mu.Unlock()
 
@@ -106,6 +166,19 @@ func (cb *deepgramCallback) Message(mr *msginterfaces.MessageResponse) error {
 		cb.onResult(*emit)
 	}
 	return nil
+}
+
+// earlyFinalLocked sends the utterance's unsent words as a final, without
+// ending Deepgram's utterance: its later chunks add only what's new.
+func (cb *deepgramCallback) earlyFinalLocked(full string, confidence float64) *TranscriptResult {
+	rest := cb.unsentLocked(full)
+	if rest == "" {
+		return nil
+	}
+	cb.sent = len(strings.Fields(full))
+	cb.lastEmittedPartial = ""
+	cb.lastFinal, cb.lastFinalAt = rest, cb.clock()
+	return &TranscriptResult{Text: rest, IsFinal: true, Confidence: confidence, Language: cb.lastLanguage}
 }
 
 // partialResultLocked builds an interim result, dropping repeats and anything
@@ -129,14 +202,16 @@ func (cb *deepgramCallback) resetUtteranceLocked(finalText string) {
 	cb.speechActive = false
 	cb.lastChunkConfidence = 0
 	cb.lastLanguage = ""
+	cb.current, cb.changedAt = "", time.Time{}
+	cb.sent = 0
 	if strings.TrimSpace(finalText) != "" {
 		cb.lastFinal = finalText
-		cb.lastFinalAt = time.Now()
+		cb.lastFinalAt = cb.clock()
 	}
 }
 
 func (cb *deepgramCallback) shouldSuppressRecentFinalLocked(text string) bool {
-	return sameTranscript(text, cb.lastFinal) && time.Since(cb.lastFinalAt) < recentFinalSuppressWindow
+	return sameTranscript(text, cb.lastFinal) && cb.clock().Sub(cb.lastFinalAt) < recentFinalSuppressWindow
 }
 
 func (cb *deepgramCallback) Metadata(md *msginterfaces.MetadataResponse) error {
@@ -161,8 +236,14 @@ func (cb *deepgramCallback) SpeechStarted(ssr *msginterfaces.SpeechStartedRespon
 // ever sending a speech_final message, the buffered chunks would otherwise sit
 // in `finalized` forever and the caller's turn would be silently dropped.
 func (cb *deepgramCallback) UtteranceEnd(ur *msginterfaces.UtteranceEndResponse) error {
+	cb.flushUtterance()
+	return nil
+}
+
+// flushUtterance ends the utterance on the words already final.
+func (cb *deepgramCallback) flushUtterance() {
 	cb.mu.Lock()
-	combined := strings.TrimSpace(cb.finalized)
+	combined := cb.unsentLocked(strings.TrimSpace(cb.finalized))
 	emit := combined != "" && !cb.shouldSuppressRecentFinalLocked(combined)
 	confidence := cb.lastChunkConfidence
 	language := cb.lastLanguage
@@ -173,7 +254,6 @@ func (cb *deepgramCallback) UtteranceEnd(ur *msginterfaces.UtteranceEndResponse)
 		log.Printf("[stt] utterance end flush: %q (conf=%.2f)", combined, confidence)
 		cb.onResult(TranscriptResult{Text: combined, IsFinal: true, Confidence: confidence, Language: language})
 	}
-	return nil
 }
 
 func (cb *deepgramCallback) Close(cr *msginterfaces.CloseResponse) error {
