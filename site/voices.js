@@ -1,5 +1,5 @@
 // /voices: every voice Voxie can speak with, per language. The clips and
-// voices/voices.json listing them are generated, not hand-written.
+// media/voices/voices.json listing them are generated, not hand-written.
 const $ = (id) => document.getElementById(id);
 const INDIAN = ["hi", "bn", "gu", "kn", "ml", "mr", "od", "pa", "ta", "te"];
 const FONTS = { hi: "Noto Sans Devanagari", mr: "Noto Sans Devanagari", bn: "Noto Sans Bengali", gu: "Noto Sans Gujarati",
@@ -132,7 +132,7 @@ audio.addEventListener("timeupdate", () => {
 });
 audio.addEventListener("ended", stop);
 
-fetch("/voices/voices.json").then((r) => r.json()).then((d) => {
+fetch("/media/voices/voices.json").then((r) => r.json()).then((d) => {
   data = d;
   const fromHash = location.hash.slice(1);
   if (data.languages.some((l) => l.code === fromHash)) lang = fromHash;

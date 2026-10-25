@@ -12,28 +12,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "af_heart (persona female)",
-     "audio": "/voices/audio/en-01.mp3"
+     "audio": "/media/voices/audio/en-01.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "am_michael (persona male)",
-     "audio": "/voices/audio/en-02.mp3"
+     "audio": "/media/voices/audio/en-02.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "af_bella (persona female-2)",
-     "audio": "/voices/audio/en-03.mp3"
+     "audio": "/media/voices/audio/en-03.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "am_fenrir (persona male-2)",
-     "audio": "/voices/audio/en-04.mp3"
+     "audio": "/media/voices/audio/en-04.mp3"
     }
    ]
   },
@@ -48,28 +48,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ef_dora (persona female)",
-     "audio": "/voices/audio/es-01.mp3"
+     "audio": "/media/voices/audio/es-01.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "em_alex (persona male)",
-     "audio": "/voices/audio/es-02.mp3"
+     "audio": "/media/voices/audio/es-02.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ef_dora (persona female-2)",
-     "audio": "/voices/audio/es-03.mp3"
+     "audio": "/media/voices/audio/es-03.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "em_alex (persona male-2)",
-     "audio": "/voices/audio/es-04.mp3"
+     "audio": "/media/voices/audio/es-04.mp3"
     }
    ]
   },
@@ -84,28 +84,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ff_siwis (persona female)",
-     "audio": "/voices/audio/fr-01.mp3"
+     "audio": "/media/voices/audio/fr-01.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ff_siwis (persona male)",
-     "audio": "/voices/audio/fr-02.mp3"
+     "audio": "/media/voices/audio/fr-02.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ff_siwis (persona female-2)",
-     "audio": "/voices/audio/fr-03.mp3"
+     "audio": "/media/voices/audio/fr-03.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ff_siwis (persona male-2)",
-     "audio": "/voices/audio/fr-04.mp3"
+     "audio": "/media/voices/audio/fr-04.mp3"
     }
    ]
   },
@@ -120,28 +120,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "if_sara (persona female)",
-     "audio": "/voices/audio/it-01.mp3"
+     "audio": "/media/voices/audio/it-01.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "im_nicola (persona male)",
-     "audio": "/voices/audio/it-02.mp3"
+     "audio": "/media/voices/audio/it-02.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "if_sara (persona female-2)",
-     "audio": "/voices/audio/it-03.mp3"
+     "audio": "/media/voices/audio/it-03.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "im_nicola (persona male-2)",
-     "audio": "/voices/audio/it-04.mp3"
+     "audio": "/media/voices/audio/it-04.mp3"
     }
    ]
   },
@@ -156,28 +156,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "pf_dora (persona female)",
-     "audio": "/voices/audio/pt-01.mp3"
+     "audio": "/media/voices/audio/pt-01.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "pm_alex (persona male)",
-     "audio": "/voices/audio/pt-02.mp3"
+     "audio": "/media/voices/audio/pt-02.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "pf_dora (persona female-2)",
-     "audio": "/voices/audio/pt-03.mp3"
+     "audio": "/media/voices/audio/pt-03.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "pm_alex (persona male-2)",
-     "audio": "/voices/audio/pt-04.mp3"
+     "audio": "/media/voices/audio/pt-04.mp3"
     }
    ]
   },
@@ -192,28 +192,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "de_DE-kerstin-low (persona female)",
-     "audio": "/voices/audio/de-01.mp3"
+     "audio": "/media/voices/audio/de-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "de_DE-thorsten-high (persona male)",
-     "audio": "/voices/audio/de-02.mp3"
+     "audio": "/media/voices/audio/de-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "de_DE-kerstin-low (persona female-2)",
-     "audio": "/voices/audio/de-03.mp3"
+     "audio": "/media/voices/audio/de-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "de_DE-thorsten-high (persona male-2)",
-     "audio": "/voices/audio/de-04.mp3"
+     "audio": "/media/voices/audio/de-04.mp3"
     }
    ]
   },
@@ -228,28 +228,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "nl_BE-nathalie-medium (persona female)",
-     "audio": "/voices/audio/nl-01.mp3"
+     "audio": "/media/voices/audio/nl-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "nl_BE-rdh-medium (persona male)",
-     "audio": "/voices/audio/nl-02.mp3"
+     "audio": "/media/voices/audio/nl-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "nl_BE-nathalie-medium (persona female-2)",
-     "audio": "/voices/audio/nl-03.mp3"
+     "audio": "/media/voices/audio/nl-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "nl_BE-rdh-medium (persona male-2)",
-     "audio": "/voices/audio/nl-04.mp3"
+     "audio": "/media/voices/audio/nl-04.mp3"
     }
    ]
   },
@@ -264,28 +264,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ru_RU-dmitri-medium (persona female)",
-     "audio": "/voices/audio/ru-01.mp3"
+     "audio": "/media/voices/audio/ru-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ru_RU-dmitri-medium (persona male)",
-     "audio": "/voices/audio/ru-02.mp3"
+     "audio": "/media/voices/audio/ru-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ru_RU-dmitri-medium (persona female-2)",
-     "audio": "/voices/audio/ru-03.mp3"
+     "audio": "/media/voices/audio/ru-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ru_RU-dmitri-medium (persona male-2)",
-     "audio": "/voices/audio/ru-04.mp3"
+     "audio": "/media/voices/audio/ru-04.mp3"
     }
    ]
   },
@@ -300,28 +300,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "pl_PL-gosia-medium (persona female)",
-     "audio": "/voices/audio/pl-01.mp3"
+     "audio": "/media/voices/audio/pl-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "pl_PL-darkman-medium (persona male)",
-     "audio": "/voices/audio/pl-02.mp3"
+     "audio": "/media/voices/audio/pl-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "pl_PL-gosia-medium (persona female-2)",
-     "audio": "/voices/audio/pl-03.mp3"
+     "audio": "/media/voices/audio/pl-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "pl_PL-darkman-medium (persona male-2)",
-     "audio": "/voices/audio/pl-04.mp3"
+     "audio": "/media/voices/audio/pl-04.mp3"
     }
    ]
   },
@@ -336,28 +336,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "uk_UA-tetiana-high (persona female)",
-     "audio": "/voices/audio/uk-01.mp3"
+     "audio": "/media/voices/audio/uk-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "uk_UA-mykyta-high (persona male)",
-     "audio": "/voices/audio/uk-02.mp3"
+     "audio": "/media/voices/audio/uk-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "uk_UA-tetiana-high (persona female-2)",
-     "audio": "/voices/audio/uk-03.mp3"
+     "audio": "/media/voices/audio/uk-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "uk_UA-mykyta-high (persona male-2)",
-     "audio": "/voices/audio/uk-04.mp3"
+     "audio": "/media/voices/audio/uk-04.mp3"
     }
    ]
   },
@@ -372,28 +372,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "cs_CZ-kasandra-medium (persona female)",
-     "audio": "/voices/audio/cs-01.mp3"
+     "audio": "/media/voices/audio/cs-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "cs_CZ-jirka-medium (persona male)",
-     "audio": "/voices/audio/cs-02.mp3"
+     "audio": "/media/voices/audio/cs-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "cs_CZ-kasandra-medium (persona female-2)",
-     "audio": "/voices/audio/cs-03.mp3"
+     "audio": "/media/voices/audio/cs-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "cs_CZ-jirka-medium (persona male-2)",
-     "audio": "/voices/audio/cs-04.mp3"
+     "audio": "/media/voices/audio/cs-04.mp3"
     }
    ]
   },
@@ -408,28 +408,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "hu_HU-berta-medium (persona female)",
-     "audio": "/voices/audio/hu-01.mp3"
+     "audio": "/media/voices/audio/hu-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "hu_HU-imre-medium (persona male)",
-     "audio": "/voices/audio/hu-02.mp3"
+     "audio": "/media/voices/audio/hu-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "hu_HU-berta-medium (persona female-2)",
-     "audio": "/voices/audio/hu-03.mp3"
+     "audio": "/media/voices/audio/hu-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "hu_HU-imre-medium (persona male-2)",
-     "audio": "/voices/audio/hu-04.mp3"
+     "audio": "/media/voices/audio/hu-04.mp3"
     }
    ]
   },
@@ -444,28 +444,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "sv_SE-alma-medium (persona female)",
-     "audio": "/voices/audio/sv-01.mp3"
+     "audio": "/media/voices/audio/sv-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "sv_SE-nst-medium (persona male)",
-     "audio": "/voices/audio/sv-02.mp3"
+     "audio": "/media/voices/audio/sv-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "sv_SE-alma-medium (persona female-2)",
-     "audio": "/voices/audio/sv-03.mp3"
+     "audio": "/media/voices/audio/sv-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "sv_SE-nst-medium (persona male-2)",
-     "audio": "/voices/audio/sv-04.mp3"
+     "audio": "/media/voices/audio/sv-04.mp3"
     }
    ]
   },
@@ -480,28 +480,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ro_RO-mihai-medium (persona female)",
-     "audio": "/voices/audio/ro-01.mp3"
+     "audio": "/media/voices/audio/ro-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ro_RO-mihai-medium (persona male)",
-     "audio": "/voices/audio/ro-02.mp3"
+     "audio": "/media/voices/audio/ro-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ro_RO-mihai-medium (persona female-2)",
-     "audio": "/voices/audio/ro-03.mp3"
+     "audio": "/media/voices/audio/ro-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "ro_RO-mihai-medium (persona male-2)",
-     "audio": "/voices/audio/ro-04.mp3"
+     "audio": "/media/voices/audio/ro-04.mp3"
     }
    ]
   },
@@ -516,28 +516,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "fi_FI-harri-medium (persona female)",
-     "audio": "/voices/audio/fi-01.mp3"
+     "audio": "/media/voices/audio/fi-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "fi_FI-harri-medium (persona male)",
-     "audio": "/voices/audio/fi-02.mp3"
+     "audio": "/media/voices/audio/fi-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "fi_FI-harri-medium (persona female-2)",
-     "audio": "/voices/audio/fi-03.mp3"
+     "audio": "/media/voices/audio/fi-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "fi_FI-harri-medium (persona male-2)",
-     "audio": "/voices/audio/fi-04.mp3"
+     "audio": "/media/voices/audio/fi-04.mp3"
     }
    ]
   },
@@ -552,28 +552,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "da_DK-talesyntese-medium (persona female)",
-     "audio": "/voices/audio/da-01.mp3"
+     "audio": "/media/voices/audio/da-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "da_DK-talesyntese-medium (persona male)",
-     "audio": "/voices/audio/da-02.mp3"
+     "audio": "/media/voices/audio/da-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "da_DK-talesyntese-medium (persona female-2)",
-     "audio": "/voices/audio/da-03.mp3"
+     "audio": "/media/voices/audio/da-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "da_DK-talesyntese-medium (persona male-2)",
-     "audio": "/voices/audio/da-04.mp3"
+     "audio": "/media/voices/audio/da-04.mp3"
     }
    ]
   },
@@ -588,28 +588,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "vi_VN-vais1000-medium (persona female)",
-     "audio": "/voices/audio/vi-01.mp3"
+     "audio": "/media/voices/audio/vi-01.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "vi_VN-vais1000-medium (persona male)",
-     "audio": "/voices/audio/vi-02.mp3"
+     "audio": "/media/voices/audio/vi-02.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "vi_VN-vais1000-medium (persona female-2)",
-     "audio": "/voices/audio/vi-03.mp3"
+     "audio": "/media/voices/audio/vi-03.mp3"
     },
     {
      "provider": "Piper (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "vi_VN-vais1000-medium (persona male-2)",
-     "audio": "/voices/audio/vi-04.mp3"
+     "audio": "/media/voices/audio/vi-04.mp3"
     }
    ]
   },
@@ -624,28 +624,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "jf_alpha (persona female)",
-     "audio": "/voices/audio/ja-01.mp3"
+     "audio": "/media/voices/audio/ja-01.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "jm_kumo (persona male)",
-     "audio": "/voices/audio/ja-02.mp3"
+     "audio": "/media/voices/audio/ja-02.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "jf_nezumi (persona female-2)",
-     "audio": "/voices/audio/ja-03.mp3"
+     "audio": "/media/voices/audio/ja-03.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "jm_kumo (persona male-2)",
-     "audio": "/voices/audio/ja-04.mp3"
+     "audio": "/media/voices/audio/ja-04.mp3"
     }
    ]
   },
@@ -660,28 +660,28 @@
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "zf_xiaobei (persona female)",
-     "audio": "/voices/audio/zh-01.mp3"
+     "audio": "/media/voices/audio/zh-01.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "zm_yunxi (persona male)",
-     "audio": "/voices/audio/zh-02.mp3"
+     "audio": "/media/voices/audio/zh-02.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "zf_xiaoni (persona female-2)",
-     "audio": "/voices/audio/zh-03.mp3"
+     "audio": "/media/voices/audio/zh-03.mp3"
     },
     {
      "provider": "Kokoro (self-hosted)",
      "model": "Voxie router",
      "via": "Voxie router",
      "voice": "zm_yunjian (persona male-2)",
-     "audio": "/voices/audio/zh-04.mp3"
+     "audio": "/media/voices/audio/zh-04.mp3"
     }
    ]
   },
@@ -696,63 +696,63 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "ritu (persona female)",
-     "audio": "/voices/audio/hi-01.mp3"
+     "audio": "/media/voices/audio/hi-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/hi-02.mp3"
+     "audio": "/media/voices/audio/hi-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/hi-03.mp3"
+     "audio": "/media/voices/audio/hi-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/hi-04.mp3"
+     "audio": "/media/voices/audio/hi-04.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "kavya (conversational)",
-     "audio": "/voices/audio/hi-05.mp3"
+     "audio": "/media/voices/audio/hi-05.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "ishita (social)",
-     "audio": "/voices/audio/hi-06.mp3"
+     "audio": "/media/voices/audio/hi-06.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "sanchita (assistant)",
-     "audio": "/voices/audio/hi-07.mp3"
+     "audio": "/media/voices/audio/hi-07.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "rahul (conversational)",
-     "audio": "/voices/audio/hi-08.mp3"
+     "audio": "/media/voices/audio/hi-08.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "aditya (conversational)",
-     "audio": "/voices/audio/hi-09.mp3"
+     "audio": "/media/voices/audio/hi-09.mp3"
     }
    ]
   },
@@ -767,42 +767,42 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/bn-01.mp3"
+     "audio": "/media/voices/audio/bn-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/bn-02.mp3"
+     "audio": "/media/voices/audio/bn-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/bn-03.mp3"
+     "audio": "/media/voices/audio/bn-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/bn-04.mp3"
+     "audio": "/media/voices/audio/bn-04.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "roopa (conversational)",
-     "audio": "/voices/audio/bn-05.mp3"
+     "audio": "/media/voices/audio/bn-05.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "arnab (conversation)",
-     "audio": "/voices/audio/bn-06.mp3"
+     "audio": "/media/voices/audio/bn-06.mp3"
     }
    ]
   },
@@ -817,49 +817,49 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/gu-01.mp3"
+     "audio": "/media/voices/audio/gu-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/gu-02.mp3"
+     "audio": "/media/voices/audio/gu-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/gu-03.mp3"
+     "audio": "/media/voices/audio/gu-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/gu-04.mp3"
+     "audio": "/media/voices/audio/gu-04.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "pooja (conversational)",
-     "audio": "/voices/audio/gu-05.mp3"
+     "audio": "/media/voices/audio/gu-05.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "pooja (customer)",
-     "audio": "/voices/audio/gu-06.mp3"
+     "audio": "/media/voices/audio/gu-06.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "bhavik (conversation)",
-     "audio": "/voices/audio/gu-07.mp3"
+     "audio": "/media/voices/audio/gu-07.mp3"
     }
    ]
   },
@@ -874,49 +874,49 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/kn-01.mp3"
+     "audio": "/media/voices/audio/kn-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/kn-02.mp3"
+     "audio": "/media/voices/audio/kn-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/kn-03.mp3"
+     "audio": "/media/voices/audio/kn-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/kn-04.mp3"
+     "audio": "/media/voices/audio/kn-04.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "chaitra (conversation)",
-     "audio": "/voices/audio/kn-05.mp3"
+     "audio": "/media/voices/audio/kn-05.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "suchitra (narration)",
-     "audio": "/voices/audio/kn-06.mp3"
+     "audio": "/media/voices/audio/kn-06.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "chetan (conversation)",
-     "audio": "/voices/audio/kn-07.mp3"
+     "audio": "/media/voices/audio/kn-07.mp3"
     }
    ]
   },
@@ -931,28 +931,28 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/ml-01.mp3"
+     "audio": "/media/voices/audio/ml-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/ml-02.mp3"
+     "audio": "/media/voices/audio/ml-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/ml-03.mp3"
+     "audio": "/media/voices/audio/ml-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/ml-04.mp3"
+     "audio": "/media/voices/audio/ml-04.mp3"
     }
    ]
   },
@@ -967,56 +967,56 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/mr-01.mp3"
+     "audio": "/media/voices/audio/mr-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/mr-02.mp3"
+     "audio": "/media/voices/audio/mr-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/mr-03.mp3"
+     "audio": "/media/voices/audio/mr-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/mr-04.mp3"
+     "audio": "/media/voices/audio/mr-04.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "ishita (conversational)",
-     "audio": "/voices/audio/mr-05.mp3"
+     "audio": "/media/voices/audio/mr-05.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "ritu (narration)",
-     "audio": "/voices/audio/mr-06.mp3"
+     "audio": "/media/voices/audio/mr-06.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "rupali (stories)",
-     "audio": "/voices/audio/mr-07.mp3"
+     "audio": "/media/voices/audio/mr-07.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "nilesh (conversation)",
-     "audio": "/voices/audio/mr-08.mp3"
+     "audio": "/media/voices/audio/mr-08.mp3"
     }
    ]
   },
@@ -1031,28 +1031,28 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/od-01.mp3"
+     "audio": "/media/voices/audio/od-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/od-02.mp3"
+     "audio": "/media/voices/audio/od-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/od-03.mp3"
+     "audio": "/media/voices/audio/od-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/od-04.mp3"
+     "audio": "/media/voices/audio/od-04.mp3"
     }
    ]
   },
@@ -1067,49 +1067,49 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/pa-01.mp3"
+     "audio": "/media/voices/audio/pa-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/pa-02.mp3"
+     "audio": "/media/voices/audio/pa-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/pa-03.mp3"
+     "audio": "/media/voices/audio/pa-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/pa-04.mp3"
+     "audio": "/media/voices/audio/pa-04.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "harpreet (narration)",
-     "audio": "/voices/audio/pa-05.mp3"
+     "audio": "/media/voices/audio/pa-05.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "anand (conversation)",
-     "audio": "/voices/audio/pa-06.mp3"
+     "audio": "/media/voices/audio/pa-06.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "jaspal (banking)",
-     "audio": "/voices/audio/pa-07.mp3"
+     "audio": "/media/voices/audio/pa-07.mp3"
     }
    ]
   },
@@ -1124,49 +1124,49 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/ta-01.mp3"
+     "audio": "/media/voices/audio/ta-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/ta-02.mp3"
+     "audio": "/media/voices/audio/ta-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/ta-03.mp3"
+     "audio": "/media/voices/audio/ta-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/ta-04.mp3"
+     "audio": "/media/voices/audio/ta-04.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "gokul (narration)",
-     "audio": "/voices/audio/ta-05.mp3"
+     "audio": "/media/voices/audio/ta-05.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "vijay (narration)",
-     "audio": "/voices/audio/ta-06.mp3"
+     "audio": "/media/voices/audio/ta-06.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "aravind (ads)",
-     "audio": "/voices/audio/ta-07.mp3"
+     "audio": "/media/voices/audio/ta-07.mp3"
     }
    ]
   },
@@ -1181,49 +1181,49 @@
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "priya (persona female)",
-     "audio": "/voices/audio/te-01.mp3"
+     "audio": "/media/voices/audio/te-01.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "rahul (persona male)",
-     "audio": "/voices/audio/te-02.mp3"
+     "audio": "/media/voices/audio/te-02.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "neha (persona female-2)",
-     "audio": "/voices/audio/te-03.mp3"
+     "audio": "/media/voices/audio/te-03.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v3",
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
-     "audio": "/voices/audio/te-04.mp3"
+     "audio": "/media/voices/audio/te-04.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "kavitha (conversation)",
-     "audio": "/voices/audio/te-05.mp3"
+     "audio": "/media/voices/audio/te-05.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "pooja (conversation)",
-     "audio": "/voices/audio/te-06.mp3"
+     "audio": "/media/voices/audio/te-06.mp3"
     },
     {
      "provider": "Sarvam",
      "model": "bulbul:v4-flash",
      "via": "",
      "voice": "tarun (narration)",
-     "audio": "/voices/audio/te-07.mp3"
+     "audio": "/media/voices/audio/te-07.mp3"
     }
    ]
   }
