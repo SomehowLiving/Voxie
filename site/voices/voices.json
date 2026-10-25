@@ -34,27 +34,6 @@
      "via": "Voxie router",
      "voice": "am_fenrir (persona male-2)",
      "audio": "/voices/audio/en-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/en-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/en-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/en-07.mp3"
     }
    ]
   },
@@ -91,27 +70,6 @@
      "via": "Voxie router",
      "voice": "em_alex (persona male-2)",
      "audio": "/voices/audio/es-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/es-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/es-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/es-07.mp3"
     }
    ]
   },
@@ -148,27 +106,6 @@
      "via": "Voxie router",
      "voice": "ff_siwis (persona male-2)",
      "audio": "/voices/audio/fr-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/fr-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/fr-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/fr-07.mp3"
     }
    ]
   },
@@ -205,27 +142,6 @@
      "via": "Voxie router",
      "voice": "im_nicola (persona male-2)",
      "audio": "/voices/audio/it-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/it-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/it-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/it-07.mp3"
     }
    ]
   },
@@ -262,27 +178,6 @@
      "via": "Voxie router",
      "voice": "pm_alex (persona male-2)",
      "audio": "/voices/audio/pt-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/pt-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/pt-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/pt-07.mp3"
     }
    ]
   },
@@ -319,27 +214,6 @@
      "via": "Voxie router",
      "voice": "de_DE-thorsten-high (persona male-2)",
      "audio": "/voices/audio/de-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/de-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/de-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/de-07.mp3"
     }
    ]
   },
@@ -376,27 +250,6 @@
      "via": "Voxie router",
      "voice": "nl_BE-rdh-medium (persona male-2)",
      "audio": "/voices/audio/nl-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/nl-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/nl-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/nl-07.mp3"
     }
    ]
   },
@@ -433,27 +286,6 @@
      "via": "Voxie router",
      "voice": "ru_RU-dmitri-medium (persona male-2)",
      "audio": "/voices/audio/ru-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/ru-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/ru-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/ru-07.mp3"
     }
    ]
   },
@@ -490,27 +322,6 @@
      "via": "Voxie router",
      "voice": "pl_PL-darkman-medium (persona male-2)",
      "audio": "/voices/audio/pl-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/pl-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/pl-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/pl-07.mp3"
     }
    ]
   },
@@ -547,27 +358,6 @@
      "via": "Voxie router",
      "voice": "uk_UA-mykyta-high (persona male-2)",
      "audio": "/voices/audio/uk-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/uk-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/uk-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/uk-07.mp3"
     }
    ]
   },
@@ -604,27 +394,6 @@
      "via": "Voxie router",
      "voice": "cs_CZ-jirka-medium (persona male-2)",
      "audio": "/voices/audio/cs-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/cs-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/cs-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/cs-07.mp3"
     }
    ]
   },
@@ -661,27 +430,6 @@
      "via": "Voxie router",
      "voice": "hu_HU-imre-medium (persona male-2)",
      "audio": "/voices/audio/hu-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_flash_v2_5",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/hu-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_flash_v2_5",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/hu-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/hu-07.mp3"
     }
    ]
   },
@@ -718,27 +466,6 @@
      "via": "Voxie router",
      "voice": "sv_SE-nst-medium (persona male-2)",
      "audio": "/voices/audio/sv-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/sv-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/sv-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/sv-07.mp3"
     }
    ]
   },
@@ -775,27 +502,6 @@
      "via": "Voxie router",
      "voice": "ro_RO-mihai-medium (persona male-2)",
      "audio": "/voices/audio/ro-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/ro-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/ro-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/ro-07.mp3"
     }
    ]
   },
@@ -832,27 +538,6 @@
      "via": "Voxie router",
      "voice": "fi_FI-harri-medium (persona male-2)",
      "audio": "/voices/audio/fi-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/fi-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/fi-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/fi-07.mp3"
     }
    ]
   },
@@ -889,27 +574,6 @@
      "via": "Voxie router",
      "voice": "da_DK-talesyntese-medium (persona male-2)",
      "audio": "/voices/audio/da-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/da-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/da-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/da-07.mp3"
     }
    ]
   },
@@ -946,27 +610,6 @@
      "via": "Voxie router",
      "voice": "vi_VN-vais1000-medium (persona male-2)",
      "audio": "/voices/audio/vi-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_flash_v2_5",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/vi-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_flash_v2_5",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/vi-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/vi-07.mp3"
     }
    ]
   },
@@ -1003,27 +646,6 @@
      "via": "Voxie router",
      "voice": "jm_kumo (persona male-2)",
      "audio": "/voices/audio/ja-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/ja-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/ja-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/ja-07.mp3"
     }
    ]
   },
@@ -1060,27 +682,6 @@
      "via": "Voxie router",
      "voice": "zm_yunjian (persona male-2)",
      "audio": "/voices/audio/zh-04.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/zh-05.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/zh-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/zh-07.mp3"
     }
    ]
   },
@@ -1152,27 +753,6 @@
      "via": "",
      "voice": "aditya (conversational)",
      "audio": "/voices/audio/hi-09.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/hi-10.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/hi-11.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/hi-12.mp3"
     }
    ]
   },
@@ -1223,13 +803,6 @@
      "via": "",
      "voice": "arnab (conversation)",
      "audio": "/voices/audio/bn-06.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/bn-07.mp3"
     }
    ]
   },
@@ -1287,13 +860,6 @@
      "via": "",
      "voice": "bhavik (conversation)",
      "audio": "/voices/audio/gu-07.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/gu-08.mp3"
     }
    ]
   },
@@ -1351,13 +917,6 @@
      "via": "",
      "voice": "chetan (conversation)",
      "audio": "/voices/audio/kn-07.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/kn-08.mp3"
     }
    ]
   },
@@ -1394,13 +953,6 @@
      "via": "Voxie router",
      "voice": "aditya (persona male-2)",
      "audio": "/voices/audio/ml-04.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/ml-05.mp3"
     }
    ]
   },
@@ -1465,13 +1017,6 @@
      "via": "",
      "voice": "nilesh (conversation)",
      "audio": "/voices/audio/mr-08.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/mr-09.mp3"
     }
    ]
   },
@@ -1565,13 +1110,6 @@
      "via": "",
      "voice": "jaspal (banking)",
      "audio": "/voices/audio/pa-07.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/pa-08.mp3"
     }
    ]
   },
@@ -1629,27 +1167,6 @@
      "via": "",
      "voice": "aravind (ads)",
      "audio": "/voices/audio/ta-07.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Chris",
-     "audio": "/voices/audio/ta-08.mp3"
-    },
-    {
-     "provider": "ElevenLabs",
-     "model": "eleven_multilingual_v2",
-     "via": "",
-     "voice": "Sarah",
-     "audio": "/voices/audio/ta-09.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/ta-10.mp3"
     }
    ]
   },
@@ -1707,13 +1224,6 @@
      "via": "",
      "voice": "tarun (narration)",
      "audio": "/voices/audio/te-07.mp3"
-    },
-    {
-     "provider": "Cartesia",
-     "model": "sonic-3",
-     "via": "",
-     "voice": "Katie",
-     "audio": "/voices/audio/te-08.mp3"
     }
    ]
   }

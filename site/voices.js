@@ -10,8 +10,6 @@ const PROVIDERS = [
   { key: "all", label: "All" },
   { key: "voxie", label: "Voxie's own" },
   { key: "sarvam", label: "Sarvam" },
-  { key: "elevenlabs", label: "ElevenLabs" },
-  { key: "cartesia", label: "Cartesia" },
 ];
 const providerKey = (v) => (/kokoro|piper/i.test(v.provider) ? "voxie" : v.provider.toLowerCase());
 const PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>';
