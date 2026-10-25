@@ -134,7 +134,9 @@ audio.addEventListener("timeupdate", () => {
 });
 audio.addEventListener("ended", stop);
 
-fetch("/media/voices/voices.json").then((r) => r.json()).then((d) => {
+// Revalidated every load: the list changes whenever voices are added, and a
+// cached copy would show new page code with old voices.
+fetch("/media/voices/voices.json", { cache: "no-cache" }).then((r) => r.json()).then((d) => {
   data = d;
   const fromHash = location.hash.slice(1);
   if (data.languages.some((l) => l.code === fromHash)) lang = fromHash;
