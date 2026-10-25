@@ -3,6 +3,7 @@ package tts
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/streamcoreai/streamcore-server/internal/config"
 )
@@ -43,7 +44,57 @@ func NewClient(cfg *config.Config) (Client, error) {
 }
 
 func newProviderClient(cfg *config.Config) (Client, error) {
-	switch cfg.TTS.Provider {
+	if cfg.TTS.Provider == "failover" {
+		return newFailoverFromConfig(cfg)
+	}
+	c, err := newNamedProvider(cfg, cfg.TTS.Provider)
+	if err != nil {
+		return nil, err
+	}
+	return adaptTags(cfg.TTS.Provider, c), nil
+}
+
+// newFailoverFromConfig builds every provider named in [tts] failover and
+// [tts.languages] and chains them.
+func newFailoverFromConfig(cfg *config.Config) (Client, error) {
+	clients := map[string]Client{}
+	add := func(name string) error {
+		if _, ok := clients[name]; ok {
+			return nil
+		}
+		if name == "failover" {
+			return fmt.Errorf("tts failover can't contain \"failover\"")
+		}
+		c, err := newNamedProvider(cfg, name)
+		if err != nil {
+			return fmt.Errorf("tts failover: %w", err)
+		}
+		clients[name] = adaptTags(name, c)
+		return nil
+	}
+	for _, n := range cfg.TTS.Failover {
+		if err := add(n); err != nil {
+			return nil, err
+		}
+	}
+	for _, names := range cfg.TTS.Languages {
+		for _, n := range names {
+			if err := add(n); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return newFailoverClient(clients, FailoverOptions{
+		Order:             cfg.TTS.Failover,
+		ByLanguage:        cfg.TTS.Languages,
+		FirstAudioTimeout: time.Duration(cfg.TTS.FirstAudioTimeoutMs) * time.Millisecond,
+		Cooldown:          time.Duration(cfg.TTS.CooldownMs) * time.Millisecond,
+	})
+}
+
+// newNamedProvider builds one voice provider by name.
+func newNamedProvider(cfg *config.Config, name string) (Client, error) {
+	switch name {
 	case "deepgram":
 		if cfg.Deepgram.APIKey == "" {
 			return nil, ErrMissingAPIKey{Provider: "deepgram", Field: "[deepgram] api_key"}
@@ -101,7 +152,7 @@ func newProviderClient(cfg *config.Config) (Client, error) {
 	case "vibevoice":
 		return NewVibeVoiceClient(cfg.VibeVoice.TTSURL, cfg.VibeVoice.Voice), nil
 	default:
-		return nil, fmt.Errorf("unknown tts provider %q (supported: aliyun, cartesia, deepgram, elevenlabs, mimo, minimax, speechify, telnyx, vibevoice, volcengine)", cfg.TTS.Provider)
+		return nil, fmt.Errorf("unknown tts provider %q (supported: aliyun, cartesia, deepgram, elevenlabs, failover, mimo, minimax, speechify, telnyx, vibevoice, volcengine)", name)
 	}
 }
 

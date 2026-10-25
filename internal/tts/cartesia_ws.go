@@ -62,6 +62,7 @@ type wsResponse struct {
 	Title     string `json:"title"`
 	Message   string `json:"message"`
 	ErrorCode string `json:"error_code"`
+	Error     string `json:"error"`
 }
 
 // wsGenerationRequest is the JSON payload sent to request speech synthesis.
@@ -73,6 +74,10 @@ type wsGenerationRequest struct {
 	GenerationConfig *wsGenerationConfig `json:"generation_config,omitempty"`
 	ContextID        string              `json:"context_id"`
 	Continue         bool                `json:"continue"`
+	// Language is the sentence's language ("hi", "ta"); empty lets Cartesia
+	// assume English. Sonic-3 rejects a language it doesn't speak (Odia, as
+	// of 2026-10), which sends the sentence on to the next voice.
+	Language string `json:"language,omitempty"`
 }
 
 // wsGenerationConfig controls sonic-3 audio attributes. Speed is explicitly
@@ -261,6 +266,12 @@ func (c *cartesiaWSClient) SynthesizeStream(ctx context.Context, text string) (<
 // slower, excited slightly faster). Speed is clamped to a conversational
 // band so a bad tag can never produce comedy audio.
 func (c *cartesiaWSClient) SynthesizeStreamWithControls(ctx context.Context, text string, vc VoiceControls) (<-chan StreamChunk, error) {
+	return c.SynthesizeStreamLanguage(ctx, text, "", vc)
+}
+
+// SynthesizeStreamLanguage is SynthesizeStreamWithControls for a sentence in
+// a known language.
+func (c *cartesiaWSClient) SynthesizeStreamLanguage(ctx context.Context, text, language string, vc VoiceControls) (<-chan StreamChunk, error) {
 	if err := c.ensureConnected(ctx); err != nil {
 		return nil, fmt.Errorf("cartesia ws connect: %w", err)
 	}
@@ -295,6 +306,7 @@ func (c *cartesiaWSClient) SynthesizeStreamWithControls(ctx context.Context, tex
 		GenerationConfig: &wsGenerationConfig{Speed: speed},
 		ContextID:        contextID,
 		Continue:         false,
+		Language:         language,
 	}
 
 	if err := c.writeJSON(req); err != nil {
@@ -322,6 +334,9 @@ func (c *cartesiaWSClient) SynthesizeStreamWithControls(ctx context.Context, tex
 					msg := resp.Message
 					if msg == "" {
 						msg = resp.Title
+					}
+					if msg == "" {
+						msg = resp.Error
 					}
 					outCh <- StreamChunk{Err: fmt.Errorf("cartesia ws [%s]: %s", resp.ErrorCode, msg)}
 					return

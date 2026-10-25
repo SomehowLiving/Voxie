@@ -140,7 +140,13 @@ min_confidence = 0.85                         # any Deepgram turn below this is 
 provider = "openai"     # Supported: openai, ollama, agent
 
 [tts]
-provider = "cartesia"   # Supported: aliyun, cartesia, deepgram, elevenlabs, mimo, minimax, speechify, telnyx, vibevoice, volcengine
+provider = "cartesia"   # Supported: aliyun, cartesia, deepgram, elevenlabs, failover, mimo, minimax, speechify, telnyx, vibevoice, volcengine
+failover = []           # With provider = "failover": voices in order of preference, e.g. ["vibevoice", "cartesia"]. Each
+                        # sentence goes to the first available one; a voice that errors, is rate limited or out of
+                        # credit, or doesn't start speaking in time is skipped and the sentence goes to the next
+languages = {}          # Per-language order, overriding failover for that language: { hi = ["cartesia", "vibevoice"] }
+first_audio_timeout_ms = 3000  # No audio within this and the sentence goes to the next voice
+cooldown_ms = 30000     # How long a failed voice is skipped (out of credit: 10 min; key rejected: until restart)
 
 # Provider credentials
 
