@@ -176,6 +176,7 @@ async function handleAgent(req) {
   const call = sessions.get(req.session_id) ?? {
     caller: callers.get(req.resource_id ?? "") ?? { name: "there", language: "", region: "" },
     history: [],
+    turn: 0, // the latest chat turn: a reply to an older one is never stored
   };
   sessions.set(req.session_id, call);
 
@@ -191,6 +192,14 @@ async function handleAgent(req) {
     case "chat": {
       const said = (req.text ?? "").trim();
       if (!said) return { text: "" };
+      const turn = ++call.turn;
+      if (req.replaces_last_turn) {
+        // The caller paused mid-sentence and went on: this turn is the whole
+        // sentence. Forget the first part and the reply nobody heard.
+        const i = call.history.findLastIndex((m) => m.role === "user");
+        if (i >= 0) call.history.splice(i);
+        console.log(`${ts()} [agent] the caller went on after a pause; answering the whole sentence`);
+      }
       publish({ kind: "caller", text: said, language: req.language });
       if (req.interrupted_text) {
         // The caller cut the last reply off: remember only what they heard.
@@ -213,6 +222,9 @@ async function handleAgent(req) {
       // Models sometimes add [end] to a first reply; a call isn't over before
       // the caller has said more than one thing.
       if (call.history.filter((m) => m.role === "user").length < 2) reply.endCall = false;
+      // A newer turn arrived while this one was thinking (Voxie cancelled this
+      // request): the caller will never hear this reply.
+      if (turn !== call.turn) return { text: "" };
       call.history.push({ role: "assistant", content: reply.text });
       publish({ kind: "agent", text: untagged(reply.text), endCall: reply.endCall });
       return { text: reply.text, ...(reply.endCall ? { end_call: true } : {}) };

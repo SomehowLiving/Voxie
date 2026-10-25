@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/streamcoreai/streamcore-server/internal/audio"
 	"github.com/streamcoreai/streamcore-server/internal/llm"
@@ -47,19 +48,96 @@ func (p *Pipeline) runAgent() {
 				p.turnLanguage.Store(ev.Language)
 			}
 			p.closeCallerSpokeFirst.Do(func() { close(p.callerSpokeFirst) })
-			// A turn that lands while the reply is still playing cuts it off
-			// just as a barge-in does: the app hears what the caller heard.
-			p.captureHeard()
+			text, language := ev.Text, ev.Language
+			replaces := p.continuesLastTurn()
+			if replaces {
+				// The caller paused mid-sentence, the first part was answered,
+				// and they went on before any of that reply was heard. Answer
+				// the whole sentence, not its second half as an interruption:
+				// live, "En fait, je préfère parler français." / "Quand va-t-il
+				// arriver ?" got two replies, the first cut off.
+				text = p.lastTurn.text + " " + ev.Text
+				if utf8.RuneCountInString(p.lastTurn.text) > utf8.RuneCountInString(ev.Text) && p.lastTurn.language != "" {
+					language = p.lastTurn.language
+				}
+				// The caller may have cut in on the reply's first word or two;
+				// that's not an interruption to tell the app about.
+				p.interruptedText.Store("")
+				log.Printf("[agent] the caller went on before the reply was heard; answering both parts: %q", text)
+			} else {
+				// A turn that lands while the reply is still playing cuts it
+				// off just as a barge-in does: the app hears what the caller
+				// heard.
+				p.captureHeard()
+			}
 			gen := p.supersedeResponse()
+			p.lastTurn = answeredTurn{text: text, language: language, at: time.Now(), gen: gen}
 			p.sendEvent(stateMsg{Type: "state", State: "thinking"})
-			go func() { defer p.recoverPanic("respond"); p.respond(gen, ev.Text, ev.Language, ev.TurnStart) }()
+			go func() {
+				defer p.recoverPanic("respond")
+				p.respond(gen, text, language, ev.TurnStart, replaces)
+			}()
 
 		case <-p.interruptCh:
 			p.captureHeard()
 			log.Println("[agent] interrupted (barge-in)")
-			p.supersedeResponse()
+			cutsLastTurn := p.responseGen.Load() == p.lastTurn.gen
+			heard := p.ledger.heardFrames(p.lastTurn.gen)
+			gen := p.supersedeResponse()
+			if cutsLastTurn {
+				p.lastTurn.cutAt, p.lastTurn.heardFrames, p.lastTurn.cutGen = time.Now(), heard, gen
+			}
 		}
 	}
+}
+
+// continuationWindow bounds how long after a turn was answered (or its reply
+// cut off) a new turn can still be its continuation: a pause mid-sentence,
+// then the rest of it.
+const continuationWindow = 5 * time.Second
+
+// continuationHeardMax is the most of a reply the caller can have heard and
+// still be finishing their own sentence rather than answering the reply.
+// Live, with a 1-1.5s pause mid-sentence the reply had started, and the
+// caller going on cut it off after "", "Sure, I…", "Je…", "मुझे खेद…".
+const continuationHeardMax = 60 // frames, ~1.2s
+
+// answeredTurn is a caller turn that was sent for an answer.
+type answeredTurn struct {
+	text, language string
+	at             time.Time
+	gen            uint64
+	// If the caller cut its reply off: when, how much of it they had
+	// heard, and the generation the barge-in opened.
+	cutAt       time.Time
+	heardFrames int64
+	cutGen      uint64
+}
+
+// continuesLastTurn reports whether a turn arriving now continues the last
+// one: it came soon after, and the caller has heard at most the first word or
+// two of that turn's reply, which hasn't finished -- or they cut in on its
+// start and nothing else has happened since.
+func (p *Pipeline) continuesLastTurn() bool {
+	lt := p.lastTurn
+	if lt.text == "" {
+		return false
+	}
+	gen := p.responseGen.Load()
+	switch {
+	case gen == lt.gen:
+		// The reply is still playing (or hasn't started): the new final cuts
+		// it off. Live, "Mi número de pedido es" / "cuatro." landed on
+		// "Lo siento,". A reply that finished playing was heard in full.
+		if time.Since(lt.at) > continuationWindow {
+			return false
+		}
+		heard := p.ledger.heardFrames(lt.gen)
+		return heard == 0 || (p.ledger.unheard() && heard <= continuationHeardMax)
+	case !lt.cutAt.IsZero() && gen == lt.cutGen:
+		return time.Since(lt.cutAt) <= continuationWindow && lt.heardFrames <= continuationHeardMax
+	}
+	return false
 }
 
 // isPassiveAcknowledgement reports whether a completed turn is just the caller
@@ -126,7 +204,7 @@ func baseLang(code string) string {
 // gen is the response generation issued by supersedeResponse; it scopes every
 // mutation of shared speaking state to this response, so a barge-in or a newer
 // turn cleanly takes ownership of the audio path.
-func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time.Time) {
+func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time.Time, replacesLastTurn bool) {
 	respCtx, cancel := context.WithCancel(p.ctx)
 
 	// Superseded between the turn being dispatched and this goroutine getting
@@ -154,7 +232,7 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 	// pick up naturally.
 	// turn.Text stays the caller's words throughout; turn.Prompt accumulates the
 	// same context inline for providers that can only read one message.
-	turn := llm.Turn{Text: userText, Prompt: userText, Language: language}
+	turn := llm.Turn{Text: userText, Prompt: userText, Language: language, ReplacesLastTurn: replacesLastTurn}
 	if interrupted, _ := p.interruptedText.Load().(string); interrupted != "" {
 		p.interruptedText.Store("")
 		trimmedUser := strings.TrimSpace(strings.ToLower(userText))
@@ -232,7 +310,11 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 
 	p.lastAgentText.Store("")
 	if p.transcriptLog != nil {
-		p.transcriptLog.Add("user", userText)
+		if replacesLastTurn {
+			p.transcriptLog.ReplaceLastTurn(userText)
+		} else {
+			p.transcriptLog.Add("user", userText)
+		}
 	}
 	p.maybeRefreshRollingSummary()
 

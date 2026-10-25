@@ -54,6 +54,12 @@ type Turn struct {
 	// Empty unless this turn follows a barge-in.
 	InterruptedText string
 
+	// ReplacesLastTurn: the last turn was the first part of this one -- the
+	// caller paused mid-sentence, then went on before any reply was heard.
+	// Text holds both parts. Drop the last turn, and any reply to it, from
+	// your history: the caller never heard that reply.
+	ReplacesLastTurn bool
+
 	// Context holds retrieved RAG chunks.
 	Context []string
 
@@ -129,4 +135,23 @@ func NewClient(cfg *config.Config, resourceID string) (Client, error) {
 	default:
 		return nil, fmt.Errorf("unknown llm provider %q (supported: openai, ollama, agent)", cfg.LLM.Provider)
 	}
+}
+
+// dropLastTurn removes the last user message and everything after it, for a
+// turn that Turn.ReplacesLastTurn supersedes. If a tool ran in that turn,
+// history is kept as it is: the tool's effect happened, and the model has to
+// know.
+func dropLastTurn[M any](history []M, isUser, isTool func(M) bool) []M {
+	for i := len(history) - 1; i >= 0; i-- {
+		if !isUser(history[i]) {
+			continue
+		}
+		for _, m := range history[i+1:] {
+			if isTool(m) {
+				return history
+			}
+		}
+		return history[:i]
+	}
+	return history
 }

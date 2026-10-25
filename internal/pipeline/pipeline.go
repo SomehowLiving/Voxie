@@ -198,6 +198,8 @@ type Pipeline struct {
 	turnLanguage atomic.Value // string
 	// ledger records which sentences of the current response actually played.
 	ledger playbackLedger
+	// lastTurn is the caller's last turn as answered; owned by runAgent.
+	lastTurn answeredTurn
 	// lifecycleEmittedGen guarantees one completion event per response
 	// generation; latestLifecycleTurn rejects late plugin output from an older
 	// turn when a newer turn has already completed.

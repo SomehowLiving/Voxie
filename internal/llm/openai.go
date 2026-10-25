@@ -148,6 +148,13 @@ func (c *openaiClient) Chat(ctx context.Context, turn Turn, onChunk func(string)
 	// dangling tool_call_ids with error placeholders so the conversation
 	// stays valid.
 	c.reconcileHistory()
+	if turn.ReplacesLastTurn {
+		c.history = dropLastTurn(c.history,
+			func(m openai.ChatCompletionMessage) bool { return m.Role == openai.ChatMessageRoleUser },
+			func(m openai.ChatCompletionMessage) bool {
+				return len(m.ToolCalls) > 0 || m.Role == openai.ChatMessageRoleTool
+			})
+	}
 	c.history = append(c.history, openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleUser,
 		Content: userText,
