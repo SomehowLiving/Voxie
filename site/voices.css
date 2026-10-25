@@ -115,3 +115,33 @@
 .rate-reveal li { font-size: 15px; }
 .rate-reveal li > span { margin-right: 8px; }
 .v-pill:disabled { opacity: .4; cursor: default; }
+
+/* Like and dislike on a card (after half the clip), and listen-through in the panel. */
+.v-vote { display: flex; gap: 6px; margin-top: 8px; }
+.v-vote.appear { animation: v-pop .25s ease-out; }
+@keyframes v-pop { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .v-vote.appear { animation: none; } }
+.v-thumb { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink-2); font: 500 12.5px var(--font); cursor: pointer; }
+.v-thumb svg { width: 14px; height: 14px; fill: currentColor; }
+.v-thumb.down svg { transform: rotate(180deg); }
+.v-thumb:hover { border-color: rgba(20, 30, 60, .25); }
+.v-thumb[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.v-thumb:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.d-retention { display: grid; gap: 7px; margin-bottom: 10px; }
+.d-retention div { display: grid; grid-template-columns: 100px 1fr 44px; align-items: center; gap: 10px; font-size: 13.5px; color: var(--ink-2); }
+.d-retention b { font-weight: 500; color: var(--ink); text-align: right; }
+.d-ret-bar { height: 8px; border-radius: 8px; background: rgba(20, 30, 60, .07); overflow: hidden; }
+.d-ret-bar span { display: block; height: 100%; background: var(--blue); border-radius: 8px; }
+
+/* /voice-stats */
+.s-controls { display: flex; gap: 20px; align-items: end; flex-wrap: wrap; margin-bottom: 18px; }
+.s-lang select { font: inherit; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.s-only { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--ink-2); padding-bottom: 8px; }
+.s-wrap { overflow-x: auto; }
+.s-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.s-table th, .s-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.s-table .s-num { text-align: right; font-variant-numeric: tabular-nums; }
+.s-table th button { all: unset; cursor: pointer; font-weight: 500; color: var(--ink-2); }
+.s-table th[aria-sort="ascending"] button, .s-table th[aria-sort="descending"] button { color: var(--ink); }
+.s-table th button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 3px; }
+.s-table tbody tr:hover { background: rgba(20, 30, 60, .03); }

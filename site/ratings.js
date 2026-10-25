@@ -1,6 +1,7 @@
-// Listener ratings for voices: the five questions (a 1-5 opinion score per
-// question, as in a MOS listening test), where ratings are stored, and the
-// star widgets. Shared by /voices and /rate.
+// Listener feedback on voices: ratings on five questions (a 1-5 opinion
+// score per question, as in a MOS listening test), likes and dislikes, and how
+// far each play is listened to. Where it's stored, and the star widgets.
+// Shared by /voices, /rate and /voice-stats.
 //
 // Storage: the API named in <meta name="voxie-ratings-api"> when there is
 // one. Without it, on localhost, ratings stay in this browser so the flow can
@@ -57,11 +58,61 @@ const Ratings = (() => {
     return out;
   }
 
+  // Listening and votes per voice, kept as counters in the local preview:
+  // { lang, plays, reach: {25, 50, 75, 100: plays that got that far}, likes, dislikes }.
+  const STATS_KEY = "voxie-stats-preview";
+  const LISTEN_POINTS = [25, 50, 75, 100];
+  function bump(voice, lang, change) {
+    const all = store.get(STATS_KEY, {});
+    change(all[voice] ||= { lang, plays: 0, reach: { 25: 0, 50: 0, 75: 0, 100: 0 }, likes: 0, dislikes: 0 });
+    store.set(STATS_KEY, all);
+  }
+  const post = (path, body) => fetch(`${api}${path}`, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
+  // Per voice: the rating summary (n is 0 when nobody has rated yet) and
+  // `listening`. lang "all" gives every language, for /voice-stats.
   async function summary(lang) {
     if (mode === "off") return {};
-    if (mode === "local") return summarize(store.get(PREVIEW_KEY, []).filter((r) => r.lang === lang));
+    if (mode === "local") {
+      const out = summarize(store.get(PREVIEW_KEY, []).filter((r) => lang === "all" || r.lang === lang));
+      for (const [voice, s] of Object.entries(store.get(STATS_KEY, {}))) {
+        if (lang === "all" || s.lang === lang) out[voice] = { ...(out[voice] || { n: 0 }), listening: s };
+      }
+      return out;
+    }
     const r = await fetch(`${api}?lang=${encodeURIComponent(lang)}`, { cache: "no-cache" });
     return r.ok ? (await r.json()).voices || {} : {};
+  }
+
+  // A play started ("play"), or reached 25/50/75/100% of the clip.
+  const heard = () => new Set(store.get("voxie-heard-half", []));
+  const heardHalf = (voice) => heard().has(voice);
+  function track(voice, lang, point) {
+    if (mode === "off") return;
+    if (point === 50 && !heardHalf(voice)) store.set("voxie-heard-half", [...heard(), voice]);
+    if (mode === "local") return bump(voice, lang, (s) => (point === "play" ? s.plays++ : s.reach[point]++));
+    post("/events", { voice, lang, point, at: new Date().toISOString() }).catch(() => {});
+  }
+
+  // One vote per voice per browser: 1 like, -1 dislike, 0 none. Voting the
+  // same way again takes the vote back. Returns the vote now in place.
+  const votes = () => store.get("voxie-votes", {});
+  const myVote = (voice) => votes()[voice] || 0;
+  async function vote(voice, lang, value) {
+    if (mode === "off") return 0;
+    const before = myVote(voice);
+    const now = value === before ? 0 : value;
+    if (mode === "local") {
+      bump(voice, lang, (s) => {
+        if (before === 1) s.likes--; else if (before === -1) s.dislikes--;
+        if (now === 1) s.likes++; else if (now === -1) s.dislikes++;
+      });
+    } else {
+      const res = await post("/votes", { voice, lang, value: now, rater: rater() }).catch(() => null);
+      if (!res?.ok) return before;
+    }
+    store.set("voxie-votes", { ...votes(), [voice]: now });
+    return now;
   }
 
   // rating: { voice, lang, scores: {question: 1-5}, native, region, comment, blind }
@@ -118,5 +169,6 @@ const Ratings = (() => {
     return scores;
   }
 
-  return { QUESTIONS, MIN, mode, summary, submit, hasRated, about, setAbout, stars, questionFields, readScores, invite };
+  return { QUESTIONS, MIN, LISTEN_POINTS, mode, summary, submit, hasRated, about, setAbout, stars, questionFields, readScores, invite,
+    track, heardHalf, vote, myVote };
 })();

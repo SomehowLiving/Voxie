@@ -31,6 +31,14 @@ let scores = {}; // listener ratings for the shown language, by voice id
 const voiceId = (v) => v.audio.split("/").pop().replace(/\.mp3$/, "");
 const audio = new Audio();
 let playingCard = null;
+// The play being listened to, and how far it has got (25/50/75/100%), so
+// each point is counted once per play.
+let listening = null;
+function startListening(v, code) {
+  listening = { voice: voiceId(v), lang: code, reached: 0 };
+  Ratings.track(listening.voice, code, "play");
+}
+const THUMB = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10v11H3V10h4zm2 11h8.4a2 2 0 0 0 2-1.6l1.4-7A2 2 0 0 0 18.8 10H13.5l.8-4a2 2 0 0 0-3.6-1.5L9 9.5V21z"/></svg>';
 
 function loadFont(code, text) {
   const family = FONTS[code];
@@ -123,9 +131,11 @@ function render() {
         <button class="v-name" type="button" aria-haspopup="dialog"></button>
         <div class="v-meta"><span class="v-tag p p-${key}"></span>${v.model ? '<span class="v-tag m"></span>' : ""}${key === "voxie" ? '<span class="v-tag">self-hosted</span>' : ""}${v.testing ? '<span class="v-tag">not in Voxie yet</span>' : ""}</div>
         <div class="v-score"></div>
+        <div class="v-vote" hidden></div>
       </div>
       <div class="v-bar"><span></span></div>`;
     card.dataset.voice = voiceId(v);
+    card.dataset.lang = l.code;
     card.querySelector(".v-name").textContent = v.voice;
     card.querySelector(".v-name").setAttribute("aria-label", `${v.voice}, ${name}: details and ratings`);
     card.querySelector(".v-name").addEventListener("click", () => openDetails(v, l));
@@ -139,6 +149,7 @@ function render() {
       card.querySelector(".v-play").innerHTML = STOP;
       audio.src = v.audio;
       audio.play().catch(stop);
+      startListening(v, l.code);
     });
     return card;
   }));
@@ -150,14 +161,36 @@ function render() {
 // The one-line rating on each card: an average once enough people have rated.
 function scoreLine(id) {
   const s = scores[id];
-  if (!s) return "Not rated yet";
+  if (!s || !s.n) return "Not rated yet";
   if (s.n < Ratings.MIN) return `${s.n} rating${s.n > 1 ? "s" : ""} so far`;
   const avg = Object.values(s.avg).reduce((a, b) => a + b, 0) / Ratings.QUESTIONS.length;
   return `${Ratings.stars(avg)} <b>${avg.toFixed(1)}</b> · ${s.n} rating${s.n > 1 ? "s" : ""}${s.native ? `, ${s.native} native` : ""}`;
 }
 function scoreLines() {
   if (Ratings.mode === "off") return;
-  for (const card of $("grid").querySelectorAll(".v-card")) card.querySelector(".v-score").innerHTML = scoreLine(card.dataset.voice);
+  for (const card of $("grid").querySelectorAll(".v-card")) {
+    card.querySelector(".v-score").innerHTML = scoreLine(card.dataset.voice);
+    voteBox(card);
+  }
+}
+async function refreshScores() {
+  const shown = lang;
+  const s = await Ratings.summary(lang).catch(() => null);
+  if (s && shown === lang) { scores = s; scoreLines(); }
+}
+
+// Like and dislike, offered once this browser has heard at least half the clip.
+function voteBox(card, appearing = false) {
+  const id = card.dataset.voice, box = card.querySelector(".v-vote");
+  if (Ratings.mode === "off" || !Ratings.heardHalf(id)) { box.hidden = true; return; }
+  const mine = Ratings.myVote(id), st = scores[id]?.listening || { likes: 0, dislikes: 0 };
+  box.innerHTML = `<button type="button" class="v-thumb" data-v="1" aria-pressed="${mine === 1}" aria-label="Like (${st.likes})" title="Like">${THUMB}<span>${st.likes}</span></button>` +
+    `<button type="button" class="v-thumb down" data-v="-1" aria-pressed="${mine === -1}" aria-label="Dislike (${st.dislikes})" title="Dislike">${THUMB}<span>${st.dislikes}</span></button>`;
+  for (const b of box.querySelectorAll("button")) {
+    b.addEventListener("click", async () => { await Ratings.vote(id, card.dataset.lang, Number(b.dataset.v)); refreshScores(); });
+  }
+  box.classList.toggle("appear", appearing);
+  box.hidden = false;
 }
 
 const MONTH = new Intl.DateTimeFormat("en", { month: "long", year: "numeric" });
@@ -167,13 +200,24 @@ function openDetails(v, l) {
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   let ratings;
   if (Ratings.mode === "off") ratings = `<p class="d-muted">Listener ratings open soon.</p>`;
-  else if (!s) ratings = `<p class="d-muted">No ratings yet.</p>`;
+  else if (!s || !s.n) ratings = `<p class="d-muted">No ratings yet.</p>`;
   else if (s.n < Ratings.MIN) ratings = `<p class="d-muted">${s.n} rating${s.n > 1 ? "s" : ""} so far; averages show from ${Ratings.MIN}.</p>`;
   else {
     const regions = Object.entries(s.regions).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([r, n]) => `${esc(r)} ${n}`).join(", ");
     ratings = `<dl class="d-scores">${Ratings.QUESTIONS.map((q) =>
       `<div><dt title="${q.ask}">${q.label}</dt><dd>${Ratings.stars(s.avg[q.key])} <b>${s.avg[q.key].toFixed(1)}</b>/5</dd></div>`).join("")}</dl>
       <p class="d-muted">Rated by ${s.n} listener${s.n > 1 ? "s" : ""}${s.native ? `, ${s.native} native speaker${s.native > 1 ? "s" : ""} (self-declared)` : ""}${s.invited ? `, ${s.invited} invited` : ""}.${regions ? ` Accents: ${regions}.` : ""}${s.last ? ` Last rated ${MONTH.format(new Date(s.last))}.` : ""}</p>`;
+  }
+  const st = s?.listening;
+  let listen;
+  if (Ratings.mode === "off") listen = `<p class="d-muted">Listening stats open soon.</p>`;
+  else if (!st?.plays) listen = `<p class="d-muted">No plays yet.</p>`;
+  else {
+    listen = `<div class="d-retention">${Ratings.LISTEN_POINTS.map((p) => {
+      const share = Math.min(1, st.reach[p] / st.plays);
+      return `<div><span>${p === 100 ? "To the end" : `Past ${p}%`}</span><span class="d-ret-bar"><span style="width:${share * 100}%"></span></span><b>${Math.round(share * 100)}%</b></div>`;
+    }).join("")}</div>
+      <p class="d-muted">${st.plays} play${st.plays > 1 ? "s" : ""}; the bars are the share of plays that got that far. ${st.likes} like${st.likes === 1 ? "" : "s"}, ${st.dislikes} dislike${st.dislikes === 1 ? "" : "s"}.</p>`;
   }
   const m = v.measured;
   const measured = m
@@ -185,6 +229,7 @@ function openDetails(v, l) {
     <p class="d-status">${v.testing ? "Not in Voxie yet: shown so you can compare." : providerKey(v) === "voxie" ? "Voxie's own, self-hosted." : "Plugs into Voxie with your own key."}</p>
     <button class="btn btn-dark btn-sm d-play" type="button">Play</button>
     <section><h3>Listener ratings</h3>${ratings}</section>
+    <section><h3>Listening</h3>${listen}</section>
     <section><h3>Measured by us</h3>${measured}</section>
     <section class="d-rate" ${Ratings.mode === "off" ? "hidden" : ""}><h3>Rate this voice</h3></section>`;
   body.querySelector(".d-play").addEventListener("click", (e) => {
@@ -192,6 +237,7 @@ function openDetails(v, l) {
     stop();
     if (playing) return;
     audio.src = v.audio; audio.play().catch(() => {}); e.target.textContent = "Stop";
+    startListening(v, l.code);
     audio.onended = audio.onpause = () => { e.target.textContent = "Play"; };
   });
   if (Ratings.mode !== "off") body.querySelector(".d-rate").append(rateForm(v, l, () => openDetails(v, l)));
@@ -238,8 +284,22 @@ function rateForm(v, l, done) {
   return wrap;
 }
 
+function reached(point) {
+  listening.reached = point;
+  Ratings.track(listening.voice, listening.lang, point);
+  const card = $("grid").querySelector(`.v-card[data-voice="${listening.voice}"]`);
+  if (point === 50 && card) voteBox(card, true);
+}
 audio.addEventListener("timeupdate", () => {
-  if (playingCard && audio.duration) playingCard.querySelector(".v-bar span").style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  if (playingCard) playingCard.querySelector(".v-bar span").style.width = `${pct}%`;
+  if (listening) for (const p of [25, 50, 75]) if (pct >= p && listening.reached < p) reached(p);
+});
+audio.addEventListener("ended", () => {
+  if (listening) for (const p of Ratings.LISTEN_POINTS) if (listening.reached < p) reached(p);
+  listening = null;
+  refreshScores();
 });
 audio.addEventListener("ended", stop);
 
