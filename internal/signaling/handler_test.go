@@ -384,6 +384,9 @@ func TestPeerOptionsFromQuery(t *testing.T) {
 		{"?aec=upstream", "", false},
 		{"?aec=", "", false},
 	}
+	if got := peerOptionsFrom(httptest.NewRequest(http.MethodPost, "/whip?voice=cartesia", nil)); got.Voice != "cartesia" {
+		t.Errorf("voice = %q, want cartesia", got.Voice)
+	}
 	for _, c := range cases {
 		r := httptest.NewRequest(http.MethodPost, "/whip"+c.query, nil)
 		got := peerOptionsFrom(r)

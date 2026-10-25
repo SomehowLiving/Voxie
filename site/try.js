@@ -69,6 +69,38 @@ if (publicServer) {
   $("server").value = store.get("voxie-try-server") || "";
 }
 
+// The voices the server is set up with, if it lets a call choose one
+// (GET /voices, [tts] client_choice). No list, no picker: the page works as
+// before against any server.
+const voiceNames = {
+  vibevoice: "Voxie's own voices (Kokoro, Piper, Sarvam)",
+  cartesia: "Cartesia",
+  elevenlabs: "ElevenLabs",
+  deepgram: "Deepgram Aura",
+  sarvam: "Sarvam",
+};
+async function loadVoices() {
+  const field = $("voiceField"), select = $("voice");
+  field.hidden = true;
+  let base;
+  try { base = serverBase(); } catch { return; }
+  try {
+    const res = await fetch(base + "/voices", { signal: AbortSignal.timeout(2500) });
+    if (!res.ok) return;
+    const { voices, choosable } = await res.json();
+    if (!choosable || !Array.isArray(voices) || voices.length < 2) return;
+    select.replaceChildren(...voices.map((v, i) => {
+      const o = document.createElement("option");
+      o.value = v;
+      o.textContent = (voiceNames[v] || v) + (i === 0 ? " (default)" : "");
+      return o;
+    }));
+    const saved = store.get("voxie-try-voice");
+    if (saved && voices.includes(saved)) select.value = saved;
+    field.hidden = false;
+  } catch {}
+}
+
 function serverBase() {
   const raw = (publicServer || $("server").value.trim() || $("server").placeholder).replace(/\/+$/, "");
   let url;
@@ -207,7 +239,9 @@ async function call() {
 
     let resp;
     try {
-      resp = await fetch(base + "/whip", { method: "POST", headers: { "Content-Type": "application/sdp" }, body: pc.localDescription.sdp });
+      const voice = $("voiceField").hidden ? "" : $("voice").value;
+      if (voice) store.set("voxie-try-voice", voice);
+      resp = await fetch(base + "/whip" + (voice ? "?voice=" + encodeURIComponent(voice) : ""), { method: "POST", headers: { "Content-Type": "application/sdp" }, body: pc.localDescription.sdp });
     } catch {
       const port = new URL(base).port;
       if (port === "8400" || port === "8410" || port === "9101") {
@@ -248,6 +282,8 @@ function hangUp() {
 }
 
 $("call").addEventListener("click", call);
+$("server").addEventListener("change", loadVoices);
+loadVoices();
 $("hang").addEventListener("click", hangUp);
 // Leaving the page ends the call on the server too.
 addEventListener("pagehide", () => { if (sessionUrl) fetch(sessionUrl, { method: "DELETE", keepalive: true }).catch(() => {}); });

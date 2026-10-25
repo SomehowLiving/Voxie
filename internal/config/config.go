@@ -377,6 +377,11 @@ type TTSConfig struct {
 	// CooldownMs: how long a provider that failed is skipped (default
 	// 30000; out of credit: 10 min; key rejected: until restart).
 	CooldownMs int `toml:"cooldown_ms"`
+	// ClientChoice lets a call ask for one of the configured voices
+	// (?voice=cartesia on the WHIP URL), which then goes first in the chain
+	// for that call. Off by default: a client could otherwise choose the
+	// most expensive voice. Only voices already configured can be chosen.
+	ClientChoice bool `toml:"client_choice"`
 }
 
 // SarvamConfig is Sarvam AI's speech-to-text (https://docs.sarvam.ai),

@@ -5,8 +5,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -171,8 +173,16 @@ func (c *cartesiaWSClient) ensureConnected(ctx context.Context) error {
 		HandshakeTimeout: 10 * time.Second,
 	}
 
-	conn, _, err := dialer.DialContext(ctx, c.wsURL, header)
+	conn, resp, err := dialer.DialContext(ctx, c.wsURL, header)
 	if err != nil {
+		// A refused handshake carries the reason in an HTTP response:
+		// gorilla only says "bad handshake", and the failover chain needs the
+		// status to tell out of credit (402) from a key rejected or a blip.
+		if resp != nil {
+			body, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+			resp.Body.Close()
+			return fmt.Errorf("cartesia ws dial: %d %s: %s", resp.StatusCode, http.StatusText(resp.StatusCode), strings.TrimSpace(string(body)))
+		}
 		return fmt.Errorf("cartesia ws dial: %w", err)
 	}
 

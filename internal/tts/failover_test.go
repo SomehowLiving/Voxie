@@ -3,9 +3,15 @@ package tts
 import (
 	"context"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"slices"
+	"strings"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/streamcoreai/streamcore-server/internal/config"
 )
 
 // fakeVoice is a scripted provider: it fails with err, or waits delay and
@@ -286,5 +292,144 @@ func TestAdaptTags(t *testing.T) {
 	r := &fakeVoice{}
 	if adaptTags("vibevoice", r) != Client(r) {
 		t.Fatal("the voice router reads tags itself and should get them unchanged")
+	}
+}
+
+func chainOrder(t *testing.T, c Client) []string {
+	t.Helper()
+	s, ok := c.(*sanitizingClient)
+	if !ok {
+		t.Fatalf("got %T", c)
+	}
+	f, ok := s.inner.(*failoverClient)
+	if !ok {
+		t.Fatalf("got %T inside", s.inner)
+	}
+	return f.order
+}
+
+func voiceConfig(choice bool) *config.Config {
+	cfg := &config.Config{}
+	cfg.TTS.Provider = "failover"
+	cfg.TTS.Failover = []string{"vibevoice", "deepgram"}
+	cfg.TTS.Languages = map[string][]string{"hi": {"vibevoice", "deepgram"}}
+	cfg.TTS.ClientChoice = choice
+	cfg.VibeVoice.TTSURL = "http://127.0.0.1:1"
+	cfg.Deepgram.APIKey = "test"
+	return cfg
+}
+
+func TestNewClientForPutsTheChosenVoiceFirst(t *testing.T) {
+	cfg := voiceConfig(true)
+	c, err := NewClientFor(cfg, "deepgram")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := chainOrder(t, c); !slices.Equal(got, []string{"deepgram", "vibevoice"}) {
+		t.Fatalf("order = %v", got)
+	}
+	if !slices.Equal(cfg.TTS.Failover, []string{"vibevoice", "deepgram"}) {
+		t.Fatal("the deployment's own order was changed")
+	}
+}
+
+func TestNewClientForKeepsTheDeploymentOrder(t *testing.T) {
+	for name, tc := range map[string]struct {
+		cfg   *config.Config
+		voice string
+	}{
+		"choice off":    {voiceConfig(false), "deepgram"},
+		"unknown voice": {voiceConfig(true), "elevenlabs"},
+		"no voice":      {voiceConfig(true), ""},
+	} {
+		c, err := NewClientFor(tc.cfg, tc.voice)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := chainOrder(t, c); !slices.Equal(got, []string{"vibevoice", "deepgram"}) {
+			t.Errorf("%s: order = %v", name, got)
+		}
+	}
+}
+
+func TestVoices(t *testing.T) {
+	if got := Voices(voiceConfig(true)); !slices.Equal(got, []string{"vibevoice", "deepgram"}) {
+		t.Errorf("failover: %v", got)
+	}
+	single := &config.Config{}
+	single.TTS.Provider = "cartesia"
+	if got := Voices(single); !slices.Equal(got, []string{"cartesia"}) {
+		t.Errorf("single: %v", got)
+	}
+}
+
+// Cartesia refuses the WebSocket handshake with 402 when out of credit; the
+// chain must see the status to skip it for longer than a blip.
+func TestCartesiaRefusedHandshakeCarriesTheStatus(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusPaymentRequired)
+		w.Write([]byte("Model credits limit reached"))
+	}))
+	defer srv.Close()
+	c := NewCartesiaWSClient("key", "", "ws"+strings.TrimPrefix(srv.URL, "http"))
+	_, err := c.SynthesizeStream(context.Background(), "hello")
+	if err == nil || !strings.Contains(err.Error(), "402") {
+		t.Fatalf("err = %v, want the 402", err)
+	}
+	if d, _ := classify(err, defaultCooldown); d != longCooldown {
+		t.Errorf("cooldown = %s, want %s (out of credit)", d, longCooldown)
+	}
+}
+
+// Live: Cartesia out of credit, and an English-only Deepgram voice read the
+// agent's Tamil, Hindi and Dutch. A voice that speaks the language goes first.
+func TestFailoverPrefersAVoiceThatSpeaksTheLanguage(t *testing.T) {
+	cart := &fakeVoice{err: errors.New("cartesia ws dial: 402 Payment Required")}
+	dg, el := &fakeVoice{chunks: audio("dg")}, &fakeVoice{chunks: audio("el")}
+	f := newTestFailover(t, map[string]*fakeVoice{"cartesia": cart, "deepgram": dg, "elevenlabs": el}, FailoverOptions{
+		Order: []string{"cartesia", "deepgram", "elevenlabs"},
+		Speaks: map[string]func(string) bool{
+			"deepgram":   func(l string) bool { return l == "en" },
+			"elevenlabs": func(l string) bool { return l == "en" || l == "ta" },
+		},
+	})
+	if got, _ := speak(t, f, "[lang:ta] வணக்கம்"); got != "el" {
+		t.Fatalf("Tamil spoken by %q, want elevenlabs", got)
+	}
+	if got, _ := speak(t, f, "[lang:en] Hello."); got != "dg" {
+		t.Fatalf("English spoken by %q, want deepgram (next in order)", got)
+	}
+}
+
+// No voice that speaks it is up: the one that doesn't still reads it, rather
+// than silence.
+func TestFailoverStillSpeaksWhenNoVoiceKnowsTheLanguage(t *testing.T) {
+	dg := &fakeVoice{chunks: audio("dg")}
+	f := newTestFailover(t, map[string]*fakeVoice{"deepgram": dg}, FailoverOptions{
+		Order:  []string{"deepgram"},
+		Speaks: map[string]func(string) bool{"deepgram": func(l string) bool { return l == "en" }},
+	})
+	if got, _ := speak(t, f, "[lang:hi] नमस्ते"); got != "dg" {
+		t.Fatalf("got %q", got)
+	}
+}
+
+func TestSpeaksFor(t *testing.T) {
+	cfg := &config.Config{}
+	if s := speaksFor(cfg, "deepgram"); !s("en") || s("ta") {
+		t.Error("default Aura voice is English only")
+	}
+	cfg.Deepgram.TTSModel = "aura-2-celeste-es"
+	if s := speaksFor(cfg, "deepgram"); !s("es") || s("en") {
+		t.Error("a Spanish Aura voice speaks Spanish")
+	}
+	if s := speaksFor(cfg, "elevenlabs"); !s("ta") || !s("hi") || s("bn") {
+		t.Error("ElevenLabs v2.5 speaks Tamil and Hindi, not Bengali")
+	}
+	if s := speaksFor(cfg, "cartesia"); !s("hi") || s("od") {
+		t.Error("Cartesia speaks Hindi, not Odia")
+	}
+	if speaksFor(cfg, "vibevoice") != nil {
+		t.Error("the voice router picks its own voice per language")
 	}
 }

@@ -129,6 +129,7 @@ func peerOptionsFrom(r *http.Request) session.PeerOptions {
 	return session.PeerOptions{
 		Direction: q.Get("direction"),
 		AECAbsent: q.Get("aec") == "none",
+		Voice:     q.Get("voice"),
 	}
 }
 
