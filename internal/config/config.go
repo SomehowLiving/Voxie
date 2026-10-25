@@ -20,6 +20,7 @@ import (
 type Config struct {
 	Server     ServerConfig     `toml:"server"`
 	Debug      DebugConfig      `toml:"debug"`
+	Reports    ReportsConfig    `toml:"reports"`
 	Plugins    PluginsConfig    `toml:"plugins"`
 	Display    DisplayConfig    `toml:"display"`
 	GitHub     GitHubConfig     `toml:"github"`
@@ -50,6 +51,16 @@ type Config struct {
 	Pgvector   PgvectorConfig   `toml:"pgvector"`
 	Supabase   SupabaseConfig   `toml:"supabase"`
 }
+
+// ReportsConfig: per-call reports for `voxie report`. Numbers and labels
+// only, never what was said, so they're on unless turned off.
+type ReportsConfig struct {
+	Enabled *bool  `toml:"enabled"` // default true
+	Dir     string `toml:"dir"`     // default "reports"
+}
+
+// On reports whether call reports are written.
+func (r ReportsConfig) On() bool { return r.Enabled == nil || *r.Enabled }
 
 type DebugConfig struct {
 	Bind                 string `toml:"bind"`
@@ -651,6 +662,7 @@ func Load(path string) (*Config, error) {
 
 	// Apply defaults
 	setDefault(&cfg.Server.Port, "8080")
+	setDefault(&cfg.Reports.Dir, "reports")
 	if cfg.Server.SessionGraceMs == 0 {
 		cfg.Server.SessionGraceMs = 30000
 	}

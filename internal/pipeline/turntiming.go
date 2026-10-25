@@ -5,6 +5,8 @@ import (
 	"log"
 	"sync/atomic"
 	"time"
+
+	"github.com/streamcoreai/streamcore-server/internal/callreport"
 )
 
 // turnClock times one caller turn, from the moment the caller stopped
@@ -28,11 +30,23 @@ type turnClock struct {
 	checkMs   int64
 	language  string
 	provider  string
+	// confidence is speech-to-text's for the turn's final.
+	confidence float64
 
 	llmFirst      atomic.Int64 // unix nanos
 	firstSentence atomic.Int64
 	holdNs        atomic.Int64
 	logged        atomic.Bool
+
+	// For the call report: the timeline as logged, when the first audio went
+	// out and when the caller cut in (unix nanos), the voice provider of the
+	// first sentence and the reply's language.
+	stages       atomic.Pointer[callreport.Stages]
+	approx       atomic.Bool
+	firstAudioAt atomic.Int64
+	cutAt        atomic.Int64
+	voice        atomic.Value // string
+	replyLang    atomic.Value // string
 }
 
 func newTurnClock(ev TranscriptEvent, language string) *turnClock {
@@ -50,6 +64,7 @@ func (c *turnClock) firstAudio() {
 		return
 	}
 	now := time.Now()
+	c.firstAudioAt.Store(now.UnixNano())
 	start, approx := c.speechEnd, ""
 	// The onset VAD can miss a short phrase; its last reading is then from
 	// an earlier utterance (live: "stt 14.38s" for a final that came on time).
@@ -64,6 +79,12 @@ func (c *turnClock) firstAudio() {
 		sentence = llm
 	}
 	hold := time.Duration(c.holdNs.Load())
+	c.approx.Store(approx != "")
+	c.stages.Store(&callreport.Stages{
+		STT: c.finalAt.Sub(start).Milliseconds(), Check: c.checkMs, Merge: c.dispatch.Sub(c.finalAt).Milliseconds(),
+		LLM: llm.Sub(c.dispatch).Milliseconds(), FirstSentence: sentence.Sub(llm).Milliseconds(),
+		Voice: (now.Sub(sentence) - hold).Milliseconds(), Hold: hold.Milliseconds(), Total: now.Sub(start).Milliseconds(),
+	})
 	log.Printf("[turn-timing] %s%s to first audio: stt %s (check %s), merge %s, llm %s (first sentence +%s), voice %s, hold %s [%s %s]",
 		approx, secs(now.Sub(start)),
 		secs(c.finalAt.Sub(start)), secs(time.Duration(c.checkMs)*time.Millisecond),

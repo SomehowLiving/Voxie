@@ -11,6 +11,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/streamcoreai/streamcore-server/internal/audio"
+	"github.com/streamcoreai/streamcore-server/internal/callreport"
 	"github.com/streamcoreai/streamcore-server/internal/llm"
 	"github.com/streamcoreai/streamcore-server/internal/procstat"
 	"github.com/streamcoreai/streamcore-server/internal/rag"
@@ -70,10 +71,13 @@ func (p *Pipeline) runAgent() {
 				// off just as a barge-in does: the app hears what the caller
 				// heard.
 				p.captureHeard()
+				p.markCut(true)
 			}
 			gen := p.supersedeResponse()
 			p.lastTurn = answeredTurn{text: text, language: language, at: time.Now(), gen: gen}
-			p.clocks.Store(gen, newTurnClock(ev, language))
+			clock := newTurnClock(ev, language)
+			clock.confidence = p.lastUserConfidence()
+			p.clocks.Store(gen, clock)
 			p.sendEvent(stateMsg{Type: "state", State: "thinking"})
 			go func() {
 				defer p.recoverPanic("respond")
@@ -82,6 +86,7 @@ func (p *Pipeline) runAgent() {
 
 		case <-p.interruptCh:
 			p.captureHeard()
+			p.markCut(false)
 			log.Println("[agent] interrupted (barge-in)")
 			cutsLastTurn := p.responseGen.Load() == p.lastTurn.gen
 			heard := p.ledger.heardFrames(p.lastTurn.gen)
@@ -369,6 +374,9 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 		func(sentence string) {
 			if clock != nil {
 				stampOnce(&clock.firstSentence)
+				if l := tts.SentenceLanguage(sentence); l != "" {
+					clock.replyLang.CompareAndSwap(nil, l)
+				}
 			}
 			select {
 			case sentences <- sentence:
@@ -385,8 +393,14 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 		log.Printf("[agent] backend asked to end the call after this response")
 		p.endCallGen.Store(gen + 1)
 	}
+	if r, ok := p.llmClient.(llm.OutcomeReporter); ok {
+		if o := r.TakeOutcome(); o != nil {
+			p.report.SetOutcome(callreport.Outcome{Success: o.Success, Reason: o.Reason})
+		}
+	}
 
 	wg.Wait()
+	p.reportTurn(clock, userText, language, err, respCtx.Err() != nil)
 
 	if p.transcriptLog != nil {
 		if txt, _ := p.lastAgentText.Load().(string); txt != "" {
@@ -613,6 +627,9 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 				scancel()
 				return
 			}
+			if chunk.Provider != "" && clock != nil {
+				clock.voice.CompareAndSwap(nil, chunk.Provider)
+			}
 			received += len(chunk.PCM)
 
 			samples := append(leftover, audio.Linear16BytesToPCM(chunk.PCM)...)
@@ -823,6 +840,7 @@ func (p *Pipeline) finishResponse(gen uint64) {
 	// instead of cut off.
 	if p.endCallGen.Load() == gen+1 {
 		log.Printf("[agent] final response played; ending the call")
+		p.endedBy.CompareAndSwap(nil, "agent")
 		p.cancel()
 	}
 }
