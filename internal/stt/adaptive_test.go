@@ -663,3 +663,42 @@ func TestAdaptiveUsesTheIdentifiersWordsForALanguageNoListenerHears(t *testing.T
 		t.Fatal("switched listener for a language no listener hears")
 	}
 }
+
+// Live: after Japanese, multi heard "And one more thing." as katakana,
+// labelled Japanese at 0.96. The check names English, which multi hears --
+// but the turn it wrote is in the wrong script, so Whisper's words stand.
+func TestAdaptiveReplacesEnglishWrittenInKatakana(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "en", Text: "And one more thing."}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("アンドワンモーティング。", "ja", 0.96))
+	if got := h.next(); got.Text != "And one more thing." || got.Language != "en" {
+		t.Fatalf("got %+v", got)
+	}
+	if h.log.count() != 1 {
+		t.Error("multi hears English: no switch needed")
+	}
+}
+
+// A Japanese sentence is not checked for being katakana.
+func TestAdaptivePassesJapaneseWithKanjiStraightThrough(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "ja"}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("ホテルの予約を変更したいです。", "ja", 0.98))
+	h.next()
+	if groq.callCount() != 0 {
+		t.Error("a normal Japanese sentence was held for a check")
+	}
+}
+
+func TestScriptHelpers(t *testing.T) {
+	for s, want := range map[string]bool{"アンドワンモーティング": true, "コーヒー": true, "ホテルの予約": false, "OK": false} {
+		if mostlyKatakana(s) != want {
+			t.Errorf("mostlyKatakana(%q) != %v", s, want)
+		}
+	}
+	if !wrongScript("アンドワンモーティング", "en") || wrongScript("Hello, मेरा order", "en") || wrongScript("नमस्ते", "hi") {
+		t.Error("wrongScript")
+	}
+}

@@ -488,6 +488,12 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 	if item.spec.covers(id.Language) {
 		log.Printf("[stt:adaptive] checked turn (%s): %s says %s in %s; %s hears it", heard, id.Source, id.Language, elapsed, item.spec)
 		a.agree(id.Language)
+		if item.final != nil && id.Text != "" && wrongScript(item.final.Text, id.Language) {
+			// The listener hears the language, but wrote this turn in another
+			// script: English as katakana. The identifier's words are the turn.
+			a.onResult(TranscriptResult{Text: id.Text, IsFinal: true, Language: id.Language, Provider: id.Source})
+			return
+		}
 		a.release(item)
 		return
 	}
@@ -580,6 +586,12 @@ func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int) checkKind {
 		return checkNone
 	}
 	if r.Confidence > 0 && r.Confidence < a.minConfidence {
+		return checkHold
+	}
+	// Live, after a Japanese sentence multi heard "And one more thing." as
+	// "アンドワンモーティング" -- labelled Japanese at 0.96. Japanese sentences
+	// mix kanji and hiragana; one in katakana alone is foreign words.
+	if r.Language == "ja" && mostlyKatakana(r.Text) {
 		return checkHold
 	}
 	if r.Language == "hi" && !a.settled() {
@@ -722,6 +734,39 @@ func (a *adaptiveClient) identifyTurn(item adaptiveItem, thorough bool) (Identif
 
 // isIndian: Hindi or a regional Indian language -- what Sarvam's labels can
 // be trusted for.
+// mostlyKatakana: at least 4 katakana and nearly no other letters.
+func mostlyKatakana(s string) bool {
+	kata, other := 0, 0
+	for _, r := range s {
+		switch {
+		case unicode.Is(unicode.Katakana, r) || r == 'ー':
+			kata++
+		case unicode.IsLetter(r):
+			other++
+		}
+	}
+	return kata >= 4 && other*10 <= kata
+}
+
+// nonLatinLanguages are written in other scripts.
+var nonLatinLanguages = setOf("ja", "zh", "ko", "hi", "ru", "uk", "ar", "el", "he", "th", "fa", "ur",
+	"bn", "ta", "te", "kn", "ml", "mr", "gu", "pa", "od", "ne", "si", "my", "km", "lo", "am", "bg", "sr")
+
+// wrongScript: lang is written in Latin script and text has no Latin letters.
+func wrongScript(text, lang string) bool {
+	if nonLatinLanguages[lang] {
+		return false
+	}
+	letters := false
+	for _, r := range text {
+		if unicode.Is(unicode.Latin, r) {
+			return false
+		}
+		letters = letters || unicode.IsLetter(r)
+	}
+	return letters
+}
+
 // squash keeps only letters, combining marks and digits, lowercased, so
 // "바꿔 주세요." and "바꿔주세요" compare equal.
 func squash(s string) string {
