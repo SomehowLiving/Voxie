@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "type": "module",
+  "description": "voxieai.vercel.app: static pages, plus the listener-ratings API in api/ (Vercel Functions).",
+  "dependencies": {
+    "mongodb": "6.10.0"
+  }
+}
