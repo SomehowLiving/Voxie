@@ -1,0 +1,38 @@
+# Release — on a version tag (v0.2.0), build both images, check that each
+# starts, and publish them to ghcr.io as <version>, <short commit> and latest
+# (tools/release/build-images.sh). No other tag is touched.
+#
+# Only a pushed tag starts this. A GitHub Release does not: that event belongs
+# to deploy-ec2.yml, inherited from StreamCore.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  images:
+    name: Build, check & publish images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # The voice router image is ~5 GB (PyTorch with CUDA); the runner needs room.
+      - name: Free disk space
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
+
+      - name: Log in to ghcr.io
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build, check and push
+        run: tools/release/build-images.sh "${GITHUB_REF_NAME}" --push
