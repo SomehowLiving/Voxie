@@ -17,11 +17,13 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/streamcoreai/streamcore-server/internal/callreport"
 	"github.com/streamcoreai/streamcore-server/internal/config"
 	"github.com/streamcoreai/streamcore-server/internal/plugin"
 	"github.com/streamcoreai/streamcore-server/internal/rag"
 	"github.com/streamcoreai/streamcore-server/internal/session"
 	"github.com/streamcoreai/streamcore-server/internal/signaling"
+	"github.com/streamcoreai/streamcore-server/internal/tts"
 	turnserver "github.com/streamcoreai/streamcore-server/internal/turn"
 	"github.com/streamcoreai/streamcore-server/internal/twilio"
 )
@@ -31,9 +33,21 @@ func main() {
 	// reply, first audio) are hundreds of milliseconds apart.
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 
+	if len(os.Args) > 1 && os.Args[1] == "report" {
+		os.Exit(runReport(os.Args[2:], os.Stdout))
+	}
+
 	cfg, err := config.Load("")
 	if err != nil {
 		log.Fatalf("config: %v", err)
+	}
+	if cfg.Reports.On() {
+		if w, err := callreport.NewWriter(cfg.Reports.Dir); err != nil {
+			log.Printf("Warning: call reports off: %v", err)
+		} else {
+			callreport.SetDefault(w)
+			log.Printf("Call reports in %s (voxie report %s)", cfg.Reports.Dir, cfg.Reports.Dir)
+		}
 	}
 	debugSrv, err := startDebugServer(cfg.Debug)
 	if err != nil {
@@ -90,6 +104,7 @@ func main() {
 	}
 
 	mux := newPublicMux(whipHandler, issueToken)
+	mux.HandleFunc("/voices", voicesHandler(cfg))
 	// Phone calls through Twilio Media Streams. Only with Twilio's auth token:
 	// it's what proves a stream really comes from Twilio, and without it the
 	// endpoint would let anyone start a call on this server's API keys.
@@ -411,5 +426,21 @@ func withLegacyDeveloperSettings(cfg *config.Config, settings map[string]map[str
 			"network_access":  cfg.Codex.NetworkAccess,
 			"config":          cfg.Codex.Config,
 		}
+	}
+}
+
+// voicesHandler lists the configured voices, and whether a call may choose
+// one (?voice= on /whip, with [tts] client_choice). Names only.
+func voicesHandler(cfg *config.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]any{
+			"voices":    tts.Voices(cfg),
+			"choosable": cfg.TTS.ClientChoice && cfg.TTS.Provider == "failover",
+		})
 	}
 }

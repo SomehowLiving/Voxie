@@ -83,6 +83,12 @@ func (p *Pipeline) runInbound() {
 		}
 		if result.IsFinal {
 			ev.TurnStart = time.Now()
+			ev.CheckMs, ev.Provider = result.CheckMs, result.Provider
+			if n := p.lastCallerSoundAt.Load(); n != 0 {
+				if end := time.Unix(0, n); time.Since(end) < 30*time.Second {
+					ev.SpeechEndAt = end
+				}
+			}
 			// Sampled here, not in runAgent: the turn buffer may hold this
 			// final for up to turnMergeMax, by which point the agent has
 			// finished and the talking-over question can no longer be asked.
@@ -96,6 +102,7 @@ func (p *Pipeline) runInbound() {
 			ev.OverAgentSpeech = p.agentSpeechWithin(grace)
 			hasPartialText.Store(false)
 			latestPartial.Store("text", "")
+			p.lastPartialAt.Store(0)
 			// The utterance is over, so a tool that fired on it may fire again
 			// on the next thing said.
 			p.reflex.endUtterance()
@@ -115,6 +122,7 @@ func (p *Pipeline) runInbound() {
 				// Require at least 2 non-whitespace characters to count as real
 				// speech. Single-char noise artifacts ("uh", "m") are ignored.
 				hasPartialText.Store(true)
+				p.lastPartialAt.Store(time.Now().UnixNano())
 			}
 			// Before the turn buffer, before the model. A manifest that
 			// declared on_partial gets its packet out now; everything else

@@ -21,6 +21,12 @@ type TranscriptEvent struct {
 	Language  string
 	langChars int       // length of the piece Language came from
 	TurnStart time.Time // set on final transcripts for latency measurement
+	// SpeechEndAt is when the caller's voice was last heard before this
+	// final (zero if unknown); latency is measured from it.
+	SpeechEndAt time.Time
+	// CheckMs is how long the listener held the final for a language check.
+	CheckMs  int64
+	Provider string
 	// MergeWaitMs is how long the turn buffer held this turn open merging
 	// continuations, so latency accounting can separate debounce from work.
 	MergeWaitMs int64
@@ -69,4 +75,8 @@ type PeerOptions struct {
 	// WHIP URL). A browser cancels echo in getUserMedia, so absent means
 	// present, which is what every client predating the hint is.
 	AECAbsent bool
+
+	// Voice is the voice the call asked for (?voice= on the WHIP URL); see
+	// [tts] client_choice. Empty: the deployment's order.
+	Voice string
 }

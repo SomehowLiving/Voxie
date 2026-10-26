@@ -1,11 +1,11 @@
 # Voxie from the published images: no build, no Go or PyTorch toolchain.
 #
-#   docker login ghcr.io                                # while the images are private
 #   cp .env.example .env                                # add your keys
 #   docker compose -f compose.release.yaml up           # Linux (Docker Engine)
 #   open http://localhost:8400
 #
-# VOXIE_TAG picks a version (default: latest). Pin one in production.
+# VOXIE_TAG picks a version (default: latest), e.g. VOXIE_TAG=v0.2.0. Pin one in
+# production. Versions are published by .github/workflows/release.yml.
 # The server and quickstart use host networking (WebRTC media needs the
 # server reachable on UDP). On Docker Desktop (Windows, WSL2, macOS) run
 # only the voice router here and the server natively: see README.
@@ -16,6 +16,7 @@ services:
     env_file: .env
     volumes:
       - ./configs/voxie.toml:/config.toml:ro
+      - ./reports:/reports                  # call reports: voxie report reports
     restart: unless-stopped
 
   voice-router:

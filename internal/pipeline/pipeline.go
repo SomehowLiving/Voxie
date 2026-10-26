@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/pion/webrtc/v4"
+	"github.com/streamcoreai/streamcore-server/internal/callreport"
 	"github.com/streamcoreai/streamcore-server/internal/config"
 	"github.com/streamcoreai/streamcore-server/internal/llm"
 	"github.com/streamcoreai/streamcore-server/internal/plugin"
@@ -139,7 +140,10 @@ type Pipeline struct {
 	// flight through STT, and holds a check-in turn ("hello?") while the
 	// caller is saying it again.
 	lastCallerSoundAt atomic.Int64
-	greetingDecided   atomic.Bool
+	// lastPartialAt (unix nanos, 0 = none since the last final) is when the
+	// listener last sent partial words: the caller is mid-utterance.
+	lastPartialAt   atomic.Int64
+	greetingDecided atomic.Bool
 
 	// transcriptLog is the running record of the conversation. The rolling
 	// summary and the low-confidence heuristics read it; it is not the
@@ -198,6 +202,14 @@ type Pipeline struct {
 	turnLanguage atomic.Value // string
 	// ledger records which sentences of the current response actually played.
 	ledger playbackLedger
+	// lastTurn is the caller's last turn as answered; owned by runAgent.
+	lastTurn answeredTurn
+	// clocks times each turn's reply: response gen → *turnClock.
+	clocks sync.Map
+	// report records the call for `voxie report` (nil when reports are off);
+	// endedBy is who ended it, when that's known: "agent" or "error".
+	report  *callreport.Call
+	endedBy atomic.Value // string
 	// lifecycleEmittedGen guarantees one completion event per response
 	// generation; latestLifecycleTurn rejects late plugin output from an older
 	// turn when a newer turn has already completed.
@@ -268,7 +280,7 @@ func NewWithMedia(
 	llmClient := conv.LLM
 	var ttsClient tts.Client
 	if !cfg.RealtimeEnabled() {
-		ttsClient, err = tts.NewClient(cfg)
+		ttsClient, err = tts.NewClientFor(cfg, opts.Voice)
 		if err != nil {
 			return nil, err
 		}
@@ -288,6 +300,7 @@ func NewWithMedia(
 		ragClient:     ragClient,
 		pluginMgr:     pluginMgr,
 		reflex:        newPartialReflex(pluginMgr),
+		report:        callreport.NewCall(conv.SessionID, resumed),
 		imageRecv:     imgRecv,
 		vad:           vad.NewDefault(),
 		bargeInVAD:    vad.NewBargeIn(),
@@ -424,6 +437,7 @@ func NewWithMedia(
 func (p *Pipeline) recoverPanic(name string) {
 	if r := recover(); r != nil {
 		log.Printf("[pipeline] panic in %s: %v\n%s", name, r, debug.Stack())
+		p.endedBy.CompareAndSwap(nil, "error")
 		p.cancel()
 	}
 }
@@ -494,6 +508,13 @@ func (p *Pipeline) Start() {
 	}
 
 	wg.Wait()
+	// Anything else that ends a call (the line dropping, a hang-up, the
+	// page closing) is the caller's doing as far as the report goes.
+	endedBy, _ := p.endedBy.Load().(string)
+	if endedBy == "" {
+		endedBy = "caller"
+	}
+	p.report.End(endedBy, p.speaking.Load())
 	log.Println("[pipeline] stopped")
 }
 

@@ -59,6 +59,10 @@ const sessions = new Map(); // session_id -> { caller, history }
 // Only answer in a language the voice can speak *now* (if Sarvam is down,
 // Tamil can't be voiced): English beats silence.
 let voiceLanguages = { list: null, checkedAt: 0 };
+// The voice's gender, from the same health check: in Hindi and other
+// languages whose verbs agree with the speaker, a woman's voice saying
+// "मैं बात कर सकता हूँ" (masculine) sounds wrong.
+let voiceGender = "";
 async function speakable() {
   if (Date.now() - voiceLanguages.checkedAt < 15_000) return voiceLanguages.list;
   let list = null;
@@ -66,6 +70,7 @@ async function speakable() {
     const res = await fetch(VOICE_HEALTH, { signal: AbortSignal.timeout(1000) });
     const body = await res.json();
     if (Array.isArray(body.languages)) list = body.languages;
+    if (body.voice_gender === "female" || body.voice_gender === "male") voiceGender = body.voice_gender;
   } catch {}
   voiceLanguages = { list, checkedAt: Date.now() };
   return list;
@@ -80,12 +85,12 @@ const languageName = (code) =>
 function systemPrompt(languages) {
   const voiced = languages ? languages.map(languageName).join(", ") : "any";
   return `You are Voxie, a friendly voice assistant on a live phone call.
-- You're a demo: you have no real business data (hours, prices, bookings). If asked, say so kindly instead of making something up.
-- Reply in the language the caller is speaking right now; if they switch, switch with them.
-- Your voice can only speak these languages: ${voiced}. If the caller's language isn't one of them, reply in English. When you mention languages to the caller, say their names, never the codes.
-- One or two short spoken sentences. No markdown, lists or emoji.
+- You're a demo with no real business data (hours, prices, bookings): if asked for those, say so kindly instead of making something up. That's the only limit: you speak every language below fluently.
+- Reply in the language the caller is speaking right now; if they switch, switch with them. Talk the way people speak on a phone call in that language, not the way it's written: everyday spoken words, and in Indian languages the colloquial form, with the English words people really use (payment, ticket, okay). Never formal, literary or bookish language.
+- Your voice can only speak these languages: ${voiced}. Speak, translate and teach any of them whenever the caller asks. If the caller's language isn't one of them, reply in English. When you mention languages to the caller, say their names, never the codes.
+- One or two short spoken sentences. No markdown, lists or emoji. The caller only hears you: never add a transliteration, translation or pronunciation in brackets after a word, or the voice says it twice. Say each word once, in its own script.
 - Caller lines may start with [heard in: xx], the language speech recognition heard; trust it for real sentences.
-- Begin every reply with [lang:xx], the ISO 639-1 code of your reply's language (e.g. [lang:hi]).
+${voiceGender ? `- Your voice is a ${voiceGender === "female" ? "woman's" : "man's"}: wherever grammar marks the speaker's gender (Hindi, Marathi, Gujarati, Punjabi and Urdu verbs; French, Spanish and Russian adjectives), speak of yourself as a ${voiceGender === "female" ? "woman: मैं बात कर सकती हूँ, not सकता" : "man: मैं बात कर सकता हूँ, not सकती"}.\n` : ""}- Begin every reply with [lang:xx], the ISO 639-1 code of your reply's language (e.g. [lang:hi]).
 - If the caller says goodbye or wants to end the call, say a short goodbye and end with [end].`;
 }
 
@@ -94,11 +99,15 @@ async function think(history) {
   const reply = await ask(history, languages);
   // Models don't always obey the language list; a reply the voice can't
   // speak would be silence, so ask once more, for English.
-  const lang = /^\s*\[lang:([a-z]{2,3})\]/i.exec(reply.text)?.[1]?.toLowerCase();
-  if (languages && lang && !languages.includes(lang)) {
-    return ask([...history, { role: "system", content: "Your voice can't speak that language. Reply in English, starting with [lang:en]." }], languages);
-  }
-  return reply;
+  const langOf = (r) => /^\s*\[lang:([a-z]{2,3})\]/i.exec(r.text)?.[1]?.toLowerCase();
+  const speaks = (r) => !languages || !langOf(r) || languages.includes(langOf(r));
+  if (speaks(reply)) return reply;
+  const retry = await ask([...history, { role: "system", content: "Your voice can't speak that language. Reply in English, starting with [lang:en]." }], languages);
+  if (speaks(retry)) return retry;
+  // Live, the model answered in Urdu twice, and the voice read Urdu text it
+  // can't speak as fifteen seconds of noise. Never send that to the voice.
+  console.log(`${ts()} [agent] the model kept answering in [lang:${langOf(retry)}]; saying so in English instead`);
+  return { text: "[lang:en] Sorry, I can't speak that language yet. Could we continue in English, or another language I speak?", endCall: false };
 }
 
 const GOODBYE = /\b(bye|goodbye|that's all|adi[oó]s|chao|au revoir|tsch[uü]ss|auf wiedersehen|ciao|arrivederci|tchau|do widzenia|dzi[eę]kuj[eę]|tot ziens|hej d[aå]|näkemiin|farvel|la revedere|naschledanou)\b|さようなら|じゃあね|再见|拜拜|안녕히|до свидания|до побачення|अलविदा|बाय|ठीक है धन्यवाद|போய் வருகிறேன்|பை|నమస్తే బై|বিদায়/i;
@@ -176,6 +185,7 @@ async function handleAgent(req) {
   const call = sessions.get(req.session_id) ?? {
     caller: callers.get(req.resource_id ?? "") ?? { name: "there", language: "", region: "" },
     history: [],
+    turn: 0, // the latest chat turn: a reply to an older one is never stored
   };
   sessions.set(req.session_id, call);
 
@@ -191,6 +201,14 @@ async function handleAgent(req) {
     case "chat": {
       const said = (req.text ?? "").trim();
       if (!said) return { text: "" };
+      const turn = ++call.turn;
+      if (req.replaces_last_turn) {
+        // The caller paused mid-sentence and went on: this turn is the whole
+        // sentence. Forget the first part and the reply nobody heard.
+        const i = call.history.findLastIndex((m) => m.role === "user");
+        if (i >= 0) call.history.splice(i);
+        console.log(`${ts()} [agent] the caller went on after a pause; answering the whole sentence`);
+      }
       publish({ kind: "caller", text: said, language: req.language });
       if (req.interrupted_text) {
         // The caller cut the last reply off: remember only what they heard.
@@ -213,6 +231,9 @@ async function handleAgent(req) {
       // Models sometimes add [end] to a first reply; a call isn't over before
       // the caller has said more than one thing.
       if (call.history.filter((m) => m.role === "user").length < 2) reply.endCall = false;
+      // A newer turn arrived while this one was thinking (Voxie cancelled this
+      // request): the caller will never hear this reply.
+      if (turn !== call.turn) return { text: "" };
       call.history.push({ role: "assistant", content: reply.text });
       publish({ kind: "agent", text: untagged(reply.text), endCall: reply.endCall });
       return { text: reply.text, ...(reply.endCall ? { end_call: true } : {}) };

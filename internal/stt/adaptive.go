@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/streamcoreai/streamcore-server/internal/config"
@@ -39,16 +40,27 @@ import (
 // Partials pass straight through, so barge-in never waits on a check.
 
 const (
-	adaptiveBufferMax      = 20 * time.Second       // caller audio kept for identification
-	adaptivePreRoll        = 300 * time.Millisecond // audio kept from before a turn started
-	adaptiveHoldMax        = 3 * time.Second        // longest a turn is held for a check
-	adaptiveMaxChecks      = 6                      // per call
-	adaptiveMaxNoFinal     = 3                      // checks on speech with no transcript, per call
-	adaptiveSettleAfter    = 2                      // agreeing checks before the language is settled
-	noFinalSpeechFrames    = 75                     // ~1.5s of speech...
-	shortTurnFrames        = 40                     // under ~0.8s of voice: too little to identify
-	voicedPeak             = 1000                   // a frame this loud has the caller's voice in it
-	noFinalQuiet           = 2 * time.Second        // ...then this long with no transcript
+	adaptiveBufferMax   = 20 * time.Second       // caller audio kept for identification
+	adaptivePreRoll     = 300 * time.Millisecond // audio kept from before a turn started
+	adaptiveHoldMax     = 3 * time.Second        // longest a turn is held for a check
+	adaptiveMaxChecks   = 12                     // per call: a caller may hop through several languages
+	adaptiveMaxNoFinal  = 6                      // checks on speech with no transcript, per call
+	adaptiveSettleAfter = 2                      // agreeing checks before the language is settled
+	noFinalSpeechFrames = 75                     // ~1.5s of speech...
+	shortTurnFrames     = 40                     // under ~0.8s of voice: too little to identify
+	voicedPeak          = 1000                   // a frame this loud has the caller's voice in it
+	noFinalQuiet        = 2 * time.Second        // ...then this long with no transcript
+	// A listener fixed to the wrong language can send a few garbage partial
+	// words and never a final: live, Deepgram fixed to Korean heard a Hindi
+	// caller as "자, 펜..." and nothing more, and the caller got 27s of
+	// silence. Words with no final this long after the caller went quiet
+	// count as no transcript. A real final comes well within it.
+	noFinalWordsGrace = 3 * time.Second
+	// After a switch replaces a misheard turn with the identifier's
+	// transcript, the replayed audio can make the new listener report the
+	// turn's tail again ("주세요." after "…바꿔주세요"); within this window a
+	// final already contained in the replacement is dropped.
+	replayDedupeWindow     = 6 * time.Second
 	defaultHindiConfidence = 0.97
 	defaultMinConfidence   = 0.85
 )
@@ -178,6 +190,7 @@ type adaptiveClient struct {
 	indianPrior     bool // the caller is probably in India: check Hindi turns until settled
 	holdMax         time.Duration
 	noFinalQuiet    time.Duration
+	wordsGrace      time.Duration
 
 	mu               sync.Mutex
 	current          Client
@@ -192,7 +205,12 @@ type adaptiveClient struct {
 	noFinalQueued    bool
 	// heardWords: the listener has sent partial words since the last final,
 	// so it is hearing the caller -- whatever the loudness says.
-	heardWords bool
+	heardWords  bool
+	lastWordsAt time.Time
+	// replaced is the identifier's transcript that stood in for a misheard
+	// turn, squashed; see replayDedupeWindow.
+	replaced      string
+	replacedUntil time.Time
 
 	queue chan adaptiveItem
 	done  chan struct{}
@@ -260,7 +278,7 @@ func startAdaptive(ctx context.Context, build listenerFactory, ids []namedIdenti
 	a := &adaptiveClient{
 		ctx: actx, cancel: cancel, build: build, ids: ids, onResult: onResult,
 		hindiConfidence: hindiConfidence, minConfidence: minConfidence, indianPrior: indianPrior,
-		holdMax: adaptiveHoldMax, noFinalQuiet: noFinalQuiet, turnStart: time.Now(),
+		holdMax: adaptiveHoldMax, noFinalQuiet: noFinalQuiet, wordsGrace: noFinalWordsGrace, turnStart: time.Now(),
 		queue: make(chan adaptiveItem, 32), done: make(chan struct{}),
 	}
 	spec := start
@@ -318,9 +336,12 @@ func (a *adaptiveClient) SendAudio(data []byte) error {
 		a.loudSinceFinal++
 		a.lastLoudAt = now
 	}
-	if !a.noFinalQueued && !a.heardWords && a.loudSinceFinal >= noFinalSpeechFrames && now.Sub(a.lastLoudAt) > a.noFinalQuiet {
-		// The caller clearly spoke and the listener said nothing: Chinese on
-		// Deepgram multi comes back empty.
+	quiet := now.Sub(a.lastLoudAt)
+	wordsStalled := a.heardWords && quiet > a.noFinalQuiet+a.wordsGrace && now.Sub(a.lastWordsAt) > a.wordsGrace
+	if !a.noFinalQueued && (!a.heardWords || wordsStalled) && a.loudSinceFinal >= noFinalSpeechFrames && quiet > a.noFinalQuiet {
+		// The caller clearly spoke and the listener said nothing (Chinese on
+		// Deepgram multi comes back empty), or only a few words that never
+		// became a turn.
 		a.noFinalQueued = true
 		a.enqueueLocked(adaptiveItem{pcm: a.turnAudioLocked(), spec: a.spec, voiced: a.voicedSinceFinal, from: a.acceptID, at: now})
 	}
@@ -340,6 +361,7 @@ func (a *adaptiveClient) listenerResult(id int, r TranscriptResult) {
 		// final waited behind it for 1-2.6s.
 		if strings.TrimSpace(r.Text) != "" {
 			a.heardWords = true
+			a.lastWordsAt = time.Now()
 		}
 		a.mu.Unlock()
 		a.onResult(r)
@@ -350,6 +372,14 @@ func (a *adaptiveClient) listenerResult(id int, r TranscriptResult) {
 		r.Language = a.spec.language
 	}
 	now := time.Now()
+	if now.Before(a.replacedUntil) {
+		if s := squash(r.Text); s != "" && strings.Contains(a.replaced, s) {
+			a.mu.Unlock()
+			log.Printf("[stt:adaptive] dropped %q: the replayed end of the turn already sent", truncateText(r.Text, 40))
+			return
+		}
+	}
+	a.replaced, a.replacedUntil = "", time.Time{}
 	item := adaptiveItem{final: &r, pcm: a.turnAudioLocked(), spec: a.spec, voiced: a.voicedSinceFinal, from: id, at: now}
 	a.turnStart = now
 	a.loudSinceFinal, a.voicedSinceFinal = 0, 0
@@ -410,7 +440,7 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 	}
 	kind := checkHold
 	if item.final != nil {
-		kind = a.checkKind(*item.final, item.voiced)
+		kind = a.checkKind(*item.final, item.voiced, item.spec)
 	}
 	switch kind {
 	case checkNone:
@@ -458,18 +488,35 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 	if item.spec.covers(id.Language) {
 		log.Printf("[stt:adaptive] checked turn (%s): %s says %s in %s; %s hears it", heard, id.Source, id.Language, elapsed, item.spec)
 		a.agree(id.Language)
+		if item.final != nil && id.Text != "" && wrongScript(item.final.Text, id.Language) {
+			// The listener hears the language, but wrote this turn in another
+			// script: English as katakana. The identifier's words are the turn.
+			a.replace(item, id)
+			return
+		}
 		a.release(item)
 		return
 	}
 	next, known := listenerFor(id.Language)
 	if !known {
+		// A language no listener hears (Greek, Thai, Swahili...): the
+		// listener's transcript is noise or nothing -- live, Thai came back
+		// as made-up Korean and got a Japanese reply, Greek as silence. The
+		// identifier's own transcript is the caller's words.
 		log.Printf("[stt:adaptive] checked turn (%s): %s says %s in %s; no listener known for it, keeping %s", heard, id.Source, id.Language, elapsed, item.spec)
-		a.release(item)
+		if id.Text != "" {
+			a.replace(item, id)
+		} else {
+			a.release(item)
+		}
 		return
 	}
 	log.Printf("[stt:adaptive] checked turn (%s): %s says %s in %s; switching to %s", heard, id.Source, id.Language, elapsed, next)
 	if id.Text != "" {
-		a.onResult(TranscriptResult{Text: id.Text, IsFinal: true, Language: id.Language, Provider: id.Source})
+		a.mu.Lock()
+		a.replaced, a.replacedUntil = squash(id.Text), time.Now().Add(replayDedupeWindow)
+		a.mu.Unlock()
+		a.replace(item, id)
 	} else {
 		a.release(item)
 	}
@@ -479,8 +526,16 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 
 func (a *adaptiveClient) release(item adaptiveItem) {
 	if item.final != nil {
-		a.onResult(*item.final)
+		r := *item.final
+		r.CheckMs = time.Since(item.at).Milliseconds()
+		a.onResult(r)
 	}
+}
+
+// replace sends the identifier's transcript in place of the checked turn.
+func (a *adaptiveClient) replace(item adaptiveItem, id Identification) {
+	a.onResult(TranscriptResult{Text: id.Text, IsFinal: true, Language: id.Language, Provider: id.Source,
+		CheckMs: time.Since(item.at).Milliseconds()})
 }
 
 // agree counts checks that confirmed the listener; after a couple the
@@ -521,7 +576,7 @@ func (a *adaptiveClient) applyBackgroundVerdict(item adaptiveItem) {
 
 // checkKind decides how to handle a final. voiced is how many frames of the
 // caller's voice the turn had.
-func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int) checkKind {
+func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int, spec listenerSpec) checkKind {
 	if len(a.ids) == 0 || a.checks >= adaptiveMaxChecks {
 		return checkNone
 	}
@@ -539,6 +594,19 @@ func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int) checkKind {
 		return checkNone
 	}
 	if r.Confidence > 0 && r.Confidence < a.minConfidence {
+		return checkHold
+	}
+	// Multi hears ten languages; a turn it labels with any other was misheard.
+	// Live, a Kannada caller came back as Urdu ("نن کے کنڈا پر رہتے ہیں") and
+	// as Telugu and Kannada script mixed, both at high confidence, and the
+	// agent answered in Urdu.
+	if spec == (listenerSpec{}) && r.Language != "" && !multiLanguages[baseLanguage(r.Language)] {
+		return checkHold
+	}
+	// Live, after a Japanese sentence multi heard "And one more thing." as
+	// "アンドワンモーティング" -- labelled Japanese at 0.96. Japanese sentences
+	// mix kanji and hiragana; one in katakana alone is foreign words.
+	if r.Language == "ja" && mostlyKatakana(r.Text) {
 		return checkHold
 	}
 	if r.Language == "hi" && !a.settled() {
@@ -681,6 +749,51 @@ func (a *adaptiveClient) identifyTurn(item adaptiveItem, thorough bool) (Identif
 
 // isIndian: Hindi or a regional Indian language -- what Sarvam's labels can
 // be trusted for.
+// mostlyKatakana: at least 4 katakana and nearly no other letters.
+func mostlyKatakana(s string) bool {
+	kata, other := 0, 0
+	for _, r := range s {
+		switch {
+		case unicode.Is(unicode.Katakana, r) || r == 'ー':
+			kata++
+		case unicode.IsLetter(r):
+			other++
+		}
+	}
+	return kata >= 4 && other*10 <= kata
+}
+
+// nonLatinLanguages are written in other scripts.
+var nonLatinLanguages = setOf("ja", "zh", "ko", "hi", "ru", "uk", "ar", "el", "he", "th", "fa", "ur",
+	"bn", "ta", "te", "kn", "ml", "mr", "gu", "pa", "od", "ne", "si", "my", "km", "lo", "am", "bg", "sr")
+
+// wrongScript: lang is written in Latin script and text has no Latin letters.
+func wrongScript(text, lang string) bool {
+	if nonLatinLanguages[lang] {
+		return false
+	}
+	letters := false
+	for _, r := range text {
+		if unicode.Is(unicode.Latin, r) {
+			return false
+		}
+		letters = letters || unicode.IsLetter(r)
+	}
+	return letters
+}
+
+// squash keeps only letters, combining marks and digits, lowercased, so
+// "바꿔 주세요." and "바꿔주세요" compare equal.
+func squash(s string) string {
+	var b strings.Builder
+	for _, r := range strings.ToLower(s) {
+		if unicode.IsLetter(r) || unicode.IsMark(r) || unicode.IsDigit(r) {
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}
+
 func isIndian(lang string) bool { return lang == "hi" || indianRegional[lang] }
 
 // switchTo moves the call to another listener. The old one keeps hearing

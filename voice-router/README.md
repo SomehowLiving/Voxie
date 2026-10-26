@@ -32,7 +32,7 @@ upgrades torch and transformers and breaks VibeVoice.
 ```bash
 uv venv --python 3.11 .venv
 uv pip install --python .venv/bin/python torch==2.9.1 --index-url https://download.pytorch.org/whl/cu128
-uv pip install --python .venv/bin/python -r requirements.txt
+uv pip install --python .venv/bin/python -r requirements.txt -c constraints.txt
 uv pip uninstall --python .venv/bin/python unidic   # see "Japanese" below
 .venv/bin/python server.py --port 8300 --voice female
 ```

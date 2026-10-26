@@ -375,3 +375,75 @@ func TestStreamedReplyIsVoicedAsItArrivesAndCanEndTheCall(t *testing.T) {
 		t.Fatal(`{"end_call": true} in a streamed reply must end the call`)
 	}
 }
+
+func TestSplitSentencesKeepsPunctuationWithItsSentence(t *testing.T) {
+	got := splitSentences("हम एक साथ सीखेंगे, ठीक है? (Hum ek saath seekhenge, theek hai?)")
+	if len(got) != 2 || got[1] != "(Hum ek saath seekhenge, theek hai?)" {
+		t.Fatalf("got %q; a lone closing bracket must not be a sentence", got)
+	}
+	for _, p := range splitSentences(`Say "नमस्ते." Then repeat it.`) {
+		if !hasWords(p) {
+			t.Fatalf("%q has nothing to say", p)
+		}
+	}
+}
+
+func TestChatSaysWhenItReplacesTheLastTurn(t *testing.T) {
+	agent := newCaptureAgent(t)
+	client := agent.client("")
+	turn := Turn{Text: "I want to... book a table for two", Prompt: "I want to... book a table for two", ReplacesLastTurn: true}
+	if _, err := client.Chat(context.Background(), turn, nil, nil); err != nil {
+		t.Fatalf("Chat: %v", err)
+	}
+	if !agent.requests[0].ReplacesLastTurn {
+		t.Error("replaces_last_turn not sent")
+	}
+}
+
+func TestDropLastTurn(t *testing.T) {
+	type m struct{ role string }
+	isUser := func(x m) bool { return x.role == "user" }
+	isTool := func(x m) bool { return x.role == "tool" }
+	h := []m{{"system"}, {"user"}, {"assistant"}, {"user"}, {"assistant"}}
+	if got := dropLastTurn(h, isUser, isTool); len(got) != 3 {
+		t.Errorf("got %v; want the last user message and its reply dropped", got)
+	}
+	withTool := []m{{"user"}, {"assistant"}, {"tool"}, {"assistant"}}
+	if got := dropLastTurn(withTool, isUser, isTool); len(got) != 4 {
+		t.Errorf("got %v; a turn whose tool ran must be kept", got)
+	}
+	if got := dropLastTurn([]m{{"system"}}, isUser, isTool); len(got) != 1 {
+		t.Errorf("got %v", got)
+	}
+}
+
+// An app can say how the call went, in a JSON reply or a streamed one; the
+// outcome applies once.
+func TestChatReplyOutcome(t *testing.T) {
+	client := newReplyAgent(t, `{"text":"You're booked for eight.","outcome":{"success":true,"reason":"booked"}}`)
+	if _, err := client.Chat(context.Background(), Turn{Text: "eight", Prompt: "eight"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	o := client.(OutcomeReporter).TakeOutcome()
+	if o == nil || o.Success == nil || !*o.Success || o.Reason != "booked" {
+		t.Fatalf("outcome %+v", o)
+	}
+	if client.(OutcomeReporter).TakeOutcome() != nil {
+		t.Fatal("an outcome must be taken once")
+	}
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		for _, event := range []string{`{"delta":"Sorry, we're full."}`, `{"outcome":{"success":false,"reason":"no_tables"}}`, `[DONE]`} {
+			fmt.Fprintf(w, "data: %s\n\n", event)
+		}
+	}))
+	t.Cleanup(srv.Close)
+	streamed := NewAgentClient(srv.URL, "", 0, "")
+	if _, err := streamed.Chat(context.Background(), Turn{Text: "eight", Prompt: "eight"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if o := streamed.(OutcomeReporter).TakeOutcome(); o == nil || o.Success == nil || *o.Success || o.Reason != "no_tables" {
+		t.Fatalf("streamed outcome %+v", o)
+	}
+}

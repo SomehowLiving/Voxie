@@ -16,15 +16,22 @@ const (
 	// continuations, so a caller who never pauses cleanly still gets an answer.
 	turnMergeMax = 2500 * time.Millisecond
 	// turnMergeIncomplete is the longer wait used when the text ends on a
-	// dangling word ("and", "my number is") or mid-dictation — the caller is
-	// clearly not finished.
-	turnMergeIncomplete = 900 * time.Millisecond
+	// dangling word ("and", "my number is", "Mi número de pedido es") or
+	// mid-dictation — the caller is clearly not finished. Long enough for a
+	// 1.5s pause: the final lands ~400ms after the caller stops, and the
+	// caller has to be audibly speaking again when it runs out (midSentenceMax).
+	turnMergeIncomplete = 1500 * time.Millisecond
 	// checkInWait is the wait after a turn that is only a check-in ("hello?",
 	// "haan hello"). Callers repeat it: live, a second "hello" landed 1.7s
 	// after the first final and was answered as a turn of its own. If the
 	// caller has made sound since the last final, the wait extends until the
 	// repeat's final arrives -- live, ~450ms after the sound stopped -- or
 	// they've been quiet for checkInFinalLag, bounded by turnMergeMax.
+	// midSentenceMax bounds the wait on a turn that ends mid-sentence ("Mi
+	// número de pedido es") while the caller is audibly speaking again: live,
+	// a 1.5s pause there got the first half answered.
+	midSentenceMax = 5 * time.Second
+
 	checkInWait     = 1200 * time.Millisecond
 	checkInFinalLag = 1000 * time.Millisecond
 	checkInPoll     = 100 * time.Millisecond
@@ -38,14 +45,25 @@ const (
 // provider punctuated as finished ("I already fixed it.") was taking the long
 // incomplete window too. When the STT has already judged the thought complete,
 // believe it; only an unpunctuated dangling tail extends the wait.
+//
+// A sentence the provider punctuated as finished goes at once. Over 224 live
+// turns the base window merged a second piece into almost none of them while
+// delaying every reply by it; a piece that does follow is joined to the turn
+// anyway (continuesLastTurn), at the cost of a cancelled request.
 func mergeWait(text string, base time.Duration) time.Duration {
 	if endsTerminal(text) {
-		return base
+		return 0
 	}
 	if endsIncomplete(text) || endsDictation(text) {
 		return turnMergeIncomplete
 	}
 	return base
+}
+
+// midSentence reports whether text stops where a sentence can't end. As in
+// mergeWait, terminal punctuation means the STT judged it finished.
+func midSentence(text string) bool {
+	return !endsTerminal(text) && (endsIncomplete(text) || endsDictation(text))
 }
 
 // callerSpokeSince reports whether the caller made sound after t, within
@@ -142,6 +160,14 @@ func (p *Pipeline) runTurnBuffer() {
 				// began over the agent's voice was an interruption regardless of
 				// whether its later halves landed after the agent stopped.
 				pending.OverAgentSpeech = pending.OverAgentSpeech || ev.OverAgentSpeech
+				// The caller stopped at the end of the last piece.
+				if ev.SpeechEndAt.After(pending.SpeechEndAt) {
+					pending.SpeechEndAt = ev.SpeechEndAt
+				}
+				pending.CheckMs = max(pending.CheckMs, ev.CheckMs)
+				if ev.Provider != "" {
+					pending.Provider = ev.Provider
+				}
 			}
 
 			// A caller still mid-thought gets a longer grace period.
@@ -168,6 +194,13 @@ func (p *Pipeline) runTurnBuffer() {
 		case <-timerC:
 			// A check-in the caller is repeating: wait for the repeat's final.
 			if pending != nil && isCheckIn(pending.Text) && time.Since(turnBegan)+checkInPoll < turnMergeMax &&
+				p.callerSpokeSince(lastFinal, checkInFinalLag) {
+				arm(checkInPoll)
+				continue
+			}
+			// Mid-sentence, and the caller is talking again: the rest of the
+			// sentence is on its way through STT.
+			if pending != nil && midSentence(pending.Text) && time.Since(turnBegan)+checkInPoll < midSentenceMax &&
 				p.callerSpokeSince(lastFinal, checkInFinalLag) {
 				arm(checkInPoll)
 				continue
