@@ -9,10 +9,11 @@ RUN apt-get update \
 
 WORKDIR /app
 RUN pip install --no-cache-dir torch==2.9.1 --index-url https://download.pytorch.org/whl/cu128
-COPY requirements.txt .
+COPY requirements.txt constraints.txt ./
 # misaki[ja] pulls the full unidic dictionary, which crashes MeCab without a
-# separate 1GB download; unidic-lite is enough.
-RUN pip install --no-cache-dir -r requirements.txt \
+# separate 1GB download; unidic-lite is enough. constraints.txt pins every
+# indirect dependency: unpinned, a rebuild broke spaCy (see the file).
+RUN pip install --no-cache-dir -r requirements.txt -c constraints.txt \
  && (pip uninstall -y unidic || true)
 COPY server.py spoken_names.example.json ./
 
