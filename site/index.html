@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="only light" />
   <title>Voxie: voice agents that speak your caller's language</title>
   <meta name="description" content="Voxie is open-source voice infrastructure for real-time agents. It runs the call (listening, turn-taking, interruptions and the voice) in 29 spoken languages, switches speech-to-text mid-call when the caller's language needs it, and leaves your app to decide what to say." />
   <link rel="canonical" href="https://voxieai.vercel.app/" />
@@ -37,12 +38,13 @@
       <a href="#use-cases">Use cases</a>
       <a href="#integrate">Integrate</a>
       <a href="#languages">Languages</a>
+      <a href="/voices">Voices</a>
       <a href="https://github.com/SomehowLiving/Voxie/tree/main/docs/voxie" rel="noopener">Docs</a>
     </nav>
     <div class="nav-right">
       <a class="nav-gh" href="https://github.com/SomehowLiving/Voxie" rel="noopener" aria-label="Star Voxie on GitHub"><svg class="gh" aria-hidden="true"><use href="#gh"/></svg><span class="nav-gh-t">Star</span><span class="stars" hidden></span></a>
-      <a class="btn btn-line btn-sm" href="/try">Try Voxie</a>
-      <a class="btn btn-dark btn-sm" href="#integrate">Get started <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn btn-line btn-sm nav-try" href="/try">Try Voxie</a>
+      <a class="btn btn-dark btn-sm" href="#integrate">Get started</a>
     </div>
   </header>
 
@@ -54,9 +56,8 @@
         <h1 id="hero-title">Voice agents that speak <span class="grad">your caller's</span> language.</h1>
         <p class="lede">Voxie runs the call: listening, turn-taking, interruptions and the voice, in 29 languages. It switches speech-to-text mid-call when the caller's language needs it. Your app only decides what to say.</p>
         <div class="actions">
-          <a class="btn btn-dark" href="/try">Try Voxie <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn btn-dark" href="/try">Try Voxie</a>
           <a class="btn btn-line" href="#integrate">Get started</a>
-          <a class="btn btn-soft" href="https://github.com/SomehowLiving/Voxie" rel="noopener"><svg class="gh" aria-hidden="true"><use href="#gh"/></svg>Star on GitHub<span class="stars" hidden></span></a>
         </div>
         <ul class="checks">
           <li>Listens first</li><li>Real barge-in</li><li>29 languages spoken</li><li>Apache 2.0</li>
@@ -246,6 +247,7 @@ VOXIE_TAG=56d3a3b docker compose -f compose.release.yaml up</code></pre></div>
           <button role="tab" aria-selected="true" aria-controls="spoken" id="tab-spoken">Spoken (29)</button>
           <button role="tab" aria-selected="false" aria-controls="understood" id="tab-understood" tabindex="-1">Understood (3)</button>
         </div>
+        <div class="tab-panels">
         <div id="spoken" role="tabpanel" aria-labelledby="tab-spoken">
           <ul class="lang-list">
             <li class="w">English</li><li class="w">Spanish</li><li class="w">French</li><li class="w">Italian</li><li class="w">Portuguese</li><li class="w">Japanese</li><li class="w">Chinese</li><li class="w">German</li><li class="w">Dutch</li><li class="w">Russian</li><li class="w">Polish</li><li class="w">Ukrainian</li><li class="w">Czech</li><li class="w">Hungarian</li><li class="w">Swedish</li><li class="w">Romanian</li><li class="w">Finnish</li><li class="w">Danish</li><li class="w">Vietnamese</li>
@@ -255,6 +257,7 @@ VOXIE_TAG=56d3a3b docker compose -f compose.release.yaml up</code></pre></div>
         <div id="understood" role="tabpanel" aria-labelledby="tab-understood" hidden>
           <ul class="lang-list"><li class="u">Korean</li><li class="u">Arabic</li><li class="u">Turkish</li></ul>
           <p class="note">No voice for these yet: your agent hears them, and answers in English.</p>
+        </div>
         </div>
       </div>
       <div class="langs-chips" aria-hidden="true">

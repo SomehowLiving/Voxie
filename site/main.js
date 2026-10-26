@@ -261,10 +261,7 @@ revealables.forEach((el) => io.observe(el));
     vec3 peach = vec3(0.995, 0.935, 0.885);
     vec3 col = mix(base, blue, smoothstep(0.1, 1.0, a) * 0.6);
     col = mix(col, peach, smoothstep(0.35, 1.0, b) * 0.42);
-    // faint silk lines, like the artwork's
-    float y = p.y + 0.12 * sin(p.x * 2.6 + t * 2.0) + 0.05 * sin(p.x * 7.0 - t * 1.5);
-    float lines = pow(abs(sin(y * 55.0)), 90.0) * smoothstep(0.45, 1.0, a) * 0.035;
-    col += lines + light;
+    col += light;
     gl_FragColor = vec4(col, 1.0);
   }`;
   const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };

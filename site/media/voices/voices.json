@@ -1,0 +1,4121 @@
+{
+ "generated": "2026-10-25",
+ "languages": [
+  {
+   "code": "en",
+   "name": "English",
+   "native": "English",
+   "text": "Hi! Your order's on its way, it should get to you tomorrow. Anything else I can help with? Thanks for calling, and have a lovely day!",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "af_heart (persona female)",
+     "audio": "/media/voices/audio/en-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "am_michael (persona male)",
+     "audio": "/media/voices/audio/en-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "af_bella (persona female-2)",
+     "audio": "/media/voices/audio/en-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "am_fenrir (persona male-2)",
+     "audio": "/media/voices/audio/en-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/en-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.85,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/en-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.16,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/en-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/en-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/en-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_alloy",
+     "audio": "/media/voices/audio/en-x-af_alloy.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_aoede",
+     "audio": "/media/voices/audio/en-x-af_aoede.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_jessica",
+     "audio": "/media/voices/audio/en-x-af_jessica.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_kore",
+     "audio": "/media/voices/audio/en-x-af_kore.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_nicole",
+     "audio": "/media/voices/audio/en-x-af_nicole.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_nova",
+     "audio": "/media/voices/audio/en-x-af_nova.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_river",
+     "audio": "/media/voices/audio/en-x-af_river.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_sarah",
+     "audio": "/media/voices/audio/en-x-af_sarah.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "af_sky",
+     "audio": "/media/voices/audio/en-x-af_sky.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_adam",
+     "audio": "/media/voices/audio/en-x-am_adam.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_echo",
+     "audio": "/media/voices/audio/en-x-am_echo.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_eric",
+     "audio": "/media/voices/audio/en-x-am_eric.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_liam",
+     "audio": "/media/voices/audio/en-x-am_liam.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_onyx",
+     "audio": "/media/voices/audio/en-x-am_onyx.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_puck",
+     "audio": "/media/voices/audio/en-x-am_puck.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "am_santa",
+     "audio": "/media/voices/audio/en-x-am_santa.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bf_alice",
+     "audio": "/media/voices/audio/en-x-bf_alice.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bf_emma",
+     "audio": "/media/voices/audio/en-x-bf_emma.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bf_isabella",
+     "audio": "/media/voices/audio/en-x-bf_isabella.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bf_lily",
+     "audio": "/media/voices/audio/en-x-bf_lily.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bm_daniel",
+     "audio": "/media/voices/audio/en-x-bm_daniel.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bm_fable",
+     "audio": "/media/voices/audio/en-x-bm_fable.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bm_george",
+     "audio": "/media/voices/audio/en-x-bm_george.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "bm_lewis",
+     "audio": "/media/voices/audio/en-x-bm_lewis.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/en-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/en-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/en-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/en-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "amalthea (female)",
+     "audio": "/media/voices/audio/en-deepgram-amalthea.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "andromeda (female)",
+     "audio": "/media/voices/audio/en-deepgram-andromeda.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "asteria (female)",
+     "audio": "/media/voices/audio/en-deepgram-asteria.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "apollo (male)",
+     "audio": "/media/voices/audio/en-deepgram-apollo.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "arcas (male)",
+     "audio": "/media/voices/audio/en-deepgram-arcas.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "aries (male)",
+     "audio": "/media/voices/audio/en-deepgram-aries.mp3",
+     "batch": "phase1"
+    }
+   ]
+  },
+  {
+   "code": "es",
+   "name": "Spanish",
+   "native": "Español",
+   "text": "¡Hola! Tu pedido ya va en camino y te llega mañana. ¿Te ayudo con algo más? ¡Gracias por llamar y que tengas un buen día!",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ef_dora (persona female)",
+     "audio": "/media/voices/audio/es-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "em_alex (persona male)",
+     "audio": "/media/voices/audio/es-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ef_dora (persona female-2)",
+     "audio": "/media/voices/audio/es-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "em_alex (persona male-2)",
+     "audio": "/media/voices/audio/es-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/es-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.63,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/es-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.53,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/es-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/es-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/es-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "em_santa",
+     "audio": "/media/voices/audio/es-x-em_santa.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/es-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/es-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/es-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/es-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "agustina (female)",
+     "audio": "/media/voices/audio/es-deepgram-agustina.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "antonia (female)",
+     "audio": "/media/voices/audio/es-deepgram-antonia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "carina (female)",
+     "audio": "/media/voices/audio/es-deepgram-carina.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "alvaro (male)",
+     "audio": "/media/voices/audio/es-deepgram-alvaro.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "aquila (male)",
+     "audio": "/media/voices/audio/es-deepgram-aquila.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "javier (male)",
+     "audio": "/media/voices/audio/es-deepgram-javier.mp3",
+     "batch": "phase1"
+    }
+   ]
+  },
+  {
+   "code": "fr",
+   "name": "French",
+   "native": "Français",
+   "text": "Bonjour ! Votre commande est en route, elle arrive demain. Je peux vous aider pour autre chose ? Merci de votre appel, et bonne journée !",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ff_siwis (persona female)",
+     "audio": "/media/voices/audio/fr-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ff_siwis (persona male)",
+     "audio": "/media/voices/audio/fr-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ff_siwis (persona female-2)",
+     "audio": "/media/voices/audio/fr-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ff_siwis (persona male-2)",
+     "audio": "/media/voices/audio/fr-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/fr-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.72,
+      "rtf": 2.56,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/fr-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.31,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/fr-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/fr-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/fr-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "fr_FR-gilles-low",
+     "audio": "/media/voices/audio/fr-x-fr_FR-gilles-low.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/fr-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/fr-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/fr-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/fr-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "agathe (female)",
+     "audio": "/media/voices/audio/fr-deepgram-agathe.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "hector (male)",
+     "audio": "/media/voices/audio/fr-deepgram-hector.mp3",
+     "batch": "phase1"
+    }
+   ]
+  },
+  {
+   "code": "it",
+   "name": "Italian",
+   "native": "Italiano",
+   "text": "Ciao! Il tuo ordine è in viaggio, ti arriva domani. Posso aiutarti con altro? Grazie della chiamata, e buona giornata!",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "if_sara (persona female)",
+     "audio": "/media/voices/audio/it-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "im_nicola (persona male)",
+     "audio": "/media/voices/audio/it-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "if_sara (persona female-2)",
+     "audio": "/media/voices/audio/it-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "im_nicola (persona male-2)",
+     "audio": "/media/voices/audio/it-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/it-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 2.47,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/it-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.62,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/it-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/it-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/it-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "it_IT-serena-medium",
+     "audio": "/media/voices/audio/it-x-it_IT-serena-medium.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/it-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/it-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/it-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/it-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "cinzia (female)",
+     "audio": "/media/voices/audio/it-deepgram-cinzia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "demetra (female)",
+     "audio": "/media/voices/audio/it-deepgram-demetra.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "livia (female)",
+     "audio": "/media/voices/audio/it-deepgram-livia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "cesare (male)",
+     "audio": "/media/voices/audio/it-deepgram-cesare.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "dionisio (male)",
+     "audio": "/media/voices/audio/it-deepgram-dionisio.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "elio (male)",
+     "audio": "/media/voices/audio/it-deepgram-elio.mp3",
+     "batch": "phase1"
+    }
+   ]
+  },
+  {
+   "code": "pt",
+   "name": "Portuguese",
+   "native": "Português",
+   "text": "Oi! Seu pedido já está a caminho e chega amanhã. Posso ajudar com mais alguma coisa? Obrigado por ligar, e tenha um ótimo dia!",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pf_dora (persona female)",
+     "audio": "/media/voices/audio/pt-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pm_alex (persona male)",
+     "audio": "/media/voices/audio/pt-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pf_dora (persona female-2)",
+     "audio": "/media/voices/audio/pt-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pm_alex (persona male-2)",
+     "audio": "/media/voices/audio/pt-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/pt-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.47,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/pt-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 2.48,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/pt-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/pt-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/pt-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "pm_santa",
+     "audio": "/media/voices/audio/pt-x-pm_santa.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/pt-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/pt-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/pt-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/pt-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "de",
+   "name": "German",
+   "native": "Deutsch",
+   "text": "Hallo! Deine Bestellung ist unterwegs und kommt morgen an. Kann ich sonst noch was für dich tun? Danke für deinen Anruf und einen schönen Tag noch!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "de_DE-kerstin-low (persona female)",
+     "audio": "/media/voices/audio/de-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "de_DE-thorsten-high (persona male)",
+     "audio": "/media/voices/audio/de-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "de_DE-kerstin-low (persona female-2)",
+     "audio": "/media/voices/audio/de-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "de_DE-thorsten-high (persona male-2)",
+     "audio": "/media/voices/audio/de-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/de-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.5,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/de-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.9,
+      "rtf": 2.71,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/de-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/de-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/de-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/de-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/de-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/de-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/de-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "aurelia (female)",
+     "audio": "/media/voices/audio/de-deepgram-aurelia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "elara (female)",
+     "audio": "/media/voices/audio/de-deepgram-elara.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "kara (female)",
+     "audio": "/media/voices/audio/de-deepgram-kara.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "fabian (male)",
+     "audio": "/media/voices/audio/de-deepgram-fabian.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "julius (male)",
+     "audio": "/media/voices/audio/de-deepgram-julius.mp3",
+     "batch": "phase1"
+    }
+   ]
+  },
+  {
+   "code": "nl",
+   "name": "Dutch",
+   "native": "Nederlands",
+   "text": "Hoi! Je bestelling is onderweg en komt morgen aan. Kan ik je nog ergens mee helpen? Bedankt voor je telefoontje, en nog een fijne dag!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "nl_BE-nathalie-medium (persona female)",
+     "audio": "/media/voices/audio/nl-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "nl_BE-rdh-medium (persona male)",
+     "audio": "/media/voices/audio/nl-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "nl_BE-nathalie-medium (persona female-2)",
+     "audio": "/media/voices/audio/nl-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "nl_BE-rdh-medium (persona male-2)",
+     "audio": "/media/voices/audio/nl-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/nl-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.96,
+      "rtf": 2.62,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/nl-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.87,
+      "rtf": 2.59,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/nl-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/nl-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/nl-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/nl-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/nl-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/nl-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/nl-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "beatrix (female)",
+     "audio": "/media/voices/audio/nl-deepgram-beatrix.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "cornelia (female)",
+     "audio": "/media/voices/audio/nl-deepgram-cornelia.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "daphne (female)",
+     "audio": "/media/voices/audio/nl-deepgram-daphne.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "lars (male)",
+     "audio": "/media/voices/audio/nl-deepgram-lars.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "roman (male)",
+     "audio": "/media/voices/audio/nl-deepgram-roman.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "sander (male)",
+     "audio": "/media/voices/audio/nl-deepgram-sander.mp3",
+     "batch": "phase1"
+    }
+   ]
+  },
+  {
+   "code": "ru",
+   "name": "Russian",
+   "native": "Русский",
+   "text": "Здравствуйте! Ваш заказ уже в пути, приедет завтра. Могу ещё чем-нибудь помочь? Спасибо за звонок, хорошего вам дня!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ru_RU-dmitri-medium (persona female)",
+     "audio": "/media/voices/audio/ru-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ru_RU-dmitri-medium (persona male)",
+     "audio": "/media/voices/audio/ru-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ru_RU-dmitri-medium (persona female-2)",
+     "audio": "/media/voices/audio/ru-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ru_RU-dmitri-medium (persona male-2)",
+     "audio": "/media/voices/audio/ru-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/ru-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.95,
+      "rtf": 2.33,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/ru-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.95,
+      "rtf": 2.58,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/ru-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/ru-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ru-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ru-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ru-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ru-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ru-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "pl",
+   "name": "Polish",
+   "native": "Polski",
+   "text": "Cześć! Twoje zamówienie jest już w drodze, dotrze jutro. Mogę jeszcze w czymś pomóc? Dzięki za telefon i miłego dnia!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pl_PL-gosia-medium (persona female)",
+     "audio": "/media/voices/audio/pl-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pl_PL-darkman-medium (persona male)",
+     "audio": "/media/voices/audio/pl-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pl_PL-gosia-medium (persona female-2)",
+     "audio": "/media/voices/audio/pl-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "pl_PL-darkman-medium (persona male-2)",
+     "audio": "/media/voices/audio/pl-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/pl-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.93,
+      "rtf": 2.2,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/pl-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.63,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/pl-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/pl-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/pl-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/pl-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/pl-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/pl-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/pl-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "uk",
+   "name": "Ukrainian",
+   "native": "Українська",
+   "text": "Привіт! Ваше замовлення вже в дорозі, приїде завтра. Можу ще чимось допомогти? Дякую за дзвінок, гарного вам дня!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "uk_UA-tetiana-high (persona female)",
+     "audio": "/media/voices/audio/uk-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "uk_UA-mykyta-high (persona male)",
+     "audio": "/media/voices/audio/uk-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "uk_UA-tetiana-high (persona female-2)",
+     "audio": "/media/voices/audio/uk-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "uk_UA-mykyta-high (persona male-2)",
+     "audio": "/media/voices/audio/uk-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/uk-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/uk-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/uk-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/uk-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/uk-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/uk-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/uk-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "cs",
+   "name": "Czech",
+   "native": "Čeština",
+   "text": "Dobrý den! Vaše objednávka je na cestě a dorazí zítra. Můžu vám ještě s něčím pomoct? Děkuju za zavolání a hezký den!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "cs_CZ-kasandra-medium (persona female)",
+     "audio": "/media/voices/audio/cs-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "cs_CZ-jirka-medium (persona male)",
+     "audio": "/media/voices/audio/cs-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "cs_CZ-kasandra-medium (persona female-2)",
+     "audio": "/media/voices/audio/cs-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "cs_CZ-jirka-medium (persona male-2)",
+     "audio": "/media/voices/audio/cs-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/cs-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/cs-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/cs-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/cs-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/cs-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/cs-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/cs-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "hu",
+   "name": "Hungarian",
+   "native": "Magyar",
+   "text": "Szia! A rendelésed már úton van, holnap megérkezik. Segíthetek még valamiben? Köszönöm a hívást, és szép napot!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "hu_HU-berta-medium (persona female)",
+     "audio": "/media/voices/audio/hu-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "hu_HU-imre-medium (persona male)",
+     "audio": "/media/voices/audio/hu-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "hu_HU-berta-medium (persona female-2)",
+     "audio": "/media/voices/audio/hu-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "hu_HU-imre-medium (persona male-2)",
+     "audio": "/media/voices/audio/hu-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/hu-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/hu-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/hu-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/hu-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/hu-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/hu-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/hu-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "sv",
+   "name": "Swedish",
+   "native": "Svenska",
+   "text": "Hej! Din beställning är på väg och kommer i morgon. Kan jag hjälpa dig med något mer? Tack för att du ringde, och ha en fin dag!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "sv_SE-alma-medium (persona female)",
+     "audio": "/media/voices/audio/sv-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "sv_SE-nst-medium (persona male)",
+     "audio": "/media/voices/audio/sv-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "sv_SE-alma-medium (persona female-2)",
+     "audio": "/media/voices/audio/sv-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "sv_SE-nst-medium (persona male-2)",
+     "audio": "/media/voices/audio/sv-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/sv-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.94,
+      "rtf": 2.42,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/sv-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.94,
+      "rtf": 2.71,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/sv-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/sv-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/sv-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/sv-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/sv-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/sv-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/sv-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "ro",
+   "name": "Romanian",
+   "native": "Română",
+   "text": "Bună! Comanda ta e pe drum și ajunge mâine. Te mai pot ajuta cu ceva? Mulțumesc că ai sunat și o zi frumoasă!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ro_RO-mihai-medium (persona female)",
+     "audio": "/media/voices/audio/ro-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ro_RO-mihai-medium (persona male)",
+     "audio": "/media/voices/audio/ro-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ro_RO-mihai-medium (persona female-2)",
+     "audio": "/media/voices/audio/ro-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "ro_RO-mihai-medium (persona male-2)",
+     "audio": "/media/voices/audio/ro-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/ro-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/ro-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ro-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ro-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ro-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ro-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ro-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "fi",
+   "name": "Finnish",
+   "native": "Suomi",
+   "text": "Hei! Tilauksesi on matkalla ja tulee huomenna. Voinko auttaa jossain muussa? Kiitos soitosta ja oikein mukavaa päivää!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "fi_FI-harri-medium (persona female)",
+     "audio": "/media/voices/audio/fi-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "fi_FI-harri-medium (persona male)",
+     "audio": "/media/voices/audio/fi-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "fi_FI-harri-medium (persona female-2)",
+     "audio": "/media/voices/audio/fi-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "fi_FI-harri-medium (persona male-2)",
+     "audio": "/media/voices/audio/fi-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/fi-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.82,
+      "rtf": 1.97,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/fi-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 2.58,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/fi-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/fi-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/fi-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/fi-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/fi-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/fi-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/fi-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "da",
+   "name": "Danish",
+   "native": "Dansk",
+   "text": "Hej! Din bestilling er på vej og kommer i morgen. Kan jeg hjælpe med andet? Tak fordi du ringede, og hav en god dag!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "da_DK-talesyntese-medium (persona female)",
+     "audio": "/media/voices/audio/da-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "da_DK-talesyntese-medium (persona male)",
+     "audio": "/media/voices/audio/da-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "da_DK-talesyntese-medium (persona female-2)",
+     "audio": "/media/voices/audio/da-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "da_DK-talesyntese-medium (persona male-2)",
+     "audio": "/media/voices/audio/da-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/da-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 2.53,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/da-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 2.68,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/da-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/da-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/da-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/da-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/da-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/da-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/da-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "vi",
+   "name": "Vietnamese",
+   "native": "Tiếng Việt",
+   "text": "Chào bạn! Đơn hàng của bạn đang được giao, mai sẽ tới nhé. Mình giúp gì thêm được không? Cảm ơn bạn đã gọi, chúc bạn một ngày vui nhé!",
+   "voices": [
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "vi_VN-vais1000-medium (persona female)",
+     "audio": "/media/voices/audio/vi-01.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "vi_VN-vais1000-medium (persona male)",
+     "audio": "/media/voices/audio/vi-02.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "vi_VN-vais1000-medium (persona female-2)",
+     "audio": "/media/voices/audio/vi-03.mp3"
+    },
+    {
+     "provider": "Piper (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "vi_VN-vais1000-medium (persona male-2)",
+     "audio": "/media/voices/audio/vi-04.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/vi-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_flash_v2_5",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/vi-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/vi-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/vi-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/vi-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/vi-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/vi-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "ja",
+   "name": "Japanese",
+   "native": "日本語",
+   "text": "こんにちは！ご注文の品は発送済みで、明日お届けします。他に何かお手伝いできることはありますか？ お電話ありがとうございました。良い一日をお過ごしください！",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "jf_alpha (persona female)",
+     "audio": "/media/voices/audio/ja-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "jm_kumo (persona male)",
+     "audio": "/media/voices/audio/ja-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "jf_nezumi (persona female-2)",
+     "audio": "/media/voices/audio/ja-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "jm_kumo (persona male-2)",
+     "audio": "/media/voices/audio/ja-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/ja-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.94,
+      "rtf": 2.66,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/ja-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.95,
+      "rtf": 2.72,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/ja-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/ja-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ja-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "jf_gongitsune",
+     "audio": "/media/voices/audio/ja-x-jf_gongitsune.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "jf_tebukuro",
+     "audio": "/media/voices/audio/ja-x-jf_tebukuro.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ja-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ja-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ja-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ja-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "ama (female)",
+     "audio": "/media/voices/audio/ja-deepgram-ama.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "izanami (female)",
+     "audio": "/media/voices/audio/ja-deepgram-izanami.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "uzume (female)",
+     "audio": "/media/voices/audio/ja-deepgram-uzume.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "ebisu (male)",
+     "audio": "/media/voices/audio/ja-deepgram-ebisu.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Deepgram",
+     "model": "aura-2",
+     "via": "",
+     "voice": "fujin (male)",
+     "audio": "/media/voices/audio/ja-deepgram-fujin.mp3",
+     "batch": "phase1"
+    }
+   ]
+  },
+  {
+   "code": "zh",
+   "name": "Chinese",
+   "native": "中文",
+   "text": "你好！你的订单已经在路上了，明天就能到。还有什么需要帮忙的吗？ 谢谢你的来电，祝你今天愉快！",
+   "voices": [
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "zf_xiaobei (persona female)",
+     "audio": "/media/voices/audio/zh-01.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "zm_yunxi (persona male)",
+     "audio": "/media/voices/audio/zh-02.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "zf_xiaoni (persona female-2)",
+     "audio": "/media/voices/audio/zh-03.mp3"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "Voxie router",
+     "via": "Voxie router",
+     "voice": "zm_yunjian (persona male-2)",
+     "audio": "/media/voices/audio/zh-04.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/zh-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.87,
+      "rtf": 2.43,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/zh-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.92,
+      "rtf": 2.65,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/zh-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/zh-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/zh-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "zf_xiaoxiao",
+     "audio": "/media/voices/audio/zh-x-zf_xiaoxiao.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "zf_xiaoyi",
+     "audio": "/media/voices/audio/zh-x-zf_xiaoyi.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "zm_yunxia",
+     "audio": "/media/voices/audio/zh-x-zm_yunxia.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "zm_yunyang",
+     "audio": "/media/voices/audio/zh-x-zm_yunyang.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/zh-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/zh-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/zh-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/zh-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    }
+   ]
+  },
+  {
+   "code": "hi",
+   "name": "Hindi",
+   "native": "हिन्दी",
+   "text": "नमस्ते! आपका order रास्ते में है, कल तक पहुँच जाएगा। और कुछ help चाहिए? कॉल करने के लिए शुक्रिया, आपका दिन अच्छा रहे!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "ritu (persona female)",
+     "audio": "/media/voices/audio/hi-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/hi-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/hi-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/hi-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "kavya (conversational)",
+     "audio": "/media/voices/audio/hi-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "ishita (social)",
+     "audio": "/media/voices/audio/hi-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "sanchita (assistant)",
+     "audio": "/media/voices/audio/hi-07.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "rahul (conversational)",
+     "audio": "/media/voices/audio/hi-08.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "aditya (conversational)",
+     "audio": "/media/voices/audio/hi-09.mp3"
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "female character (af_heart's voice)",
+     "audio": "/media/voices/audio/hi-cb-f.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.96,
+      "rtf": 2.59,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "Chatterbox (in testing)",
+     "model": "Multilingual",
+     "via": "lab",
+     "voice": "male character (am_michael's voice)",
+     "audio": "/media/voices/audio/hi-cb-m.mp3",
+     "testing": true,
+     "measured": {
+      "readback": 0.91,
+      "rtf": 2.41,
+      "checked_with": "Deepgram nova-3"
+     }
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/hi-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/hi-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/hi-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "hf_alpha",
+     "audio": "/media/voices/audio/hi-x-hf_alpha.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "hf_beta",
+     "audio": "/media/voices/audio/hi-x-hf_beta.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "hm_omega",
+     "audio": "/media/voices/audio/hi-x-hm_omega.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Kokoro (self-hosted)",
+     "model": "",
+     "via": "",
+     "voice": "hm_psi",
+     "audio": "/media/voices/audio/hi-x-hm_psi.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/hi-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/hi-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/hi-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/hi-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Divya",
+     "audio": "/media/voices/audio/hi-parler-divya.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.91,
+      "rtf": 3.67,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Rohit",
+     "audio": "/media/voices/audio/hi-parler-rohit.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.91,
+      "rtf": 3.93,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "bn",
+   "name": "Bengali",
+   "native": "বাংলা",
+   "text": "নমস্কার! আপনার অর্ডার রাস্তায় আছে, কাল পৌঁছে যাবে। আর কিছু লাগবে? ফোন করার জন্য ধন্যবাদ, আপনার দিনটা ভালো কাটুক!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/bn-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/bn-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/bn-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/bn-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "roopa (conversational)",
+     "audio": "/media/voices/audio/bn-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "arnab (conversation)",
+     "audio": "/media/voices/audio/bn-06.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/bn-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/bn-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/bn-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/bn-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/bn-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Aditi",
+     "audio": "/media/voices/audio/bn-parler-aditi.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.36,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Arjun",
+     "audio": "/media/voices/audio/bn-parler-arjun.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 3.51,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "gu",
+   "name": "Gujarati",
+   "native": "ગુજરાતી",
+   "text": "નમસ્તે! તમારો ઓર્ડર રસ્તામાં છે, કાલે પહોંચી જશે. બીજું કંઈ જોઈએ છે? ફોન કરવા બદલ આભાર, તમારો દિવસ સારો જાય!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/gu-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/gu-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/gu-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/gu-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "pooja (conversational)",
+     "audio": "/media/voices/audio/gu-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "pooja (customer)",
+     "audio": "/media/voices/audio/gu-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "bhavik (conversation)",
+     "audio": "/media/voices/audio/gu-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/gu-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/gu-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/gu-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/gu-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/gu-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Neha",
+     "audio": "/media/voices/audio/gu-parler-neha.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.3,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Yash",
+     "audio": "/media/voices/audio/gu-parler-yash.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.26,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "kn",
+   "name": "Kannada",
+   "native": "ಕನ್ನಡ",
+   "text": "ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಆರ್ಡರ್ ದಾರಿಯಲ್ಲಿದೆ, ನಾಳೆ ಬರುತ್ತೆ. ಇನ್ನೇನಾದ್ರೂ ಬೇಕಾ? ಕಾಲ್ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ, ನಿಮ್ಮ ದಿನ ಚೆನ್ನಾಗಿರಲಿ!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/kn-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/kn-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/kn-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/kn-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "chaitra (conversation)",
+     "audio": "/media/voices/audio/kn-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "suchitra (narration)",
+     "audio": "/media/voices/audio/kn-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "chetan (conversation)",
+     "audio": "/media/voices/audio/kn-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/kn-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/kn-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/kn-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/kn-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/kn-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Anu",
+     "audio": "/media/voices/audio/kn-parler-anu.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.21,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Suresh",
+     "audio": "/media/voices/audio/kn-parler-suresh.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.97,
+      "rtf": 3.5,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "ml",
+   "name": "Malayalam",
+   "native": "മലയാളം",
+   "text": "നമസ്കാരം! നിങ്ങളുടെ ഓർഡർ വഴിയിലാണ്, നാളെ എത്തും. വേറെ എന്തെങ്കിലും വേണോ? വിളിച്ചതിന് നന്ദി, നല്ലൊരു ദിവസം ആശംസിക്കുന്നു!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/ml-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/ml-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/ml-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/ml-04.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ml-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ml-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ml-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ml-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ml-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Anjali",
+     "audio": "/media/voices/audio/ml-parler-anjali.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.84,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Harish",
+     "audio": "/media/voices/audio/ml-parler-harish.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.53,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "mr",
+   "name": "Marathi",
+   "native": "मराठी",
+   "text": "नमस्कार! तुमची ऑर्डर वाटेत आहे, उद्या पोहोचेल. अजून काही हवंय का? फोन केल्याबद्दल धन्यवाद, तुमचा दिवस छान जावो!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/mr-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/mr-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/mr-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/mr-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "ishita (conversational)",
+     "audio": "/media/voices/audio/mr-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "ritu (narration)",
+     "audio": "/media/voices/audio/mr-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "rupali (stories)",
+     "audio": "/media/voices/audio/mr-07.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "nilesh (conversation)",
+     "audio": "/media/voices/audio/mr-08.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/mr-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/mr-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/mr-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/mr-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/mr-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Sanjay",
+     "audio": "/media/voices/audio/mr-parler-sanjay.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 3.72,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Sunita",
+     "audio": "/media/voices/audio/mr-parler-sunita.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.98,
+      "rtf": 4.0,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "od",
+   "name": "Odia",
+   "native": "ଓଡ଼ିଆ",
+   "text": "ନମସ୍କାର! ଆପଣଙ୍କ ଅର୍ଡର ବାଟରେ ଅଛି, କାଲି ପହଞ୍ଚିଯିବ। ଆଉ କିଛି ଦରକାର କି? ଫୋନ୍ କରିଥିବାରୁ ଧନ୍ୟବାଦ, ଆପଣଙ୍କ ଦିନ ଭଲ କଟୁ!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/od-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/od-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/od-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/od-04.mp3"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/od-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/od-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/od-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/od-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Debjani",
+     "audio": "/media/voices/audio/od-parler-debjani.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.96,
+      "rtf": 3.58,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Manas",
+     "audio": "/media/voices/audio/od-parler-manas.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.96,
+      "rtf": 3.44,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "pa",
+   "name": "Punjabi",
+   "native": "ਪੰਜਾਬੀ",
+   "text": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਤੁਹਾਡਾ ਆਰਡਰ ਰਸਤੇ ਵਿੱਚ ਹੈ, ਕੱਲ੍ਹ ਪਹੁੰਚ ਜਾਵੇਗਾ। ਹੋਰ ਕੁਝ ਚਾਹੀਦਾ? ਫ਼ੋਨ ਕਰਨ ਲਈ ਧੰਨਵਾਦ, ਤੁਹਾਡਾ ਦਿਨ ਵਧੀਆ ਲੰਘੇ!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/pa-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/pa-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/pa-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/pa-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "harpreet (narration)",
+     "audio": "/media/voices/audio/pa-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "anand (conversation)",
+     "audio": "/media/voices/audio/pa-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "jaspal (banking)",
+     "audio": "/media/voices/audio/pa-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/pa-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/pa-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/pa-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/pa-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/pa-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Divjot",
+     "audio": "/media/voices/audio/pa-parler-divjot.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.37,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Gurpreet",
+     "audio": "/media/voices/audio/pa-parler-gurpreet.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.14,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "ta",
+   "name": "Tamil",
+   "native": "தமிழ்",
+   "text": "வணக்கம்! உங்க ஆர்டர் வழியில இருக்கு, நாளைக்கு வந்துடும். வேற ஏதாவது வேணுமா? கால் பண்ணதுக்கு நன்றி, உங்க நாள் நல்லா இருக்கட்டும்!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/ta-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/ta-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/ta-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/ta-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "gokul (narration)",
+     "audio": "/media/voices/audio/ta-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "vijay (narration)",
+     "audio": "/media/voices/audio/ta-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "aravind (ads)",
+     "audio": "/media/voices/audio/ta-07.mp3"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Chris",
+     "audio": "/media/voices/audio/ta-elevenlabs-chris.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "ElevenLabs",
+     "model": "eleven_multilingual_v2",
+     "via": "",
+     "voice": "Sarah",
+     "audio": "/media/voices/audio/ta-elevenlabs-sarah.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/ta-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/ta-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/ta-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/ta-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/ta-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Jaya",
+     "audio": "/media/voices/audio/ta-parler-jaya.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 0.91,
+      "rtf": 3.08,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  },
+  {
+   "code": "te",
+   "name": "Telugu",
+   "native": "తెలుగు",
+   "text": "నమస్కారం! మీ ఆర్డర్ దారిలో ఉంది, రేపు వచ్చేస్తుంది. ఇంకేమైనా కావాలా? కాల్ చేసినందుకు థాంక్స్, మీ రోజు బాగుండాలి!",
+   "voices": [
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "priya (persona female)",
+     "audio": "/media/voices/audio/te-01.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "rahul (persona male)",
+     "audio": "/media/voices/audio/te-02.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "neha (persona female-2)",
+     "audio": "/media/voices/audio/te-03.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v3",
+     "via": "Voxie router",
+     "voice": "aditya (persona male-2)",
+     "audio": "/media/voices/audio/te-04.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "kavitha (conversation)",
+     "audio": "/media/voices/audio/te-05.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "pooja (conversation)",
+     "audio": "/media/voices/audio/te-06.mp3"
+    },
+    {
+     "provider": "Sarvam",
+     "model": "bulbul:v4-flash",
+     "via": "",
+     "voice": "tarun (narration)",
+     "audio": "/media/voices/audio/te-07.mp3"
+    },
+    {
+     "provider": "Cartesia",
+     "model": "sonic-3",
+     "via": "",
+     "voice": "Katie",
+     "audio": "/media/voices/audio/te-cartesia-katie.mp3",
+     "batch": "phase1"
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "coral (female)",
+     "audio": "/media/voices/audio/te-openai-coral.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "marin (female)",
+     "audio": "/media/voices/audio/te-openai-marin.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "ash (male)",
+     "audio": "/media/voices/audio/te-openai-ash.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "OpenAI",
+     "model": "gpt-4o-mini-tts",
+     "via": "",
+     "voice": "cedar (male)",
+     "audio": "/media/voices/audio/te-openai-cedar.mp3",
+     "batch": "phase1",
+     "testing": true
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Lalitha",
+     "audio": "/media/voices/audio/te-parler-lalitha.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.32,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    },
+    {
+     "provider": "Indic Parler-TTS",
+     "model": "indic-parler-tts",
+     "via": "",
+     "voice": "Prakash",
+     "audio": "/media/voices/audio/te-parler-prakash.mp3",
+     "batch": "phase1",
+     "testing": true,
+     "measured": {
+      "readback": 1.0,
+      "rtf": 3.41,
+      "checked_with": "Sarvam saarika v2.5"
+     }
+    }
+   ]
+  }
+ ]
+}
