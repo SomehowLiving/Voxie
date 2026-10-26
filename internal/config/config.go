@@ -490,8 +490,21 @@ type AgentConfig struct {
 }
 
 type CartesiaConfig struct {
-	APIKey  string `toml:"api_key"`
+	APIKey string `toml:"api_key"`
+	// Model is the Sonic model; empty means sonic-3.6. Pin a dated snapshot
+	// ("sonic-3.6-2026-08-27") to keep a voice from changing under you.
+	Model string `toml:"model"`
+	// VoiceID speaks languages with no voice of their own; empty means Katie
+	// (American English).
 	VoiceID string `toml:"voice_id"`
+	// Voices gives a language its own voice: hi = "<voice id>". Indian
+	// languages default to a voice native in each (see tts/cartesia_voices.go):
+	// a voice speaks other languages in its own accent.
+	Voices map[string]string `toml:"voices"`
+	// Locales overrides the locale sent with a language's sentences, which
+	// sets the accent and how numbers and dates are read: en = "en-IN".
+	// Indian languages default to "xx-IN", the rest to their base code.
+	Locales map[string]string `toml:"locales"`
 	// WSURL overrides the Cartesia WebSocket endpoint. Empty (the default)
 	// talks to wss://api.cartesia.ai/tts/websocket.
 	WSURL string `toml:"ws_url"`

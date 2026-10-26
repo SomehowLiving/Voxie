@@ -162,7 +162,9 @@ func newNamedProvider(cfg *config.Config, name string) (Client, error) {
 		if cfg.Cartesia.APIKey == "" {
 			return nil, ErrMissingAPIKey{Provider: "cartesia", Field: "[cartesia] api_key"}
 		}
-		client := NewCartesiaWSClient(cfg.Cartesia.APIKey, cfg.Cartesia.VoiceID, cfg.Cartesia.WSURL)
+		client := NewCartesiaWSClientWith(cfg.Cartesia.APIKey, cfg.Cartesia.WSURL, CartesiaOptions{
+			Model: cfg.Cartesia.Model, VoiceID: cfg.Cartesia.VoiceID, Voices: cfg.Cartesia.Voices, Locales: cfg.Cartesia.Locales,
+		})
 		// Gate generations to the account's TTS concurrency limit so extra
 		// requests queue locally instead of getting 429s. A negative limit
 		// disables gating; the limiter is shared process-wide (one ceiling
@@ -272,8 +274,8 @@ func speaksFor(cfg *config.Config, name string) func(string) bool {
 		}
 		return func(l string) bool { return l == "en" }
 	case "cartesia":
-		// sonic-3 speaks 28 of Voxie's 29: not Odia (probed 2026-10-25).
-		return func(l string) bool { return l != "od" }
+		model := cfg.Cartesia.Model
+		return func(l string) bool { return cartesiaSpeaks(model, l) }
 	}
 	return nil
 }
