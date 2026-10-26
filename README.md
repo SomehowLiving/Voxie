@@ -19,8 +19,8 @@ Built on [StreamCore](https://github.com/streamcoreai/streamcore-server)
 - **A listener per call** ([how](docs/voxie/how-it-works.md#choosing-the-listener-the-adaptive-listener)).
   - Deepgram hears most callers. A turn it may have misheard is
     identified by language and moved to the listener that hears it:
-    Sarvam for Tamil, Telugu, Bengali…, and Deepgram fixed for Chinese,
-    Korean, Arabic, Turkish.
+    Sarvam for Tamil, Telugu, Bengali, Malayalam…; Deepgram's multilingual
+    model hears all 22 world languages itself.
   - The switch happens on the caller's first real sentence, and that turn
     isn't lost.
 - **A voice for every language it speaks.** Kokoro on your GPU for

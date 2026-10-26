@@ -66,14 +66,18 @@ const (
 )
 
 var (
-	// Deepgram multi hears these (verified).
-	multiLanguages = setOf("en", "es", "fr", "de", "it", "pt", "nl", "ru", "ja", "hi")
-	// Regional Indian languages: the Indian listener.
+	// Deepgram multi hears these, and labels them right. Since Deepgram's
+	// 2026-10-23 update to nova-3 multi, that's every world language Voxie
+	// hears: measured 2026-10-26, transcript 0.88-1.00 and the right label
+	// for all 22, on clean and phone audio alike. (Before, zh/ko/ar/tr/pl/uk/
+	// cs/hu/sv/ro/fi/da/vi needed Deepgram fixed to the language.)
+	multiLanguages = setOf("en", "es", "fr", "de", "it", "pt", "nl", "ru", "ja", "hi",
+		"zh", "ko", "ar", "tr", "pl", "uk", "cs", "hu", "sv", "ro", "fi", "da", "vi")
+	// Regional Indian languages: the Indian listener. Multi now hears ta, te,
+	// bn, gu, kn and mr too, but labels Malayalam as Tamil and Punjabi as
+	// Hindi with confidence (0.72-0.86), so a regional label is still checked
+	// and the call moves to the Indian listener, which hears all of them.
 	indianRegional = setOf("bn", "ta", "te", "kn", "ml", "mr", "gu", "pa", "od")
-	// World languages Deepgram hears only with the language fixed (verified;
-	// Polish: multi returned nothing, nova-3 fixed to pl heard it at 0.996;
-	// uk/cs/hu/sv/ro/fi/da/vi: multi 0.0-0.83, fixed 0.91-1.00).
-	fixedWorldLanguages = setOf("zh", "ko", "ar", "tr", "pl", "uk", "cs", "hu", "sv", "ro", "fi", "da", "vi")
 	// World languages Whisper has named for a short Indian turn (live: a
 	// Bengali turn as Vietnamese). On a call that looks Indian, Sarvam's
 	// answer is awaited before believing them.
@@ -126,8 +130,6 @@ func listenerFor(lang string) (listenerSpec, bool) {
 		return listenerSpec{indian: true, language: lang}, true
 	case multiLanguages[lang]:
 		return listenerSpec{}, true
-	case fixedWorldLanguages[lang]:
-		return listenerSpec{language: lang}, true
 	}
 	return listenerSpec{}, false
 }
@@ -139,8 +141,6 @@ func startListener(hint Hint) listenerSpec {
 	switch {
 	case indianRegional[lang]:
 		return listenerSpec{indian: true, language: lang}
-	case fixedWorldLanguages[lang]:
-		return listenerSpec{language: lang}
 	}
 	return listenerSpec{}
 }
@@ -488,9 +488,7 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 	if item.spec.covers(id.Language) {
 		log.Printf("[stt:adaptive] checked turn (%s): %s says %s in %s; %s hears it", heard, id.Source, id.Language, elapsed, item.spec)
 		a.agree(id.Language)
-		if item.final != nil && id.Text != "" && wrongScript(item.final.Text, id.Language) {
-			// The listener hears the language, but wrote this turn in another
-			// script: English as katakana. The identifier's words are the turn.
+		if id.Text != "" && misheardByListener(item.final, id.Language) {
 			a.replace(item, id)
 			return
 		}
@@ -522,6 +520,27 @@ func (a *adaptiveClient) process(item adaptiveItem) {
 	}
 	a.agreedOn, a.agreeing = "", 0
 	a.switchTo(next, item.at)
+}
+
+// misheardByListener reports whether a listener that hears language got
+// this turn wrong, so the identifier's words are the turn: it sent nothing
+// (Chinese on the old multi), labelled it another language (Korean as
+// katakana "Japanese", Vietnamese as English "Sin chow"), or wrote it in
+// another script (English as katakana). English and Hindi labels flip
+// within one Hinglish sentence, so between those two the listener's mixed
+// transcript stands.
+func misheardByListener(final *TranscriptResult, language string) bool {
+	if final == nil {
+		return true
+	}
+	if wrongScript(final.Text, language) {
+		return true
+	}
+	label := baseLanguage(final.Language)
+	if label == "" || label == language {
+		return false
+	}
+	return !((label == "en" || label == "hi") && (language == "en" || language == "hi"))
 }
 
 func (a *adaptiveClient) release(item adaptiveItem) {
@@ -596,10 +615,11 @@ func (a *adaptiveClient) checkKind(r TranscriptResult, voiced int, spec listener
 	if r.Confidence > 0 && r.Confidence < a.minConfidence {
 		return checkHold
 	}
-	// Multi hears ten languages; a turn it labels with any other was misheard.
-	// Live, a Kannada caller came back as Urdu ("نن کے کنڈا پر رہتے ہیں") and
-	// as Telugu and Kannada script mixed, both at high confidence, and the
-	// agent answered in Urdu.
+	// A turn multi labels with a language outside multiLanguages is checked:
+	// an Indian label may be another Indian language (Malayalam comes back as
+	// Tamil), and anything else was misheard. Live, a Kannada caller came back
+	// as Urdu ("نن کے کنڈا پر رہتے ہیں") at high confidence, and the agent
+	// answered in Urdu.
 	if spec == (listenerSpec{}) && r.Language != "" && !multiLanguages[baseLanguage(r.Language)] {
 		return checkHold
 	}

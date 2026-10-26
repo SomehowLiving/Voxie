@@ -67,13 +67,20 @@ sequenceDiagram
 
 No single speech-to-text hears everyone:
 
-| Caller speaks | Deepgram multi | Deepgram, language fixed | Sarvam |
-|---|---|---|---|
-| English, Hindi, Hinglish | ✅ 0.99+ | – | ✅ |
-| Tamil, Telugu, Bengali, Gujarati, Punjabi, Kannada, Marathi | ❌ Hindi-looking nonsense, labelled "hi", 0.70–0.95 | ✅ 0.97–1.00 | ✅ |
-| Malayalam | ❌ | ❌ not offered | ✅ |
-| Spanish, French, German, Italian, Portuguese, Dutch, Russian, Japanese | ✅ 1.00 | – | ❌ labelled "en-IN", often turned into English |
-| Chinese, Korean, Arabic, Turkish | ❌ nothing, or 0.5–0.7 | ✅ 0.98–1.00 | ❌ |
+Measured 2026-10-26, after Deepgram's 2026-10-23 update to `nova-3`
+multi, on clean and phone-quality audio:
+
+| Caller speaks | Deepgram multi | Sarvam |
+|---|---|---|
+| English, Hindi, Hinglish | ✅ | ✅ |
+| Tamil, Telugu, Bengali, Gujarati, Kannada, Marathi | ✅ 0.93–1.00, right label | ✅ |
+| Malayalam, Punjabi | ❌ labelled Tamil (or Telugu) and Hindi, confidence 0.72–0.95 | ✅ |
+| Odia | ❌ not offered | ✅ |
+| The 22 world languages (Spanish… Polish, Chinese, Korean, Arabic, Turkish, Vietnamese) | ✅ 0.88–1.00, right label | ❌ labelled "en-IN", often turned into English |
+
+Before that update, multi heard none of the regional Indian languages and
+missed Chinese, Korean, Arabic, Turkish, Polish and eight more, which went
+to Deepgram fixed to the language.
 
 So the hard part is knowing the language, not hearing it.
 `[stt] provider = "adaptive"` (`internal/stt/adaptive.go`) handles that
@@ -81,7 +88,6 @@ per call:
 
 1. **Start from what the agent knows** (`listen`).
    - A regional Indian language on record → Sarvam.
-   - zh, ko, ar or tr → Deepgram fixed to it.
    - Anything else → Deepgram multi. It hears most callers, and streams
      partial words for the best barge-in.
 2. **Check turns it may have misheard.** Such a turn is held while its
