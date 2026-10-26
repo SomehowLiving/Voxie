@@ -132,7 +132,7 @@ What was measured, per language: [docs/voxie/languages.md](docs/voxie/languages.
 | `configs/voxie.toml` | One config for every caller |
 | `quickstart/` | Call page, WHIP proxy, demo agent |
 | `tools/callers/` | Scripted multilingual callers over WebRTC |
-| `docs/voxie/` | How it works, the agent contract, language measurements, call reports |
+| `docs/voxie/` | How it works, the agent contract, call reports, and what's measured: [languages](docs/voxie/languages.md), [interruptions](docs/voxie/interruptions.md), [voices](docs/voxie/voices.md); [how Voxie compares](docs/voxie/comparison.md) |
 | `docs/`, `README.streamcore.md` | Upstream StreamCore's docs, still accurate for everything Voxie didn't change |
 
 ## Staying current with upstream
