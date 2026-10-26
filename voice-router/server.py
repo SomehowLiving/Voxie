@@ -433,6 +433,8 @@ class SarvamBreaker:
     def __init__(self, threshold: int = 2, cooldown_s: float = 60.0):
         self.threshold, self.cooldown_s = threshold, cooldown_s
         self.failures, self.open_until = 0, 0.0
+        self.reason = ""  # why it's down, for /health
+        self.suspended = False  # down for an account problem that may be fixed (credits)
         self.lock = threading.Lock()
 
     def available(self) -> bool:
@@ -441,25 +443,33 @@ class SarvamBreaker:
     def disable(self, reason: str) -> None:
         """Down for good: a rejected key won't start working on its own."""
         with self.lock:
-            self.open_until = float("inf")
+            self.open_until, self.reason, self.suspended = float("inf"), reason, False
         logger.error("Sarvam voice disabled: %s", reason)
 
     def suspend(self, reason: str, seconds: float) -> None:
         """Down for a long while: the account can't be used right now (no
-        credits) but may be topped up, so it's retried later."""
+        credits) but may be topped up, so it's retried later -- and checked
+        every minute meanwhile (sarvam_recheck_loop)."""
         with self.lock:
+            was_down = self.suspended
             self.open_until = max(self.open_until, time.monotonic() + seconds)
-        logger.error("Sarvam voice down for %.0f min: %s", seconds / 60, reason)
+            self.reason, self.suspended = reason, True
+        if not was_down:
+            logger.error("Sarvam voice down for up to %.0f min: %s", seconds / 60, reason)
 
     def success(self) -> None:
         with self.lock:
-            self.failures, self.open_until = 0, 0.0
+            was_down = self.suspended
+            self.failures, self.open_until, self.reason, self.suspended = 0, 0.0, "", False
+        if was_down:
+            logger.info("Sarvam voice is back")
 
     def failure(self) -> None:
         with self.lock:
             self.failures += 1
             if self.failures >= self.threshold:
                 self.open_until = time.monotonic() + self.cooldown_s
+                self.reason = f"{self.failures} failures in a row"
                 logger.warning("Sarvam voice marked down for %.0fs after %d failures", self.cooldown_s, self.failures)
 
 
@@ -469,6 +479,52 @@ _sarvam_breaker = SarvamBreaker()
 
 def sarvam_available() -> bool:
     return bool(_sarvam_key) and _sarvam_breaker.available()
+
+
+def sarvam_recheck_loop(every_s: float = 60.0) -> None:
+    """Out of credits, an account can be topped up at any moment. Waiting out
+    the whole suspension kept Indian languages off for ten minutes after a
+    top-up (live, 2026-10-25), so ask once a minute with one short word and
+    bring them back as soon as Sarvam answers. A rejected key stays down: it
+    won't fix itself."""
+    while True:
+        time.sleep(every_s)
+        if not (_sarvam_breaker.suspended and not _sarvam_breaker.available()):
+            continue
+        try:
+            _sarvam_once("नमस्ते", "hi")
+            _sarvam_breaker.success()
+        except urllib.error.HTTPError as exc:
+            if exc.code in (401, 403):
+                account_problem(exc)
+        except Exception:
+            pass  # still down, or the network blinked: ask again next minute
+
+
+# When a caller's line was last voiced; the keep-warm loop runs Kokoro after a quiet spell.
+_last_use = time.monotonic()
+
+
+def keep_warm_loop(idle_s: float) -> None:
+    """After an hour without calls, the GPU took 3.0s for a one-second line
+    (0.4x real time, 2026-10-25) where it takes 0.5s warm: the first caller
+    after a quiet spell waited, or failover moved them to a paid voice. One
+    word through Kokoro after each idle_s of quiet keeps the GPU ready. It
+    bypasses synthesize(), so it isn't logged and doesn't count as the last
+    language heard. A caller's line arriving at that moment waits ~0.1s."""
+    last_warm = time.monotonic()
+    while True:
+        time.sleep(max(1.0, idle_s / 4))
+        if time.monotonic() - max(_last_use, last_warm) < idle_s:
+            continue
+        last_warm = time.monotonic()
+        try:
+            lang, kokoro_voice = voice_for("en", PERSONAS[_persona])
+            with _lock:
+                for _ in _pipeline(lang)("Okay.", voice=kokoro_voice, speed=1.0):
+                    pass
+        except Exception as exc:
+            logger.warning("keep-warm line failed: %s", exc)
 
 
 def _sarvam_once(text: str, language: str, speaker: str | None = None) -> bytes:
@@ -554,6 +610,8 @@ def speakable_languages() -> list[str]:
 
 
 def synthesize(text: str, voice: str = "") -> bytes:
+    global _last_use
+    _last_use = time.monotonic()
     tagged_voice, text = take_voice_tag(text)
     persona = persona_for(tagged_voice or voice)
     tagged, text = take_language_tag(text)
@@ -632,6 +690,8 @@ def health():
         # Lines may carry "[voice:<persona>] " to choose the persona per line.
         "voice_tags": True,
         "sarvam": "not configured" if not _sarvam_key else ("up" if _sarvam_breaker.available() else "down"),
+        # Why, while it's down: "account out of credits (HTTP 402)", "key rejected (HTTP 401)"...
+        **({"sarvam_reason": _sarvam_breaker.reason} if _sarvam_key and not _sarvam_breaker.available() else {}),
     }
 
 
@@ -646,6 +706,8 @@ def main():
     parser.add_argument("--default-voice", default=None, help="Kokoro voice for English, overriding the persona's (hm_omega: Indian-accented English)")
     parser.add_argument("--sarvam-speakers", default=os.environ.get("VOXIE_SARVAM_SPEAKERS"), help="Sarvam voice per language for the persona, e.g. hi=ritu,ta=kavitha")
     parser.add_argument("--spoken-names", default=os.environ.get("VOXIE_SPOKEN_NAMES"), help="JSON file: how to spell names per language")
+    parser.add_argument("--keep-warm-s", type=float, default=float(os.environ.get("VOXIE_KEEP_WARM_S", "60")),
+                        help="voice a word after this many idle seconds, so the GPU is ready for the next caller (0: off)")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s")
     load_spoken_names(args.spoken_names)
@@ -711,6 +773,10 @@ def main():
         if _sarvam_key
         else "off: SARVAM_API_KEY not set",
     )
+    if _sarvam_key:
+        threading.Thread(target=sarvam_recheck_loop, daemon=True, name="sarvam-recheck").start()
+    if args.keep_warm_s > 0:
+        threading.Thread(target=keep_warm_loop, args=(args.keep_warm_s,), daemon=True, name="keep-warm").start()
     uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
 
 
