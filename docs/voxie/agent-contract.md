@@ -62,7 +62,7 @@ This extends upstream StreamCore's "bring your own agent" contract
 |---|---|---|
 | `listen` | Once, before speech-to-text starts (adaptive listener only) | `{"language"?: "ta", "region"?: "IN"}` |
 | `greeting` | The caller stayed silent for `greeting_delay_ms` | `{"text": "Hi Priya, …"}` |
-| `chat` | The caller finished a turn | `{"text": "…", "end_call"?: true}` |
+| `chat` | The caller finished a turn | `{"text": "…", "end_call"?: true, "outcome"?: {…}}` |
 | `oneshot` | Background work (rolling summaries) | `{"text": ""}` is fine |
 
 ### `listen`
@@ -90,14 +90,19 @@ This is the caller's turn. Reply with what to say. With `"end_call": true`,
 Voxie hangs up once that line has fully played. If the caller talks over
 the goodbye, it's cancelled and you get their words as a new `chat`.
 
+Optionally, say how the call went with `"outcome": {"success": true,
+"reason": "booked"}` (both fields optional, `reason` a short label). The last
+outcome in a call goes into its [call report](call-reports.md).
+
 ## Reply formats
 
 By `Content-Type`:
-- **`application/json`**: `{"text": "…", "end_call"?: bool}`. Buffered.
+- **`application/json`**: `{"text": "…", "end_call"?: bool, "outcome"?: {…}}`. Buffered.
   Voxie still voices it one sentence at a time.
 - **`text/event-stream`**: `data:` lines of text or `{"delta": "…"}`,
   spoken sentence by sentence as they arrive. Send `{"end_call": true}` as
-  an event to end the call after the reply, and `[DONE]` to finish. Stream
+  an event to end the call after the reply, `{"outcome": {…}}` to report
+  how it went, and `[DONE]` to finish. Stream
   when your reply is ready in pieces, for example translated sentence by
   sentence: Voxie starts voicing the first while the rest is on its way.
 - **`text/plain`**: chunked text, spoken as it arrives.

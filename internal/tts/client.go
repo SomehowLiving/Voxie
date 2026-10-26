@@ -17,6 +17,9 @@ import (
 type StreamChunk struct {
 	PCM []byte
 	Err error
+	// Provider names the voice that made the audio, on a sentence's first
+	// chunk; set by the failover chain, empty from a single provider.
+	Provider string
 }
 
 // Client synthesizes text to PCM audio (linear16, 16kHz mono).

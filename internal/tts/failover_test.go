@@ -433,3 +433,19 @@ func TestSpeaksFor(t *testing.T) {
 		t.Error("the voice router picks its own voice per language")
 	}
 }
+
+// The pipeline learns which voice spoke a sentence from its first chunk.
+func TestFailoverNamesTheVoiceThatSpoke(t *testing.T) {
+	a, b := &fakeVoice{err: errors.New("HTTP 402: out of credits")}, &fakeVoice{chunks: audio("b")}
+	f := newTestFailover(t, map[string]*fakeVoice{"a": a, "b": b}, FailoverOptions{Order: []string{"a", "b"}})
+	ch, err := f.SynthesizeStream(context.Background(), "hi")
+	if err != nil {
+		t.Fatal(err)
+	}
+	first := <-ch
+	if first.Provider != "b" {
+		t.Fatalf("first chunk names %q; want b", first.Provider)
+	}
+	for range ch {
+	}
+}

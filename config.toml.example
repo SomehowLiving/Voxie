@@ -15,6 +15,10 @@ allow_public = false            # Required acknowledgement when bind is not loop
 block_profile_rate = 0          # Average nanoseconds blocked per sample; 1 records every event. 0 disables block profiling.
 mutex_profile_fraction = 0      # Sample 1 in this many mutex contention events; 1 records every event. 0 disables mutex profiling.
 
+[reports]
+enabled = true                  # One JSON line per reply and per call, read by `voxie report`. Numbers and labels only: never audio or what was said.
+dir = "reports"                 # Where the daily files go (calls-YYYY-MM-DD.jsonl).
+
 [plugins]
 directory = "./plugins"     # Required if you want plugins and skills loaded
 # config = {}               # Per-plugin settings, keyed by the name in the plugin's manifest

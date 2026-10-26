@@ -53,3 +53,5 @@ go.work.sum
 *.swo
 .DS_Store
 Thumbs.db
+# Call reports (voxie report)
+/reports/

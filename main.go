@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/streamcoreai/streamcore-server/internal/callreport"
 	"github.com/streamcoreai/streamcore-server/internal/config"
 	"github.com/streamcoreai/streamcore-server/internal/plugin"
 	"github.com/streamcoreai/streamcore-server/internal/rag"
@@ -32,9 +33,21 @@ func main() {
 	// reply, first audio) are hundreds of milliseconds apart.
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 
+	if len(os.Args) > 1 && os.Args[1] == "report" {
+		os.Exit(runReport(os.Args[2:], os.Stdout))
+	}
+
 	cfg, err := config.Load("")
 	if err != nil {
 		log.Fatalf("config: %v", err)
+	}
+	if cfg.Reports.On() {
+		if w, err := callreport.NewWriter(cfg.Reports.Dir); err != nil {
+			log.Printf("Warning: call reports off: %v", err)
+		} else {
+			callreport.SetDefault(w)
+			log.Printf("Call reports in %s (voxie report %s)", cfg.Reports.Dir, cfg.Reports.Dir)
+		}
 	}
 	debugSrv, err := startDebugServer(cfg.Debug)
 	if err != nil {

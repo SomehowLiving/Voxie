@@ -16,6 +16,7 @@ services:
     env_file: .env
     volumes:
       - ./configs/voxie.toml:/config.toml:ro
+      - ./reports:/reports                  # call reports: voxie report reports
     restart: unless-stopped
 
   voice-router:
