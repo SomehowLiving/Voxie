@@ -12,7 +12,7 @@ import (
 
 const (
 	cartesiaAPIURL     = "https://api.cartesia.ai/tts/bytes"
-	cartesiaAPIVersion = "2025-04-16"
+	cartesiaAPIVersion = "2026-08-14"
 	// Katie - stable voice for voice agents (Cartesia docs)
 	defaultCartesiaVoiceID  = "f786b574-daa5-4673-aa0c-cbe3e8534c02"
 	cartesiaStreamChunkSize = 3200
@@ -57,7 +57,7 @@ type cartesiaOutputFormat struct {
 
 func (c *cartesiaClient) buildRequest(ctx context.Context, text string) (*http.Request, error) {
 	body := cartesiaRequest{
-		ModelID:    "sonic-3",
+		ModelID:    defaultCartesiaModel,
 		Transcript: text,
 		Voice: cartesiaVoice{
 			Mode: "id",

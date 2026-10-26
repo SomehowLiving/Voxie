@@ -18,7 +18,7 @@ import (
 
 const (
 	cartesiaDefaultWSURL = "wss://api.cartesia.ai/tts/websocket"
-	cartesiaWSVersion    = "2025-04-16"
+	cartesiaWSVersion    = "2026-08-14" // locale and Sonic 3.6
 	// cartesiaWSPendingBuf is the per-context response channel buffer.
 	// 64 slots is enough for even very long sentences while keeping
 	// memory modest (64 × pointer size).
@@ -30,9 +30,9 @@ const (
 // TLS handshake overhead (~65-195 ms per sentence). The connection is
 // established lazily on first use and auto-reconnects on failure.
 type cartesiaWSClient struct {
-	apiKey  string
-	voiceID string
-	wsURL   string
+	apiKey string
+	opts   CartesiaOptions
+	wsURL  string
 
 	// connMu protects conn and connected. It is also held during writes
 	// to serialise WebSocket write operations (gorilla/websocket requires
@@ -76,10 +76,11 @@ type wsGenerationRequest struct {
 	GenerationConfig *wsGenerationConfig `json:"generation_config,omitempty"`
 	ContextID        string              `json:"context_id"`
 	Continue         bool                `json:"continue"`
-	// Language is the sentence's language ("hi", "ta"); empty lets Cartesia
-	// assume English. Sonic-3 rejects a language it doesn't speak (Odia, as
-	// of 2026-10), which sends the sentence on to the next voice.
-	Language string `json:"language,omitempty"`
+	// Locale is the sentence's locale ("hi-IN", "or-IN"; see localeFor). It
+	// sets the accent and how numbers and dates are read; empty lets Cartesia
+	// detect the language. A model that doesn't speak it rejects the sentence,
+	// which sends it on to the next voice.
+	Locale string `json:"locale,omitempty"`
 }
 
 // wsGenerationConfig controls sonic-3 audio attributes. Speed is explicitly
@@ -102,13 +103,17 @@ type wsOutputFormat struct {
 
 // NewCartesiaWSClient creates a Cartesia TTS client backed by the WebSocket
 // API. The connection is established lazily on first synthesis request.
-// voiceID defaults to Katie if empty. wsURL overrides the WebSocket
+// voiceID (Katie if empty) speaks languages that have no native voice of
+// their own (see cartesia_voices.go). wsURL overrides the WebSocket
 // endpoint (intended for local dev — see config.CartesiaConfig.WSURL).
 // Empty wsURL means production wss://api.cartesia.ai/tts/websocket.
 func NewCartesiaWSClient(apiKey, voiceID, wsURL string) Client {
-	if voiceID == "" {
-		voiceID = defaultCartesiaVoiceID
-	}
+	return NewCartesiaWSClientWith(apiKey, wsURL, CartesiaOptions{VoiceID: voiceID})
+}
+
+// NewCartesiaWSClientWith is NewCartesiaWSClient with the model, a voice per
+// language and locales configured (see CartesiaOptions).
+func NewCartesiaWSClientWith(apiKey, wsURL string, opts CartesiaOptions) Client {
 	endpoint := cartesiaDefaultWSURL
 	if wsURL != "" {
 		endpoint = wsURL
@@ -116,7 +121,7 @@ func NewCartesiaWSClient(apiKey, voiceID, wsURL string) Client {
 	}
 	return &cartesiaWSClient{
 		apiKey:  apiKey,
-		voiceID: voiceID,
+		opts:    opts,
 		wsURL:   endpoint,
 		pending: make(map[string]chan *wsResponse),
 		closeCh: make(chan struct{}),
@@ -302,11 +307,11 @@ func (c *cartesiaWSClient) SynthesizeStreamLanguage(ctx context.Context, text, l
 	c.registerPending(contextID, respCh)
 
 	req := wsGenerationRequest{
-		ModelID:    "sonic-3",
+		ModelID:    c.opts.model(),
 		Transcript: text,
 		Voice: wsVoiceSpecifier{
 			Mode: "id",
-			ID:   c.voiceID,
+			ID:   c.opts.voiceFor(language),
 		},
 		OutputFormat: wsOutputFormat{
 			Container:  "raw",
@@ -316,7 +321,7 @@ func (c *cartesiaWSClient) SynthesizeStreamLanguage(ctx context.Context, text, l
 		GenerationConfig: &wsGenerationConfig{Speed: speed},
 		ContextID:        contextID,
 		Continue:         false,
-		Language:         language,
+		Locale:           c.opts.localeFor(language),
 	}
 
 	if err := c.writeJSON(req); err != nil {

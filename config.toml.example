@@ -247,7 +247,13 @@ timeout_ms = 60000      # Whole-turn budget, including streaming the reply
 
 [cartesia]
 api_key = ""            # Required if tts.provider = "cartesia"
-voice_id = ""           # Optional; defaults to Cartesia Katie
+model = ""              # Optional; defaults to sonic-3.6. Pin a snapshot ("sonic-3.6-2026-08-27") to keep the voice from changing
+voice_id = ""           # Optional; speaks languages without a voice of their own. Defaults to Katie (American English)
+# A voice speaks other languages in its own accent, so each Indian language
+# defaults to a voice native in it (internal/tts/cartesia_voices.go). Override
+# per language, and the locale (accent, and how numbers and dates are read):
+# voices = { hi = "<voice id>", ta = "<voice id>" }
+# locales = { en = "en-IN" }   # Indian languages default to "xx-IN"
 ws_url = ""             # Optional; defaults to wss://api.cartesia.ai/tts/websocket
 max_concurrency = 3     # Simultaneous generations before requests queue locally instead of hitting 429s.
                         # Set to your plan's TTS concurrency limit; negative disables the limiter
