@@ -1,5 +1,6 @@
 /* Voxie: airy white, glass and a cool blue, with warm light. */
 :root {
+  color-scheme: only light; /* phones in dark mode must not recolour the page */
   --bg: #f6f8fc;
   --ink: #0e1116;
   --ink-2: #4a5160;
@@ -33,6 +34,10 @@ h1, h2, h3 { margin: 0; font-weight: 500; letter-spacing: -.035em; line-height: 
 .nav-links a, .nav-gh { font-size: 14px; text-decoration: none; color: var(--ink); opacity: .85; }
 .nav-links a:hover, .nav-gh:hover { opacity: 1; }
 .nav-right { display: flex; align-items: center; gap: 18px; }
+.nav .btn { white-space: nowrap; }
+/* On a phone the hero's own Try Voxie sits just below; the bar keeps Get started. */
+@media (max-width: 480px) { .nav-right .nav-try { display: none; } .nav-right { gap: 12px; } }
+@media (max-width: 380px) { .nav-gh .stars { display: none; } }
 .nav-gh { display: inline-flex; align-items: center; gap: 6px; }
 .gh { width: 16px; height: 16px; fill: currentColor; flex: none; }
 
