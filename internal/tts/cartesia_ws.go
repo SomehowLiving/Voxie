@@ -374,8 +374,8 @@ func (c *cartesiaWSClient) SynthesizeStreamLanguage(ctx context.Context, text, l
 					// count for diagnosing speed/sample-rate issues. At
 					// 16kHz mono 16-bit: 32000 bytes/sec → 32 bytes/ms.
 					durationMs := float64(totalBytes) / 32.0
-					log.Printf("[tts:cartesia-ws] streamed %d bytes (%.0f ms expected) for %d chars of text",
-						totalBytes, durationMs, len(text))
+					log.Printf("[tts:cartesia-ws] streamed %d bytes (%.0f ms expected) for %d chars of text, voice %s, locale %s",
+						totalBytes, durationMs, len(text), shortID(req.Voice.ID), localeOrAuto(req.Locale))
 					return
 				}
 
@@ -505,4 +505,19 @@ func isNormalClose(err error) bool {
 		websocket.CloseNormalClosure,
 		websocket.CloseGoingAway,
 	)
+}
+
+// shortID is a voice ID's first block, enough to tell voices apart in a log.
+func shortID(id string) string {
+	if i := strings.IndexByte(id, '-'); i > 0 {
+		return id[:i]
+	}
+	return id
+}
+
+func localeOrAuto(locale string) string {
+	if locale == "" {
+		return "auto"
+	}
+	return locale
 }
