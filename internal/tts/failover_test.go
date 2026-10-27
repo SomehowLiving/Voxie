@@ -426,8 +426,8 @@ func TestSpeaksFor(t *testing.T) {
 	if s := speaksFor(cfg, "elevenlabs"); !s("ta") || !s("hi") || s("bn") {
 		t.Error("ElevenLabs v2.5 speaks Tamil and Hindi, not Bengali")
 	}
-	if s := speaksFor(cfg, "cartesia"); !s("hi") || !s("od") {
-		t.Error("Sonic 3.6, the default, speaks Hindi and Odia")
+	if s := speaksFor(cfg, "cartesia"); !s("hi") || !s("od") || !s("ja") || s("uk") {
+		t.Error("Sonic 3.6, the default, speaks Hindi, Odia and Japanese natively, and Ukrainian without a native voice")
 	}
 	cfg.Cartesia.Model = "sonic-3"
 	if s := speaksFor(cfg, "cartesia"); !s("hi") || s("od") {

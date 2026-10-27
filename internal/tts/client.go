@@ -274,8 +274,8 @@ func speaksFor(cfg *config.Config, name string) func(string) bool {
 		}
 		return func(l string) bool { return l == "en" }
 	case "cartesia":
-		model := cfg.Cartesia.Model
-		return func(l string) bool { return cartesiaSpeaks(model, l) }
+		o := CartesiaOptions{Model: cfg.Cartesia.Model, Voices: cfg.Cartesia.Voices}
+		return o.speaks
 	}
 	return nil
 }

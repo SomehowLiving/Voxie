@@ -18,7 +18,8 @@ func TestCartesiaVoiceAndLocalePerLanguage(t *testing.T) {
 		{"hi", cartesiaNativeVoices["hi"], "hi-IN"},
 		{"ta", cartesiaNativeVoices["ta"], "ta-IN"},
 		{"od", cartesiaNativeVoices["od"], "or-IN"}, // Voxie's od is Cartesia's or
-		{"es", defaultCartesiaVoiceID, "es"},
+		{"es", cartesiaNativeVoices["es"], "es"},
+		{"uk", defaultCartesiaVoiceID, "uk"}, // no native female Ukrainian voice
 		{"en", defaultCartesiaVoiceID, "en"},
 		{"", defaultCartesiaVoiceID, ""}, // untagged: Cartesia detects the language
 	}
@@ -45,7 +46,7 @@ func TestCartesiaConfigOverrides(t *testing.T) {
 		Model: "sonic-3.6-2026-08-27", VoiceID: "own-voice",
 		Voices: map[string]string{"hi": "my-hindi"}, Locales: map[string]string{"en": "en-IN"},
 	}
-	if o.voiceFor("hi") != "my-hindi" || o.voiceFor("ta") != cartesiaNativeVoices["ta"] || o.voiceFor("fr") != "own-voice" {
+	if o.voiceFor("hi") != "my-hindi" || o.voiceFor("ta") != cartesiaNativeVoices["ta"] || o.voiceFor("uk") != "own-voice" {
 		t.Error("configured voices come first, then native ones, then voice_id")
 	}
 	if o.localeFor("en") != "en-IN" || o.localeFor("hi") != "hi-IN" {
@@ -101,5 +102,27 @@ func TestCartesiaWSSendsModelVoiceAndLocale(t *testing.T) {
 	req := <-got
 	if req.ModelID != "sonic-3.6" || req.Voice.ID != cartesiaNativeVoices["ta"] || req.Locale != "ta-IN" {
 		t.Fatalf("sent model %q voice %q locale %q", req.ModelID, req.Voice.ID, req.Locale)
+	}
+}
+
+// Live, Katie read Japanese in an American accent: every language Voxie
+// speaks gets a native voice, except Ukrainian, which Cartesia has only a
+// male native voice for, so it's left to a voice that's native.
+func TestCartesiaHasANativeVoiceForEveryLanguageButUkrainian(t *testing.T) {
+	o := CartesiaOptions{}
+	for _, l := range []string{"es", "fr", "it", "pt", "ja", "zh", "de", "nl", "ru", "pl", "cs", "hu", "sv", "ro", "fi", "da", "vi",
+		"hi", "bn", "ta", "te", "gu", "kn", "ml", "mr", "pa", "od"} {
+		if o.voiceFor(l) == defaultCartesiaVoiceID || !o.speaks(l) {
+			t.Errorf("%s: no native voice", l)
+		}
+	}
+	if !o.speaks("en") {
+		t.Error("English is Katie's own")
+	}
+	if o.speaks("uk") {
+		t.Error("no native female Ukrainian voice: another voice should go first")
+	}
+	if !(CartesiaOptions{Voices: map[string]string{"uk": "a-ukrainian-voice"}}).speaks("uk") {
+		t.Error("a configured Ukrainian voice makes it native")
 	}
 }
