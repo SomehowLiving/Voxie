@@ -66,3 +66,21 @@ func TestStripVoiceTagsRemovesLanguageHints(t *testing.T) {
 		t.Errorf("ParseVoiceTag must not strip the language hint, got %q", text)
 	}
 }
+
+// Live: "[lang:ok?] [??] This …" -- Cartesia rejected it, ElevenLabs read it.
+func TestDropBrokenTags(t *testing.T) {
+	cases := map[string]string{
+		"[lang:ok?] [??] This …":            "This …",
+		"[lang:kn] ಇನ್ನೇನು ಬೇಕು?":           "[lang:kn] ಇನ್ನೇನು ಬೇಕು?", // a valid leading tag stays: it routes the sentence
+		"[voice:male] [lang:hi] नमस्ते":     "[voice:male] [lang:hi] नमस्ते",
+		"ಬೇಕು?[lang:kn] ಇನ್ನೇನು":            "ಬೇಕು? ಇನ್ನೇನು",
+		"Call me at 5 [...] please":         "Call me at 5 please",
+		"Plain text, nothing to drop.":      "Plain text, nothing to drop.",
+		"See the note [in brackets] there.": "See the note [in brackets] there.",
+	}
+	for in, want := range cases {
+		if got := DropBrokenTags(in); got != want {
+			t.Errorf("DropBrokenTags(%q) = %q, want %q", in, got, want)
+		}
+	}
+}

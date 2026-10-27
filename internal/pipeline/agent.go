@@ -563,6 +563,7 @@ func (p *Pipeline) synthesizeSentences(ctx context.Context, gen uint64, sentence
 		// never hears it — and mapped to provider voice controls when the
 		// configured TTS supports them.
 		controls, clean := tts.ParseVoiceTag(sentence)
+		clean = tts.DropBrokenTags(clean)
 		if !speakable(clean) {
 			// Nothing a voice can say (")", "…"): sent anyway, it comes back
 			// as a burst of noise.

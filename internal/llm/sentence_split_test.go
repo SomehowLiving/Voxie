@@ -1,6 +1,7 @@
 package llm
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -57,5 +58,44 @@ func TestJSONReplyIsEmittedSentenceBySentence(t *testing.T) {
 	}
 	if len(got) != 3 {
 		t.Fatalf("emitted %q, want three sentences", got)
+	}
+}
+
+// Live, a JSON reply repeated itself with a [lang:kn] glued after each "?":
+// nothing split it, and 314 characters went to the voice in one piece.
+func TestSplitSentencesAtGluedLanguageTags(t *testing.T) {
+	got := splitSentences("[lang:kn] ನಾನು ಸಹಾಯ ಮಾಡಲು ಬಂದಿದ್ದೇನೆ, ಏನು ಬೇಕು?[lang:kn] ಇನ್ನೇನು ಕೇಳಲು ಇಷ್ಟವಿದೆ?[lang:kn] ಇನ್ನೇನು ಬೇಕು?")
+	want := []string{"[lang:kn] ನಾನು ಸಹಾಯ ಮಾಡಲು ಬಂದಿದ್ದೇನೆ, ಏನು ಬೇಕು?", "[lang:kn] ಇನ್ನೇನು ಕೇಳಲು ಇಷ್ಟವಿದೆ?", "[lang:kn] ಇನ್ನೇನು ಬೇಕು?"}
+	if strings.Join(got, "|") != strings.Join(want, "|") {
+		t.Fatalf("got %q", got)
+	}
+	if got := splitSentences(""); len(got) != 0 {
+		t.Fatalf("empty: %q", got)
+	}
+}
+
+// Streaming: a language tag mid-buffer ends the sentence before it.
+func TestFindSentenceEndAtALanguageTag(t *testing.T) {
+	s := "[lang:hi] नमस्ते दोस्त [lang:en] Hello"
+	if i := findSentenceEnd(s); s[:i+1] != "[lang:hi] नमस्ते दोस्त " {
+		t.Fatalf("cut at %d: %q", i, s[:i+1])
+	}
+	if i := findSentenceEnd("[lang:hi] नमस्ते दोस्त"); i != -1 {
+		t.Fatalf("a leading tag is not a boundary: %d", i)
+	}
+}
+
+// Every sentence of a reply goes to the voice in the reply's language: live,
+// a Kannada reply's second sentence came out in the default English voice.
+func TestEverySentenceCarriesTheRepliesLanguage(t *testing.T) {
+	client := newReplyAgent(t, `{"text":"[lang:kn] ಹೌದು, ನಾನು ಸ್ವಲ್ಪ ಕನ್ನಡದಲ್ಲಿ ಮಾತಾಡ್ತೀನಿ. ನಿಮಗೆ ಏನು ಬೇಕು? [lang:en] Or English. Fine too."}`)
+	var got []string
+	if _, err := client.Chat(context.Background(), Turn{Text: "hi", Prompt: "hi"}, nil, func(s string) { got = append(got, s) }); err != nil {
+		t.Fatal(err)
+	}
+	// The first sentence is cut at its first clause, so the voice starts sooner.
+	want := []string{"[lang:kn] ಹೌದು,", "[lang:kn] ನಾನು ಸ್ವಲ್ಪ ಕನ್ನಡದಲ್ಲಿ ಮಾತಾಡ್ತೀನಿ.", "[lang:kn] ನಿಮಗೆ ಏನು ಬೇಕು?", "[lang:en] Or English.", "[lang:en] Fine too."}
+	if strings.Join(got, "|") != strings.Join(want, "|") {
+		t.Fatalf("sentences to the voice:\n got %q\nwant %q", got, want)
 	}
 }

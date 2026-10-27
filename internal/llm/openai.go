@@ -526,10 +526,15 @@ func findSentenceEnd(s string) int {
 			unicodeEnd = i + utf8.RuneLen(r) - 1
 		}
 	}
-	if ascii := findASCIISentenceEnd(s); ascii > unicodeEnd {
-		return ascii
+	end := unicodeEnd
+	if ascii := findASCIISentenceEnd(s); ascii > end {
+		end = ascii
 	}
-	return unicodeEnd
+	// A language tag mid-text starts a new sentence (see splitAtLangTags).
+	if i := strings.LastIndex(s, "[lang:"); i > 0 && i-1 > end {
+		end = i - 1
+	}
+	return end
 }
 
 func findASCIISentenceEnd(s string) int {

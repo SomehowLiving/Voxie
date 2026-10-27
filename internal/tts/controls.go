@@ -66,6 +66,31 @@ func ParseVoiceTag(sentence string) (VoiceControls, string) {
 	return vc, strings.TrimSpace(trimmed[end+1:])
 }
 
+// DropBrokenTags removes what an agent sometimes writes for a tag but no
+// voice should read, keeping a valid leading "[lang:xx]" / "[voice:x]" that
+// routes the sentence: any other language tag (malformed or mid-sentence)
+// and brackets with no word in them. Live, after a listener sent a turn
+// with no language, the agent answered "[lang:ok?] [??] This …": Cartesia
+// rejected it and the next voice read it out.
+func DropBrokenTags(text string) string {
+	if !strings.Contains(text, "[") {
+		return text
+	}
+	lead := leadingTags.FindString(text)
+	rest := anyLangTag.ReplaceAllString(text[len(lead):], " ")
+	rest = wordlessBrackets.ReplaceAllString(rest, " ")
+	rest = strings.Join(strings.Fields(rest), " ")
+	if lead == "" {
+		return rest
+	}
+	return strings.TrimSpace(lead) + " " + rest
+}
+
+var (
+	anyLangTag       = regexp.MustCompile(`\[lang:[^\]\s]{0,16}\]`)
+	wordlessBrackets = regexp.MustCompile(`\[[^\p{L}\p{N}\]]{0,16}\]`)
+)
+
 // StripVoiceTags removes every known [tag] occurrence from text — used when
 // recording transcripts so delivery hints never pollute what reviews and
 // the LLM history treat as spoken words.

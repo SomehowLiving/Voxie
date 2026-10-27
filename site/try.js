@@ -141,7 +141,7 @@ function addNote(text) {
   el.textContent = text;
   log.appendChild(el);
 }
-const clean = (s) => s.replace(/\[(lang|voice):[^\]]*\]\s*/g, "");
+const clean = (s) => s.replace(/\[(lang|voice):[^\]]*\]/g, " ").replace(/\[[^\p{L}\p{N}\]]{0,16}\]/gu, " ").replace(/ {2,}/g, " ");
 
 let voxieState = "", asideEl = null;
 function onEvent(raw) {
