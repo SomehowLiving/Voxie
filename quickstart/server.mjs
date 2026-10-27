@@ -216,12 +216,12 @@ async function handleAgent(req) {
         const last = call.history.at(-1);
         if (last?.role === "assistant") last.content = `${req.interrupted_text} [the caller cut in here]`;
       }
-      // Voxie says which language the call is in (call_language: it doesn't
+      // Voxie says which language the call is in (language: it doesn't
       // move on "okay" or "thank you") and which this line was heard in.
       // Live, "Okay" in a Kannada call got an English reply.
       const tags = [];
-      if (req.call_language) tags.push(`[call language: ${req.call_language}]`);
-      if (req.language && req.language !== req.call_language) tags.push(`[heard in: ${req.language}]`);
+      if (req.language) tags.push(`[call language: ${req.language}]`);
+      if (req.heard_language && req.heard_language !== req.language) tags.push(`[heard in: ${req.heard_language}]`);
       call.history.push({ role: "user", content: tags.length ? `${tags.join(" ")} ${said}` : said });
       let reply;
       try {

@@ -109,6 +109,15 @@ func NewAgentClient(url, apiKey string, timeoutMs int, resourceID string) Client
 	}
 }
 
+// callLanguageOr is the conversation's language, or the turn's when the
+// conversation's isn't known yet.
+func callLanguageOr(turn Turn) string {
+	if turn.CallLanguage != "" {
+		return turn.CallLanguage
+	}
+	return turn.Language
+}
+
 func newAgentSessionID() string {
 	b := make([]byte, 16)
 	rand.Read(b)
@@ -120,11 +129,12 @@ type agentRequest struct {
 	ResourceID string `json:"resource_id,omitempty"`
 	Type       string `json:"type"`
 	Text       string `json:"text"`
-	// Language is the language the caller spoke this turn in (chat only).
+	// Language is the language the conversation is in (chat only): what to
+	// reply in. A "thank you" in English doesn't change a Kannada call's.
 	Language string `json:"language,omitempty"`
-	// CallLanguage is the language the conversation is in (chat only).
-	CallLanguage string `json:"call_language,omitempty"`
-	System       string `json:"system,omitempty"`
+	// HeardLanguage is the language this turn alone was heard in (chat only).
+	HeardLanguage string `json:"heard_language,omitempty"`
+	System        string `json:"system,omitempty"`
 
 	// Context the pipeline gathered for this turn, kept out of Text so an agent
 	// that persists what it receives stores the caller's words and nothing else.
@@ -137,12 +147,12 @@ type agentRequest struct {
 func (c *agentClient) Chat(ctx context.Context, turn Turn, onChunk func(string), onSentence func(string)) (string, error) {
 	c.mu.Lock()
 	req := agentRequest{
-		SessionID:    c.sessionID,
-		ResourceID:   c.resourceID,
-		Type:         "chat",
-		Text:         turn.Text,
-		Language:     turn.Language,
-		CallLanguage: turn.CallLanguage,
+		SessionID:     c.sessionID,
+		ResourceID:    c.resourceID,
+		Type:          "chat",
+		Text:          turn.Text,
+		Language:      callLanguageOr(turn),
+		HeardLanguage: turn.Language,
 		// Note is an instruction for this turn only, so it rides with the skill
 		// text rather than accumulating into it.
 		System:           c.extraSystem + turn.Note,
