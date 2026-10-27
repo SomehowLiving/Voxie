@@ -447,3 +447,15 @@ func TestChatReplyOutcome(t *testing.T) {
 		t.Fatalf("streamed outcome %+v", o)
 	}
 }
+
+// The agent gets the turn's language and the call's: "Okay" in a Kannada call.
+func TestChatSendsTheCallsLanguage(t *testing.T) {
+	agent := newCaptureAgent(t)
+	client := agent.client("")
+	if _, err := client.Chat(context.Background(), Turn{Text: "Okay", Prompt: "Okay", Language: "en", CallLanguage: "kn"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if r := agent.requests[0]; r.Language != "en" || r.CallLanguage != "kn" {
+		t.Fatalf("sent language %q call_language %q", r.Language, r.CallLanguage)
+	}
+}

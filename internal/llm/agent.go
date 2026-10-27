@@ -122,7 +122,9 @@ type agentRequest struct {
 	Text       string `json:"text"`
 	// Language is the language the caller spoke this turn in (chat only).
 	Language string `json:"language,omitempty"`
-	System   string `json:"system,omitempty"`
+	// CallLanguage is the language the conversation is in (chat only).
+	CallLanguage string `json:"call_language,omitempty"`
+	System       string `json:"system,omitempty"`
 
 	// Context the pipeline gathered for this turn, kept out of Text so an agent
 	// that persists what it receives stores the caller's words and nothing else.
@@ -135,11 +137,12 @@ type agentRequest struct {
 func (c *agentClient) Chat(ctx context.Context, turn Turn, onChunk func(string), onSentence func(string)) (string, error) {
 	c.mu.Lock()
 	req := agentRequest{
-		SessionID:  c.sessionID,
-		ResourceID: c.resourceID,
-		Type:       "chat",
-		Text:       turn.Text,
-		Language:   turn.Language,
+		SessionID:    c.sessionID,
+		ResourceID:   c.resourceID,
+		Type:         "chat",
+		Text:         turn.Text,
+		Language:     turn.Language,
+		CallLanguage: turn.CallLanguage,
 		// Note is an instruction for this turn only, so it rides with the skill
 		// text rather than accumulating into it.
 		System:           c.extraSystem + turn.Note,

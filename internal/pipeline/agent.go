@@ -77,6 +77,7 @@ func (p *Pipeline) runAgent() {
 			p.lastTurn = answeredTurn{text: text, language: language, at: time.Now(), gen: gen}
 			clock := newTurnClock(ev, language)
 			clock.confidence = p.lastUserConfidence()
+			clock.callLanguage = p.callLang.observe(language, text)
 			p.clocks.Store(gen, clock)
 			p.sendEvent(stateMsg{Type: "state", State: "thinking"})
 			go func() {
@@ -244,6 +245,9 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 	// turn.Text stays the caller's words throughout; turn.Prompt accumulates the
 	// same context inline for providers that can only read one message.
 	turn := llm.Turn{Text: userText, Prompt: userText, Language: language, ReplacesLastTurn: replacesLastTurn}
+	if clock != nil {
+		turn.CallLanguage = clock.callLanguage
+	}
 	if interrupted, _ := p.interruptedText.Load().(string); interrupted != "" {
 		p.interruptedText.Store("")
 		trimmedUser := strings.TrimSpace(strings.ToLower(userText))
@@ -400,6 +404,13 @@ func (p *Pipeline) respond(gen uint64, userText, language string, turnStart time
 	}
 
 	wg.Wait()
+	// The agent answering in another language moves the call there: it was
+	// asked to ("can you speak Japanese?"), or chose to.
+	if clock != nil {
+		if l, _ := clock.replyLang.Load().(string); l != "" && respCtx.Err() == nil {
+			p.callLang.replied(l)
+		}
+	}
 	p.reportTurn(clock, userText, language, err, respCtx.Err() != nil)
 
 	if p.transcriptLog != nil {

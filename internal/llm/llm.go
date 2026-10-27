@@ -46,6 +46,12 @@ type Turn struct {
 	// the caller speaks, so keep your own sense of the call's language.
 	Language string
 
+	// CallLanguage is the language the conversation is in: it changes on a
+	// sentence in another language, not on "okay" or "thank you" (see
+	// pipeline/calllanguage.go). Reply in it unless the caller asks for
+	// another. Empty when nothing has been heard yet.
+	CallLanguage string
+
 	// Prompt is Text with the context below folded in, for providers that carry
 	// context in the message. Equal to Text when there is none.
 	Prompt string

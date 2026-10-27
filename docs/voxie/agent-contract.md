@@ -22,6 +22,7 @@ This extends upstream StreamCore's "bring your own agent" contract
   "type": "chat",
   "text": "मुझे दोबारा फ़ोन मत करना",
   "language": "hi",
+  "call_language": "hi",
   "interrupted_text": "Your appointment is on Mon…",
   "replaces_last_turn": true,
   "summary": "…rolling digest of earlier turns"
@@ -35,9 +36,16 @@ This extends upstream StreamCore's "bring your own agent" contract
 - **`language`** (on `chat`) is the language the caller spoke this turn,
   as an ISO 639-1 code, when the listener knows it. It's the adaptive
   listener's verdict: identified and corrected turns carry the identified
-  language. Treat it as a strong hint, not a verdict on the whole call. A
-  one-word "Hello" is labelled English whatever the caller speaks, so
-  switch your reply language only on a real sentence.
+  language. It's this turn only: a one-word "Okay" is labelled English
+  whatever the caller speaks.
+- **`call_language`** (on `chat`) is the language the conversation is in.
+  **Reply in it** unless the caller asks for another. It changes on a
+  sentence in another language (three words that aren't fillers like
+  "okay", "thank you", "haan"; four characters in Chinese or Japanese),
+  on three short turns in a row in another language, or when your reply
+  is in another language (you were asked to switch). "Okay" or "thank
+  you" in a Kannada call leave it Kannada. A turn with no `language`
+  (a listener that doesn't label) keeps it.
 - **`interrupted_text`** is present when the caller cut the agent off,
   by talking over it or by finishing a new turn while it was still
   speaking. It's what they heard: the sentences that played in full, then
