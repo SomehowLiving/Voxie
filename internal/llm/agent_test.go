@@ -306,8 +306,12 @@ func TestChatSendsTheLanguageTheCallerSpoke(t *testing.T) {
 	if _, err := client.Chat(context.Background(), Turn{Text: "hmm", Prompt: "hmm"}, nil, nil); err != nil {
 		t.Fatal(err)
 	}
-	if agent.requests[0].Language != "ta" || agent.requests[1].Language != "" {
-		t.Fatalf("languages sent = %q, %q; want ta, then none", agent.requests[0].Language, agent.requests[1].Language)
+	// The call's language isn't known yet: language is the turn's.
+	if r := agent.requests[0]; r.Language != "ta" || r.HeardLanguage != "ta" {
+		t.Fatalf("sent language %q heard_language %q; want ta, ta", r.Language, r.HeardLanguage)
+	}
+	if r := agent.requests[1]; r.Language != "" || r.HeardLanguage != "" {
+		t.Fatalf("an unlabelled turn sent language %q heard_language %q", r.Language, r.HeardLanguage)
 	}
 }
 
@@ -445,5 +449,19 @@ func TestChatReplyOutcome(t *testing.T) {
 	}
 	if o := streamed.(OutcomeReporter).TakeOutcome(); o == nil || o.Success == nil || *o.Success || o.Reason != "no_tables" {
 		t.Fatalf("streamed outcome %+v", o)
+	}
+}
+
+// The agent gets the turn's language and the call's: "Okay" in a Kannada call.
+func TestChatSendsTheCallsLanguage(t *testing.T) {
+	agent := newCaptureAgent(t)
+	client := agent.client("")
+	if _, err := client.Chat(context.Background(), Turn{Text: "Okay", Prompt: "Okay", Language: "en", CallLanguage: "kn"}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	// "Okay" in a Kannada call: language stays the call's, heard_language
+	// says what this turn was heard in.
+	if r := agent.requests[0]; r.Language != "kn" || r.HeardLanguage != "en" {
+		t.Fatalf("sent language %q heard_language %q; want kn, en", r.Language, r.HeardLanguage)
 	}
 }

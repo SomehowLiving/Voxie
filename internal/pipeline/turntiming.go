@@ -32,6 +32,9 @@ type turnClock struct {
 	provider  string
 	// confidence is speech-to-text's for the turn's final.
 	confidence float64
+	// callLanguage is the conversation's language after this turn (see
+	// callLanguage), which the agent gets alongside the turn's own.
+	callLanguage string
 
 	llmFirst      atomic.Int64 // unix nanos
 	firstSentence atomic.Int64

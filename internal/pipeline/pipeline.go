@@ -200,6 +200,8 @@ type Pipeline struct {
 	interruptedText atomic.Value // string — what the caller heard of a reply they cut off
 	// turnLanguage is the language of the caller's last full sentence.
 	turnLanguage atomic.Value // string
+	// callLang is the language the conversation is in (see callLanguage).
+	callLang callLanguage
 	// ledger records which sentences of the current response actually played.
 	ledger playbackLedger
 	// lastTurn is the caller's last turn as answered; owned by runAgent.
