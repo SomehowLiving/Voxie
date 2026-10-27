@@ -480,6 +480,34 @@ func firstClauseCut(sentence string) int {
 // space or the end ("First. Second? Third।"), keeping each ender and the
 // space after it with its sentence. Joining the parts gives back the text.
 func splitSentences(text string) []string {
+	var out []string
+	for _, segment := range splitAtLangTags(text) {
+		out = append(out, splitSentencesIn(segment)...)
+	}
+	return out
+}
+
+// splitAtLangTags cuts text before every "[lang:" that isn't at its start.
+// Live, a reply came back as "…ಏನು ಬೇಕು?[lang:kn] ಇನ್ನೇನು…" six times over,
+// with no space after the "?": nothing split it, and 314 characters went to
+// the voice as one sentence, tags and all.
+func splitAtLangTags(text string) []string {
+	var parts []string
+	for len(text) > 1 {
+		i := strings.Index(text[1:], "[lang:")
+		if i < 0 {
+			break
+		}
+		parts = append(parts, text[:i+1])
+		text = text[i+1:]
+	}
+	if text != "" {
+		parts = append(parts, text)
+	}
+	return parts
+}
+
+func splitSentencesIn(text string) []string {
 	var parts []string
 	start := 0
 	runes := []rune(text)

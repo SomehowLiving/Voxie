@@ -179,7 +179,10 @@ function hedged(messages) {
 
 // The [lang:xx] tag tells the voice router which voice to use; the page and
 // Voxie's transcripts show the words without it.
-const untagged = (text) => text.replace(/^\s*\[lang:[a-z]{2,3}\]\s*/i, "");
+// What the page shows: no routing tags anywhere ("…ಬೇಕು?[lang:kn] ಇನ್ನೇನು…"),
+// and no brackets without a word in them ("[??]").
+const untagged = (text) =>
+  text.replace(/\[(lang|voice):[^\]]*\]/gi, " ").replace(/\[[^\p{L}\p{N}\]]{0,16}\]/gu, " ").replace(/\s{2,}/g, " ").trim();
 
 async function handleAgent(req) {
   const call = sessions.get(req.session_id) ?? {

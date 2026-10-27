@@ -59,3 +59,27 @@ func TestJSONReplyIsEmittedSentenceBySentence(t *testing.T) {
 		t.Fatalf("emitted %q, want three sentences", got)
 	}
 }
+
+// Live, a JSON reply repeated itself with a [lang:kn] glued after each "?":
+// nothing split it, and 314 characters went to the voice in one piece.
+func TestSplitSentencesAtGluedLanguageTags(t *testing.T) {
+	got := splitSentences("[lang:kn] ನಾನು ಸಹಾಯ ಮಾಡಲು ಬಂದಿದ್ದೇನೆ, ಏನು ಬೇಕು?[lang:kn] ಇನ್ನೇನು ಕೇಳಲು ಇಷ್ಟವಿದೆ?[lang:kn] ಇನ್ನೇನು ಬೇಕು?")
+	want := []string{"[lang:kn] ನಾನು ಸಹಾಯ ಮಾಡಲು ಬಂದಿದ್ದೇನೆ, ಏನು ಬೇಕು?", "[lang:kn] ಇನ್ನೇನು ಕೇಳಲು ಇಷ್ಟವಿದೆ?", "[lang:kn] ಇನ್ನೇನು ಬೇಕು?"}
+	if strings.Join(got, "|") != strings.Join(want, "|") {
+		t.Fatalf("got %q", got)
+	}
+	if got := splitSentences(""); len(got) != 0 {
+		t.Fatalf("empty: %q", got)
+	}
+}
+
+// Streaming: a language tag mid-buffer ends the sentence before it.
+func TestFindSentenceEndAtALanguageTag(t *testing.T) {
+	s := "[lang:hi] नमस्ते दोस्त [lang:en] Hello"
+	if i := findSentenceEnd(s); s[:i+1] != "[lang:hi] नमस्ते दोस्त " {
+		t.Fatalf("cut at %d: %q", i, s[:i+1])
+	}
+	if i := findSentenceEnd("[lang:hi] नमस्ते दोस्त"); i != -1 {
+		t.Fatalf("a leading tag is not a boundary: %d", i)
+	}
+}
