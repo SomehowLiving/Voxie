@@ -10,9 +10,9 @@ noise). Real human callers will score lower; nobody has measured that yet.
 |---|---|---|
 | English, Spanish, French, Italian, Portuguese, Japanese | Deepgram multi | Kokoro |
 | German, Dutch, Russian | Deepgram multi | Piper (CPU) |
-| Chinese | Deepgram fixed `zh` (after identification) | Kokoro |
-| Polish, Ukrainian, Czech, Hungarian, Swedish, Romanian, Finnish, Danish, Vietnamese | Deepgram fixed (after identification) | Piper (CPU) |
-| Korean, Arabic, Turkish | Deepgram fixed (after identification) | – (no voice; answer in English) |
+| Chinese | Deepgram multi | Kokoro |
+| Polish, Ukrainian, Czech, Hungarian, Swedish, Romanian, Finnish, Danish, Vietnamese | Deepgram multi | Piper (CPU) |
+| Korean, Arabic, Turkish | Deepgram multi | – (no voice; answer in English) |
 | Hindi, Hinglish, Indian English | Deepgram multi | Sarvam (Kokoro fallback) |
 | Tamil, Telugu, Bengali, Gujarati, Punjabi, Kannada, Marathi, Malayalam | Sarvam (after identification) | Sarvam (Marathi: Kokoro fallback) |
 | Odia | Sarvam | Sarvam |
@@ -36,16 +36,12 @@ voice (`bulbul:v3`, clean audio), since Google TTS has no Odia:
 | es, fr, de, ja, en | Stayed on Deepgram multi, never checked | – |
 | hi, Hinglish (Indian number) | First two Hindi turns checked, then settled | 0.4–1.2s |
 | ta, te, bn, gu, pa, kn, ml, mr | Switched to Sarvam on the first real turn, that turn corrected | 0.46–0.98s |
-| zh (clean and phone) | Identified on the first turn → Deepgram fixed zh | 0.48–0.55s |
-| ko, ar, tr | Identified on the first turn → Deepgram fixed | 0.40–0.42s |
+| pl, ko (2026-10-26, after Deepgram's multi update) | Stayed on Deepgram multi, every turn heard; a short turn checked (pl@0.83, ko@0.78) and confirmed | 0.52–0.77s |
+| ml on a phone line (2026-10-26) | Multi labelled it Telugu at 0.95; Sarvam identified Malayalam and the call switched on the first turn | 0.46s |
 | Wrong language on record (fr, Tamil caller) | Corrected on the first turn | 0.58s |
 | od on record (as `od` or ISO `or`) | Started on Sarvam, every turn heard in Odia | – |
 | od, nothing on record | Heard as Hindi by multi; Sarvam identified Odia, switched on the first turn | 0.65s |
 | de, nl, ru | Stayed on Deepgram multi; answered by Piper in the caller's language | – |
-| pl, nothing on record | Multi heard "Hello, Ktomovie?"; Groq identified Polish, switched to Deepgram fixed `pl` on the first turn | 0.51s |
-| pl on record | Started on Deepgram fixed `pl`, every turn heard in Polish | – |
-| cs, hu, sv, ro, fi, da, vi | Identified on the first turn → Deepgram fixed, answered by Piper | 0.37–0.71s |
-| uk | Short "Алло, хто це?" identified as Czech; the next turn as Ukrainian → Deepgram fixed `uk` | 0.53s, 0.54s |
 | ta on an Indian number (after adding vi) | Sarvam identified Tamil, switched on the first turn | 0.54s |
 | Groq key rejected | Sarvam identified Telugu, and the call switched | 0.58s |
 | Groq and Sarvam both failing | Turns kept as heard; the call completed | – |

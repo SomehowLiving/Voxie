@@ -174,10 +174,11 @@ func TestAdaptiveStartsFromTheCallersHint(t *testing.T) {
 		"fr":    {},
 		"ta":    {indian: true, language: "ta"},
 		"ml-IN": {indian: true, language: "ml"},
-		"zh":    {language: "zh"},
-		"pl":    {language: "pl"},
-		"uk-UA": {language: "uk"},
-		"vi":    {language: "vi"},
+		// Multi hears every world language since Deepgram's 2026-10-23 update.
+		"zh":    {},
+		"pl":    {},
+		"uk-UA": {},
+		"vi":    {},
 		"od":    {indian: true, language: "od"},
 		"or":    {indian: true, language: "od"}, // ISO 639-1 Odia
 		"or-IN": {indian: true, language: "od"},
@@ -241,20 +242,50 @@ func TestAdaptiveSwitchesToTheIndianListenerWithSarvamsTranscript(t *testing.T) 
 	}
 }
 
-func TestAdaptiveSwitchesToDeepgramFixedForKorean(t *testing.T) {
+// Multi hears Korean, but misheard this turn as katakana "Japanese": the
+// identifier's words are the turn, and the call stays on multi.
+func TestAdaptiveReplacesATurnMultiMisheard(t *testing.T) {
 	groq := &fakeIdentifier{id: Identification{Language: "ko", Text: "다시 전화하지 마세요."}}
 	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
 	h.speak(60)
 	h.log.last().emit(deepgramFinal("タシィチョノアジマセヨー。キョルチェリンクルル", "ja", 0.62))
-	if got := h.next(); got.Text != "다시 전화하지 마세요." {
-		t.Fatalf("got %q", got.Text)
+	if got := h.next(); got.Text != "다시 전화하지 마세요." || got.Language != "ko" {
+		t.Fatalf("got %+v", got)
 	}
-	waitFor(t, func() bool { return h.log.count() == 2 })
-	if spec := h.log.last().spec; spec != (listenerSpec{language: "ko"}) {
-		t.Fatalf("switched to %s", spec)
+	time.Sleep(50 * time.Millisecond)
+	if h.log.count() != 1 {
+		t.Fatalf("switched listener (%s) although multi hears Korean", h.log.last().spec)
 	}
 	if !h.a.EmitsPartials() {
-		t.Error("Deepgram fixed to Korean still streams partials")
+		t.Error("multi streams partials")
+	}
+}
+
+// Hinglish flips between en and hi labels within a sentence: the listener's
+// mixed transcript stands, not the identifier's.
+func TestAdaptiveKeepsAHinglishTranscript(t *testing.T) {
+	groq := &fakeIdentifier{id: Identification{Language: "hi", Text: "कल आप कितने बजे खुलते हैं, अपॉइंटमेंट लेना पड़ेगा क्या"}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("kal aap kitne baje open hote ho, appointment lena padega kya", "en", 0.7))
+	if got := h.next(); got.Text != "kal aap kitne baje open hote ho, appointment lena padega kya" {
+		t.Fatalf("got %q", got.Text)
+	}
+}
+
+// Measured 2026-10-26: multi labels Malayalam as Tamil with confidence. A
+// regional label is still checked, and the call moves to the Indian listener.
+func TestAdaptiveChecksAMalayalamTurnMultiCallsTamil(t *testing.T) {
+	sarvam := &fakeIdentifier{id: Identification{Language: "ml", Text: "നാളെ നിങ്ങൾ എത്ര മണിക്കാണ് തുറക്കുന്നത്"}}
+	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"sarvam", sarvam.fn()})
+	h.speak(60)
+	h.log.last().emit(deepgramFinal("நாலு நீங்கள் எத்தனை மணிக்கான துறக்குனது", "ta", 0.86))
+	if got := h.next(); got.Language != "ml" {
+		t.Fatalf("got %+v", got)
+	}
+	waitFor(t, func() bool { return h.log.count() == 2 })
+	if spec := h.log.last().spec; spec != (listenerSpec{indian: true, language: "ml"}) {
+		t.Fatalf("switched to %s", spec)
 	}
 }
 
@@ -393,14 +424,14 @@ func TestAdaptiveChecksSpeechThatProducedNoTranscript(t *testing.T) {
 	if got := h.next(); got.Text != "请不要再给我打电话了" || !got.IsFinal {
 		t.Fatalf("got %+v", got)
 	}
-	waitFor(t, func() bool { return h.log.count() == 2 })
-	if spec := h.log.last().spec; spec != (listenerSpec{language: "zh"}) {
-		t.Fatalf("switched to %s", spec)
+	time.Sleep(50 * time.Millisecond)
+	if h.log.count() != 1 {
+		t.Fatalf("switched listener (%s) although multi hears Chinese", h.log.last().spec)
 	}
 }
 
 func TestAdaptiveStopsCheckingAfterTheCap(t *testing.T) {
-	groq := &fakeIdentifier{id: Identification{Language: "pl"}} // no listener known for it
+	groq := &fakeIdentifier{id: Identification{Language: "sw"}} // no listener known for it
 	h := newHarness(t, listenerSpec{}, false, namedIdentifier{"groq", groq.fn()})
 	for i := 0; i < adaptiveMaxChecks+2; i++ {
 		h.speak(60)
@@ -571,9 +602,10 @@ func TestAdaptiveDoesNotCheckSpeechTheListenerIsHearing(t *testing.T) {
 	}
 }
 
-// Whisper's "vi" moves a Vietnamese caller to Deepgram fixed vi. On a call
-// that looks Indian it waits for Sarvam (Whisper has called Bengali "vi"),
-// and stands when Sarvam names no Indian language.
+// Whisper's "vi" replaces a Vietnamese turn multi misheard as English; the
+// call stays on multi, which hears Vietnamese. On a call that looks Indian
+// it waits for Sarvam (Whisper has called Bengali "vi"), and stands when
+// Sarvam names no Indian language.
 func TestAdaptiveVietnameseCaller(t *testing.T) {
 	for _, indian := range []bool{false, true} {
 		groq := &fakeIdentifier{id: Identification{Language: "vi", Text: "Xin chào"}}
@@ -581,12 +613,12 @@ func TestAdaptiveVietnameseCaller(t *testing.T) {
 		h := newHarness(t, listenerSpec{}, indian, namedIdentifier{"groq", groq.fn()}, namedIdentifier{"sarvam", sarvam.fn()})
 		h.speak(60)
 		h.log.last().emit(deepgramFinal("Sin chow", "en", 0.5))
-		if got := h.next(); got.Language != "vi" {
+		if got := h.next(); got.Language != "vi" || got.Text != "Xin chào" {
 			t.Fatalf("indian=%v: got %+v", indian, got)
 		}
-		waitFor(t, func() bool { return h.log.count() == 2 })
-		if spec := h.log.last().spec; spec != (listenerSpec{language: "vi"}) {
-			t.Fatalf("indian=%v: switched to %s", indian, spec)
+		time.Sleep(50 * time.Millisecond)
+		if h.log.count() != 1 {
+			t.Fatalf("indian=%v: switched to %s", indian, h.log.last().spec)
 		}
 		if indian && sarvam.callCount() == 0 {
 			t.Error("an Indian call should hear Sarvam out before believing Whisper's vi")
