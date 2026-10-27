@@ -9,9 +9,9 @@ import "strings"
 // a foreigner (live, 2026-10). So each language gets a voice that's native in
 // it, from Cartesia's voice list (GET /voices?language=xx-IN, accents with
 // is_native) on 2026-10-26: the first female voice per language, like Katie
-// (Mandarin from the mainland). Ukrainian has no native female voice, so
-// Cartesia isn't counted as speaking it (see cartesiaSpeaks): the failover
-// chain prefers a voice that does. [cartesia] voices overrides any of them.
+// (Mandarin from the mainland), or the only one: Ukrainian's is Oleh, male. A
+// native voice of either gender beats a matching one with a foreign accent.
+// [cartesia] voices overrides any of them.
 
 // defaultCartesiaModel is Sonic 3.6 (GA 2026-08-27): the first to speak Odia,
 // and the one that takes a locale.
@@ -47,6 +47,8 @@ var cartesiaNativeVoices = map[string]string{
 	"fi": "2835e382-643b-4ac6-8f6c-74df549a7ad0", // Milla
 	"da": "eb929394-68e7-4e08-bd2f-e7055728a5e1", // Mette
 	"vi": "8e8f222d-c817-4cc5-822b-8bf76ca7e98d", // Lien
+	"uk": "05ffab9c-d380-4909-8375-cd12f59238c3", // Oleh: the only native Ukrainian voice
+	"ko": "1a602be4-3b57-4bef-a270-dfa5efed0541", // Yeji
 }
 
 // indianLanguages are read as spoken in India: "12/10/2026" is 12 October, and
