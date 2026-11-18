@@ -2,6 +2,9 @@ package session
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -21,6 +24,17 @@ const DefaultSessionGraceMs = 30000
 // still not spin the sweep, and a long one should not delay a reap by minutes.
 const reapIntervalCap = 10 * time.Second
 
+// newResumeToken returns a high-entropy single-use token. crypto/rand rather
+// than a UUID because this is a bearer credential for an in-progress
+// conversation, not an identifier.
+func newResumeToken() (string, error) {
+	buf := make([]byte, 32)
+	if _, err := rand.Read(buf); err != nil {
+		return "", fmt.Errorf("generate resume token: %w", err)
+	}
+	return base64.RawURLEncoding.EncodeToString(buf), nil
+}
+
 type Manager struct {
 	cfg       *config.Config
 	pluginMgr *plugin.Manager
@@ -31,6 +45,9 @@ type Manager struct {
 	// redialling client can be reattached to the conversation it lost without
 	// the session ID ever being usable as a credential.
 	resumable map[string]*Session
+	// sessionTokens holds each live session's current resume token, keyed by
+	// session ID, so the Manager — not the Session — owns the credential.
+	sessionTokens map[string]string
 }
 
 func NewManager(cfg *config.Config, pluginMgr *plugin.Manager, ragClient rag.Client) *Manager {
@@ -40,6 +57,9 @@ func NewManager(cfg *config.Config, pluginMgr *plugin.Manager, ragClient rag.Cli
 		ragClient: ragClient,
 		sessions:  make(map[string]*Session),
 		resumable: make(map[string]*Session),
+		// sessionTokens is populated lazily on first IssueResumeToken, but
+		// initialise the map so nil-map writes never panic.
+		sessionTokens: make(map[string]string),
 	}
 }
 
@@ -56,7 +76,7 @@ func (m *Manager) IssueResumeToken(s *Session) string {
 		return ""
 	}
 
-	old, current, err := s.rotateResumeToken()
+	token, err := newResumeToken()
 	if err != nil {
 		// Without a token the call still works; it just cannot be resumed.
 		log.Printf("[manager] could not issue resume token for %s: %v", s.ID, err)
@@ -65,11 +85,15 @@ func (m *Manager) IssueResumeToken(s *Session) string {
 
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if old != "" {
+	// Rotating on every issue makes the token single-use: a stolen or logged
+	// token stops working the moment the legitimate client uses it, and a
+	// replay lands on a token the index no longer knows.
+	if old := m.sessionTokens[s.ID]; old != "" {
 		delete(m.resumable, old)
 	}
-	m.resumable[current] = s
-	return current
+	m.sessionTokens[s.ID] = token
+	m.resumable[token] = s
+	return token
 }
 
 // Resume looks up the session a token belongs to and detaches the token so it
@@ -84,6 +108,7 @@ func (m *Manager) Resume(token string) *Session {
 	s, ok := m.resumable[token]
 	if ok {
 		delete(m.resumable, token)
+		delete(m.sessionTokens, s.ID)
 	}
 	m.mu.Unlock()
 	if !ok {
@@ -132,16 +157,17 @@ func (m *Manager) Remove(sessionID string) {
 	if s, ok := m.sessions[sessionID]; ok {
 		s.Close()
 		delete(m.sessions, sessionID)
-		m.dropResumeTokenLocked(s)
+		m.dropResumeTokenLocked(sessionID)
 		log.Printf("[manager] removed session %s", sessionID)
 	}
 }
 
 // dropResumeTokenLocked un-indexes a session's resume token so a closed
 // conversation can never be reattached to. Caller must hold m.mu.
-func (m *Manager) dropResumeTokenLocked(s *Session) {
-	if token := s.ResumeToken(); token != "" {
+func (m *Manager) dropResumeTokenLocked(sessionID string) {
+	if token := m.sessionTokens[sessionID]; token != "" {
 		delete(m.resumable, token)
+		delete(m.sessionTokens, sessionID)
 	}
 }
 
@@ -190,7 +216,7 @@ func (m *Manager) reap(now time.Time) {
 		}
 		expired = append(expired, s)
 		delete(m.sessions, id)
-		m.dropResumeTokenLocked(s)
+		m.dropResumeTokenLocked(id)
 	}
 	m.mu.Unlock()
 
@@ -218,5 +244,6 @@ func (m *Manager) CloseAll() {
 		delete(m.sessions, id)
 	}
 	clear(m.resumable)
+	clear(m.sessionTokens)
 	log.Println("[manager] all sessions closed")
 }
