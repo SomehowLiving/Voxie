@@ -2,8 +2,6 @@ package session
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"fmt"
 	"log"
 	"runtime/debug"
@@ -11,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/pion/webrtc/v4"
 	"github.com/streamcoreai/streamcore-server/internal/config"
 	"github.com/streamcoreai/streamcore-server/internal/peer"
 	"github.com/streamcoreai/streamcore-server/internal/pipeline"
@@ -45,18 +44,17 @@ type Session struct {
 	// an agent that remembers them.
 	conv *pipeline.ConversationState
 
-	// resumeToken authorises reattaching to this session after the transport
-	// is gone for good. It is deliberately not the session ID: the ID appears
-	// in the resource URL and in logs, and a credential that grants access to
-	// a live conversation should be neither. Single-use — every resume issues
-	// a fresh one.
-	resumeToken string
-
 	// resourceID is who is on the call, from a verified JWT claim or a trusted
 	// server-side caller. Empty when the deployment offers no identity. An
 	// external agent uses it to scope memory to the person; the session ID only
 	// covers this one call.
 	resourceID string
+
+	// buildPipeline constructs the pipeline that runs on a peer once its
+	// remote audio track arrives. Injected (defaulting to buildWebRTCPipeline)
+	// so Session never calls a pipeline constructor directly — the transport
+	// layer owns how a pipeline is built.
+	buildPipeline PipelineFactory
 }
 
 // SetResourceID binds an identity to the session once. Later calls are ignored
@@ -78,20 +76,9 @@ func (s *Session) ResourceID() string {
 	return s.resourceID
 }
 
-// newResumeToken returns a high-entropy single-use token. crypto/rand rather
-// than a UUID because this is a bearer credential for an in-progress
-// conversation, not an identifier.
-func newResumeToken() (string, error) {
-	buf := make([]byte, 32)
-	if _, err := rand.Read(buf); err != nil {
-		return "", fmt.Errorf("generate resume token: %w", err)
-	}
-	return base64.RawURLEncoding.EncodeToString(buf), nil
-}
-
 func NewSession(id string, cfg *config.Config, pluginMgr *plugin.Manager, ragClient rag.Client) *Session {
 	ctx, cancel := context.WithCancel(context.Background())
-	return &Session{
+	s := &Session{
 		ID:        id,
 		cfg:       cfg,
 		pluginMgr: pluginMgr,
@@ -104,6 +91,21 @@ func NewSession(id string, cfg *config.Config, pluginMgr *plugin.Manager, ragCli
 		idleSince: time.Now(),
 		etag:      `"` + id + `"`,
 	}
+	s.buildPipeline = s.buildWebRTCPipeline
+	return s
+}
+
+// buildWebRTCPipeline is the default PipelineFactory: it builds a WebRTC
+// pipeline on the peer's tracks once the remote audio track arrives.
+func (s *Session) buildWebRTCPipeline(
+	ctx context.Context,
+	p *peer.Peer,
+	remoteTrack *webrtc.TrackRemote,
+	opts PeerOptions,
+	conv *pipeline.ConversationState,
+	resumed bool,
+) (*pipeline.Pipeline, error) {
+	return pipeline.New(ctx, s.cfg, remoteTrack, p.LocalTrack(), p.SendEvent, s.pluginMgr, s.ragClient, opts, conv, resumed)
 }
 
 // AddPeer creates a new Pion peer and launches a goroutine that waits for
@@ -112,6 +114,18 @@ func NewSession(id string, cfg *config.Config, pluginMgr *plugin.Manager, ragCli
 // PeerOptions is re-exported so the signalling layer, which already depends on
 // this package, does not need to reach into pipeline for it.
 type PeerOptions = pipeline.PeerOptions
+
+// PipelineFactory builds the pipeline that runs on a peer once its remote
+// audio track arrives. Session holds one so it never calls a pipeline
+// constructor directly — construction is the transport layer's concern.
+type PipelineFactory func(
+	ctx context.Context,
+	p *peer.Peer,
+	remoteTrack *webrtc.TrackRemote,
+	opts PeerOptions,
+	conv *pipeline.ConversationState,
+	resumed bool,
+) (*pipeline.Pipeline, error)
 
 func (s *Session) AddPeer(peerID string, opts PeerOptions) (*peer.Peer, error) {
 	s.mu.Lock()
@@ -168,7 +182,7 @@ func (s *Session) AddPeer(peerID string, opts PeerOptions) (*peer.Peer, error) {
 				return
 			}
 
-			pl, err = pipeline.New(p.Context(), s.cfg, remoteTrack, p.LocalTrack(), p.SendEvent, s.pluginMgr, s.ragClient, opts, conv, resumed)
+			pl, err = s.buildPipeline(p.Context(), p, remoteTrack, opts, conv, resumed)
 			if err != nil {
 				log.Printf("[session:%s] pipeline create error: %v", s.ID, err)
 				p.Close()
@@ -298,14 +312,6 @@ func (s *Session) RotateETag() string {
 	return s.etag
 }
 
-// ResumeToken returns the token that currently authorises reattaching to this
-// session, or "" if the session holds nothing worth resuming onto.
-func (s *Session) ResumeToken() string {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.resumeToken
-}
-
 // Resumable reports whether reattaching would actually preserve a
 // conversation. A realtime (speech-to-speech) session is not: its history
 // lives inside the provider, and a new provider connection cannot inherit it,
@@ -315,19 +321,6 @@ func (s *Session) ResumeToken() string {
 // is available at POST time — before any audio has arrived to build it.
 func (s *Session) Resumable() bool {
 	return s.cfg != nil && !s.cfg.RealtimeEnabled()
-}
-
-// rotateResumeToken issues a fresh token and returns the previous one so the
-// Manager can drop it from its index. Callers must hold no Session lock.
-func (s *Session) rotateResumeToken() (old, current string, err error) {
-	token, err := newResumeToken()
-	if err != nil {
-		return "", "", err
-	}
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	old, s.resumeToken = s.resumeToken, token
-	return old, token, nil
 }
 
 // evictPeers closes every peer currently attached, so a resuming client does
