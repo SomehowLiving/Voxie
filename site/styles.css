@@ -202,7 +202,7 @@ h1, h2, h3 { margin: 0; font-weight: 500; letter-spacing: -.035em; line-height: 
 .footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 30px 0 44px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--ink-3); }
 .footer a { color: var(--ink-2); text-decoration: none; }
 .footer a:hover { color: var(--ink); }
-.footer-links { display: flex; gap: 22px; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px 22px; }
 
 @media (max-width: 1080px) {
   .nav-links { gap: 22px; }
